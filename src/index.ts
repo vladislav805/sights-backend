@@ -5,6 +5,7 @@ import * as mysql from 'promise-mysql';
 import { callMethod, initMethods } from './handlers';
 import { getConfigValue, loadConfig } from './config';
 import { IApiParams } from './types/api';
+import log from './logger';
 
 let db: mysql.Connection;
 
@@ -22,6 +23,8 @@ service.all('/api/:method', async(request, response) => {
         ...query,
         ...(body as IApiParams),
     };
+
+    log(`Request to ${method} with ${apiParams}`);
 
     try {
         response.send({

@@ -1,1 +1,1 @@
-export const joinPhotoPath = (domain: string, path: string, name: string) => `https://${domain}/${path}/${name}`;
+export const joinPhotoPath = (domain: string, path: string, name: string): string => `https://${domain}/${path}/${name}`;

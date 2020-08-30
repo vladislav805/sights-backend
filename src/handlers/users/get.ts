@@ -8,7 +8,7 @@ import { ICity } from '../../types/city';
 import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_PHOTO, USERS_GET_FIELDS_ALLOWED } from './keys';
 import { PHOTO_KEYS } from '../photos/keys';
 import { CITY_KEYS } from '../cities/keys';
-import { stringToArrayOfId } from '../../utils/string-to-array-of-id';
+import { paramToArrayOf } from '../../utils/param-to-array-of';
 
 type UsersGetParams = {
     userIds: (number | string)[];
@@ -19,21 +19,17 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
     public handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: IMethodCallProps): UsersGetParams {
         let fields = params.fields;
 
-        let ids: (number | string)[] = stringToArrayOfId(params.userIds as string, true);
+        let ids: string[] = paramToArrayOf(params.userIds as string);
 
         if (!ids.length) {
             if (props.session) {
-                ids = [props.session.userId];
+                ids = [String(props.session.userId)];
             } else {
                 throw new Error('Not specified userIds');
             }
         }
 
-        if (typeof fields === 'string') {
-            fields = fields.split(',');
-        } else {
-            fields = (fields || []) as string[];
-        }
+        fields = paramToArrayOf<string>(fields as string);
 
         return {
             userIds: ids,

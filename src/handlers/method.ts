@@ -67,6 +67,15 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
     public needSession(): boolean {
         return true;
     }
+
+    public toString(): string {
+        return `[Method: ${this.constructor.name}]`;
+        /*
+        .replace(/^([A-Za-z]+)([A-Z])/, (a: string, b: string) => {
+            return `${a.toLowerCase()}.${b.toLowerCase()}`;
+        })
+        */
+    }
 }
 
 /**

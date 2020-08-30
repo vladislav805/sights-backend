@@ -5,6 +5,7 @@ import { ISession } from '../types/session';
 import UsersGet from './users/get';
 import SessionsGet, { getSessionByAuthKey } from './sessions/get';
 import UtilsGetTime from './utils/time';
+import log from '../logger';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -36,6 +37,8 @@ export const callMethod = async(method: string, params: IApiParams, db: mysql.Co
         const props = {
             session,
         };
+
+        log(`Call ${impl} for ${method} with ${props}`);
 
         return impl.call(params, props);
     } else {

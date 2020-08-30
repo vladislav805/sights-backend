@@ -16,5 +16,5 @@ export interface IPhotoRaw extends IPhoto {
 export const enum PhotoType {
     SIGHT = 1,
     PROFILE = 2,
-    SIGHT_SUGGEST = 4
+    SIGHT_SUGGEST = 4,
 }
