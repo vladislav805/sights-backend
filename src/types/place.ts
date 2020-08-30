@@ -1,5 +1,5 @@
-export interface IPlace {
+import { IPoint } from './point';
+
+export interface IPlace extends IPoint {
     placeId: number;
-    latitude: number;
-    longitude: number;
 }

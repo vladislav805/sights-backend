@@ -14,11 +14,11 @@ export function paramToArrayOf<T = string>(input: InputType, handler?: OutHandle
         return map<T>(handler, [input]);
     }
 
+    input = input.trim();
+
     if (!input || input.length === 0) {
         return [];
     }
 
-    let ids: string[] = input.split(',');
-
-    return map<T>(handler, ids);
+    return map<T>(handler, input.split(',').map(str => str.trim()).filter(Boolean));
 }
