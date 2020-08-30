@@ -8,7 +8,7 @@ import { ICity } from '../../types/city';
 import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_PHOTO, USERS_GET_FIELDS_ALLOWED } from './keys';
 import { PHOTO_KEYS } from '../photos/keys';
 import { CITY_KEYS } from '../cities/keys';
-import { stringToArrayOfId } from '../utils/string-to-array-of-id';
+import { stringToArrayOfId } from '../../utils/string-to-array-of-id';
 
 type UsersGetParams = {
     userIds: (number | string)[];
@@ -79,7 +79,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         return users.map((user: IUser) => {
             if (needPhoto) {
-                const photo = unpackObject<IUser, keyof IPhotoRaw, IPhotoRaw>(user, photoKey, PHOTO_KEYS);
+                const photo = unpackObject<IUser, IPhotoRaw>(user, photoKey, PHOTO_KEYS);
 
                 user.photo = photo.photoId
                     ? raw2object(photo)
@@ -87,7 +87,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
             }
 
             if (needCity) {
-                const city = unpackObject<IUser, keyof ICity, ICity>(user, cityKey, CITY_KEYS);
+                const city = unpackObject<IUser, ICity>(user, cityKey, CITY_KEYS);
 
                 user.city = city.cityId ? city : null;
             }

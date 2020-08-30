@@ -4,6 +4,7 @@ import * as bodyParser from 'body-parser';
 import * as mysql from 'promise-mysql';
 import { callMethod, initMethods } from './handlers';
 import { getConfigValue, loadConfig } from './config';
+import { IApiParams } from './types/api';
 
 let db: mysql.Connection;
 
@@ -19,7 +20,7 @@ service.all('/api/:method', async(request, response) => {
 
     let apiParams = {
         ...query,
-        ...(body as Record<string, string>),
+        ...(body as IApiParams),
     };
 
     try {

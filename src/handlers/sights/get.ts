@@ -68,7 +68,7 @@ limit 20',
         });
 
         const items = raw.map((sight: ISight) => {
-            sight.category = unpackObject<ISight, keyof ICategory, ICategory>(sight, 'ctg', CATEGORY_KEYS);
+            sight.category = unpackObject<ISight, ICategory>(sight, 'ctg', CATEGORY_KEYS);
             return sight;
         });
 
