@@ -59,7 +59,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * через handleParams)
      * @param props Готовые параметры запроса, такие как сессия и кэши
      */
-    public abstract perform(params: Params, props: IMethodCallProps): Promise<Result>;
+    protected abstract perform(params: Params, props: IMethodCallProps): Promise<Result>;
 
     /**
      * Нужна ли информация о сессии для работы метода?
