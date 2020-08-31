@@ -30,7 +30,7 @@ export const initMethods = (props: IMethodProps) => {
 
 export const hasMethod = (method: string) => method in methods;
 
-export const callMethod = async(method: string, params: IApiParams, db: mysql.Connection) => {
+export const callMethod = async(method: string, params: IApiParams, db: mysql.Pool) => {
     if (hasMethod(method)) {
         const impl = methods[method];
 

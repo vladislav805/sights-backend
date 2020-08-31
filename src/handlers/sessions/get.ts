@@ -9,7 +9,7 @@ type ISessionGetParams = {
 
 const cache: Map<string, ISession> = new Map<string, ISession>();
 
-export const getSessionByAuthKey = async(authKey: string, db: mysql.Connection): Promise<ISession | null> => {
+export const getSessionByAuthKey = async(authKey: string, db: mysql.Pool): Promise<ISession | null> => {
     if (cache.has(authKey)) {
         return Promise.resolve(cache.get(authKey)!);
     }

@@ -7,7 +7,7 @@ import { getConfigValue, loadConfig } from './config';
 import { IApiParams } from './types/api';
 import log from './logger';
 
-let db: mysql.Connection;
+let db: mysql.Pool;
 
 const service = restana();
 
@@ -38,12 +38,13 @@ service.all('/api/:method', async(request, response) => {
 loadConfig();
 
 
-async function connect2db(): Promise<mysql.Connection> {
+async function connect2db(): Promise<mysql.Pool> {
     if (db) {
+        console.log(db);
         return db;
     }
 
-    db = await mysql.createConnection({
+    db = await mysql.createPool({
         host: getConfigValue<string>('DATABASE_HOST'),
         user: getConfigValue<string>('DATABASE_USER'),
         password: getConfigValue<string>('DATABASE_PASSWORD'),

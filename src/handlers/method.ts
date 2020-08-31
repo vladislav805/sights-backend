@@ -3,7 +3,7 @@ import { ISession } from '../types/session';
 import { IApiParams } from '../types/api';
 
 export interface IMethodProps {
-    getDatabase: () => Promise<mysql.Connection>;
+    getDatabase: () => Promise<mysql.Pool>;
 }
 
 export interface IMethodCallProps {
@@ -27,7 +27,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
         this.props = props;
     }
 
-    protected getDatabase(): Promise<mysql.Connection> {
+    protected getDatabase(): Promise<mysql.Pool> {
         return this.props.getDatabase();
     }
 
