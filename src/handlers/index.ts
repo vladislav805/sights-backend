@@ -10,6 +10,7 @@ import SightsGet from './sights/get';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
+import CommentsAdd from './comments/add';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -25,6 +26,7 @@ export const initMethods = (props: IMethodProps) => {
         'sessions.get': SessionsGet,
 
         'comments.get': CommentsGet,
+        'comments.add': CommentsAdd,
 
         'utils.getTime': UtilsGetTime,
     };
