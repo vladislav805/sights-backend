@@ -1,5 +1,5 @@
 import { IApiParams } from '../types/api';
-import { IMethodAPI, IMethodProps} from './method';
+import { IMethodAPI, IMethodCallProps, IMethodProps, PrivateMethodAPI } from './method';
 import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import log from '../logger';
@@ -9,6 +9,9 @@ import UtilsGetTime from './utils/time';
 import SightsGet from './sights/get';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
+import CommentsGet from './comments/get';
+import CommentsAdd from './comments/add';
+import CommentsRemove from './comments/remove';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -22,6 +25,10 @@ export const initMethods = (props: IMethodProps) => {
         'cities.getById': CitiesGetById,
 
         'sessions.get': SessionsGet,
+
+        'comments.get': CommentsGet,
+        'comments.add': CommentsAdd,
+        'comments.remove': CommentsRemove,
 
         'utils.getTime': UtilsGetTime,
     };
@@ -40,12 +47,21 @@ export const callMethod = async(method: string, params: IApiParams, db: mysql.Po
         const impl = methods[method];
 
         let session: ISession | null = null;
-        if (impl.needSession() && typeof params.authKey === 'string') {
-            session = await getSessionByAuthKey(params.authKey, db);
+        if (impl.needSession() && impl instanceof PrivateMethodAPI) {
+            if (typeof params.authKey === 'string') {
+                session = await getSessionByAuthKey(params.authKey, db);
+            } else {
+                throw new Error('User authorization failed: authKey not specified');
+            }
+
+            if (!session) {
+                throw new Error('User authorization failed: session is invalid');
+            }
         }
 
-        const props = {
+        const props: IMethodCallProps = {
             session,
+            callMethod: (method: string, params: IApiParams) => callMethod(method, params, db),
         };
 
         log(`Call ${impl} for ${method} with ${props}`);

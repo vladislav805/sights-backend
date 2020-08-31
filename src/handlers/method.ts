@@ -8,6 +8,7 @@ export interface IMethodProps {
 
 export interface IMethodCallProps {
     session: ISession | null;
+    callMethod: (method: string, params: IApiParams) => Promise<unknown>;
 }
 
 export interface IMethodAPI<Params = unknown, Result = unknown> {
@@ -48,7 +49,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * @param props Параметры запроса, такие как сессия
      * @returns Параметры запроса, которые будет ожидать метод
      */
-    public handleParams(params: IApiParams, props: IMethodCallProps): Params {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): Params {
         return params as unknown as Params;
     }
 
@@ -90,15 +91,9 @@ export abstract class OpenMethodAPI<P, R> extends Method<P, R> {
  * Метод, который можно выполнить только авторизованным пользователем с передачей authKey
  */
 export abstract class PrivateMethodAPI<P, R> extends Method<P, R> {
-    public handleParams(params: Record<keyof P, string>, props: IMethodCallProps): P {
-        if (!('authKey' in params)) {
-            throw new Error('User authorization failed: authKey not specified');
-        }
-
-        if (!props.session) {
-            throw new Error('User authorization failed: authKey is invalid');
-        }
-
-        return params as P;
+    public needSession(): boolean {
+        return true;
     }
+
+    protected abstract perform(params: P, props: IMethodCallProps): Promise<R>;
 }
