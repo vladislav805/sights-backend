@@ -48,7 +48,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * @param props Параметры запроса, такие как сессия
      * @returns Параметры запроса, которые будет ожидать метод
      */
-    public handleParams(params: IApiParams, props: IMethodCallProps): Params {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): Params {
         return params as unknown as Params;
     }
 

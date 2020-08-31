@@ -9,6 +9,7 @@ import UtilsGetTime from './utils/time';
 import SightsGet from './sights/get';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
+import CommentsGet from './comments/get';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -22,6 +23,8 @@ export const initMethods = (props: IMethodProps) => {
         'cities.getById': CitiesGetById,
 
         'sessions.get': SessionsGet,
+
+        'comments.get': CommentsGet,
 
         'utils.getTime': UtilsGetTime,
     };

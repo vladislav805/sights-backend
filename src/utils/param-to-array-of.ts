@@ -10,11 +10,15 @@ export function paramToArrayOf<T = string>(input: InputType, handler?: OutHandle
         return [];
     }
 
+    if (Array.isArray(input)) {
+        return input;
+    }
+
     if (typeof input === 'number') {
         return map<T>(handler, [input]);
     }
 
-    input = input.trim();
+    input = String(input).trim();
 
     if (!input || input.length === 0) {
         return [];
