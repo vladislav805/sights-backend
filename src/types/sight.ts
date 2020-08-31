@@ -36,4 +36,3 @@ export const enum VisitState {
     VISITED = 1,
     DESIRED = 2,
 }
-

@@ -4,4 +4,3 @@ export type IApiList<T> = {
     count?: number;
     items: T[];
 };
-
