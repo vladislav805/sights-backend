@@ -25,7 +25,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
             if (props.session) {
                 ids = [String(props.session.userId)];
             } else {
-                throw new Error('Not specified userIds');
+                ids = [];
             }
         }
 
@@ -38,6 +38,10 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
     }
 
     public async perform({ userIds, fields }: UsersGetParams, { session }: IMethodCallProps): Promise<IUser[]> {
+        if (userIds.length === 0) {
+            return [];
+        }
+
         const cols: string[] = USER_KEYS.slice(0); // copy array
         const joins: string[] = [];
         const needPhoto: boolean = fields.includes(USERS_GET_FIELD_PHOTO);
