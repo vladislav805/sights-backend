@@ -9,6 +9,7 @@ import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_F
 import { PHOTO_KEYS } from '../photos/keys';
 import { CITY_KEYS } from '../cities/keys';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
+import db from '../../database';
 
 type UsersGetParams = {
     userIds: (number | string)[];
@@ -16,7 +17,7 @@ type UsersGetParams = {
 };
 
 class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
-    public handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: IMethodCallProps): UsersGetParams {
+    protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: IMethodCallProps): UsersGetParams {
         let fields = params.fields;
 
         let ids: string[] = paramToArrayOf(params.userIds as string);
@@ -37,7 +38,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         };
     }
 
-    public async perform({ userIds, fields }: UsersGetParams, { session }: IMethodCallProps): Promise<IUser[]> {
+    protected async perform({ userIds, fields }: UsersGetParams, { session, database }: IMethodCallProps): Promise<IUser[]> {
         if (userIds.length === 0) {
             return [];
         }
@@ -68,14 +69,15 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
             cols.push('getUserFollowersCount(`userId`) as `followers`');
         }
 
-        const db = await this.getDatabase();
+        const _db = await db();
 
         const columns = cols.join(',');
-        const ids = userIds.map(value => db.escape(value)).join(',');
+        const ids = userIds.map(value => _db.escape(value)).join(',');
 
-        const users = await db.query({
-            sql: `select ${columns} from \`user\` ${joins.join(' ')} where \`userId\` in (${ids})`,
-        });
+        const users = await database.select<IUser>(
+            `select ${columns} from \`user\` ${joins.join(' ')} where \`userId\` in (${ids})`,
+            [],
+        );
 
         return users.map((user: IUser) => {
             if (needPhoto) {

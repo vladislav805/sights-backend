@@ -54,7 +54,7 @@ type ISightsGetParams = {
 };
 
 export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISight>> {
-    public handleParams(params: IApiParams, props: IMethodCallProps): ISightsGetParams {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): ISightsGetParams {
         const areaRaw = (params.area as string || '').split(';');
 
         if (areaRaw.length !== 2) {
@@ -88,9 +88,7 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
         };
     }
 
-    public async perform(params: ISightsGetParams, props: IMethodCallProps): Promise<IApiList<ISight>> {
-        const db = await this.getDatabase();
-
+    protected async perform(params: ISightsGetParams, { database }: IMethodCallProps): Promise<IApiList<ISight>> {
         const photoKey = 'ph';
         const cityKey = 'ct';
         const categoryKey = 'cg';
@@ -175,12 +173,9 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
     (filterWhere.length ? ' and ' + filterWhere.join(' and ') : '') +
 ' limit 20';
 
-        const raw = await db.query({
-            sql,
-            values,
-        });
+        const raw = await database.select<ISight>(sql, values);
 
-        const items = raw.map((sight: ISight) => {
+        const items = raw.map(sight => {
             sight.category = unpackObject<ISight, ICategory>(sight, categoryKey, CATEGORY_KEYS);
 
             if (needCity) {

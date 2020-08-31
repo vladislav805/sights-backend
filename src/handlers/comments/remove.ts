@@ -18,15 +18,10 @@ export default class CommentsRemove extends PrivateMethodAPI<IParams, boolean> {
         };
     }
 
-    protected async perform(params: IParams, props: IMethodCallProps): Promise<boolean> {
-        const db = await this.getDatabase();
-
+    protected async perform(params: IParams, { database, session }: IMethodCallProps): Promise<boolean> {
         const sql = 'delete from `comment` where `commentId` = ? and `userId` = ?';
 
-        const result = await db.query({
-            sql,
-            values: [params.commentId, props.session?.userId],
-        });
+        const result = await database.apply(sql, [params.commentId, session?.userId]);
 
         return result.affectedRows > 0;
     }

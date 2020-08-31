@@ -8,7 +8,7 @@ type IParams = {
 };
 
 export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
-    public handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
         const sightId = +params.sightId;
 
         if (!sightId) {
@@ -24,24 +24,17 @@ export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
         return { sightId, text };
     }
 
-    protected async perform({ sightId, text }: IParams, props: IMethodCallProps): Promise<IComment> {
-        const db = await (await this.getDatabase()).getConnection();
-
+    protected async perform({ sightId, text }: IParams, { session, database }: IMethodCallProps): Promise<IComment> {
         try {
             const sql = 'insert into `comment` (`sightId`, `userId`, `date`, `text`)  values (?, ?, unix_timestamp(now()), ?)';
-            const res = await db.query({
-                sql,
-                values: [sightId, props.session?.userId, text],
-            });
+            const res = await database.apply(sql, [sightId, session?.userId, text]);
 
             const commentId = res.insertId;
 
-            const comment = await db.query({
-                sql: 'select * from `comment` where `commentId` = ?',
-                values: [commentId],
-            });
-
-            db.destroy();
+            const comment = await database.select<IComment>(
+                'select * from `comment` where `commentId` = ?',
+                [commentId],
+            );
 
             return comment[0];
         } catch (e) {

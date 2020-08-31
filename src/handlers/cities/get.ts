@@ -11,7 +11,7 @@ type IParams = {
 };
 
 export default class CitiesGet extends OpenMethodAPI<IParams, IApiList<ICity>> {
-    public handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
         return {
             count: +params.count || 50,
             offset: params.offset ? +params.offset : 0,
@@ -20,9 +20,7 @@ export default class CitiesGet extends OpenMethodAPI<IParams, IApiList<ICity>> {
         };
     }
 
-    protected async perform({ count, offset, extended, all }: IParams, props: IMethodCallProps): Promise<IApiList<ICity>> {
-        const db = await (await this.getDatabase()).getConnection();
-
+    protected async perform({ count, offset, extended, all }: IParams, { database }: IMethodCallProps): Promise<IApiList<ICity>> {
         const returnFields = extended
             ? '*'
             : '`' + CITY_KEYS.join('`, `') + '`';
@@ -36,8 +34,8 @@ export default class CitiesGet extends OpenMethodAPI<IParams, IApiList<ICity>> {
             ? ' where ' + filterWhere.join(' and ')
             : '';
 
-        const allCount = await db.query(`select count(*) as \`count\` from \`city\` ${where}`);
-        const items = await db.query(`select ${returnFields} from \`city\` ${where} limit ${offset},${count}`);
+        const allCount = await database.select<{ count: number }>(`select count(*) as \`count\` from \`city\` ${where}`);
+        const items = await database.select<ICity>(`select ${returnFields} from \`city\` ${where} limit ${offset},${count}`);
 
         return {
             count: allCount[0].count,

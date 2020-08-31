@@ -1,8 +1,8 @@
 import { IMethodCallProps, OpenMethodAPI } from '../method';
 import { IApiListExtended, IApiParams } from '../../types/api';
 import { IComment } from '../../types/comment';
-import UsersGet from '../users/get';
 import { clamp } from '../../utils/clamp';
+import { IUser } from '../../types/user';
 
 type IParams = {
     sightId: number;
@@ -25,26 +25,22 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
         };
     }
 
-    protected async perform(params: IParams, props: IMethodCallProps): Promise<IApiListExtended<IComment>> {
-        const db = await (await this.getDatabase()).getConnection();
-
-        const count = await db.query({
-            sql: 'select count(*) as `count` from `comment` where `sightId` = ?',
-            values: [params.sightId],
-        });
+    protected async perform(params: IParams, { database, session, callMethod }: IMethodCallProps): Promise<IApiListExtended<IComment>> {
+        const count = await database.select<{ count: number }>(
+            'select count(*) as `count` from `comment` where `sightId` = ?',
+            [params.sightId],
+        );
 
         const { offset, count: limit, sightId } = params;
 
-        let items: IComment[] = await db.query({
-            sql: `select * from \`comment\` where \`sightId\` = ? order by \`commentId\` limit ${offset},${limit}`,
-            values: [sightId],
-        });
+        let items: IComment[] = await database.select(
+            `select * from \`comment\` where \`sightId\` = ? order by \`commentId\` limit ${offset},${limit}`,
+            [sightId],
+        );
 
-        db.destroy();
-
-        if (props.session !== null) {
+        if (session !== null) {
             items = items.map(comment => {
-                comment.canModify = props.session?.userId === comment.userId;
+                comment.canModify = session?.userId === comment.userId;
                 return comment;
             });
         }
@@ -54,7 +50,7 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
         return {
             count: count[0].count,
             items,
-            users: await new UsersGet(this.props).call({ userIds }, props)
+            users: await callMethod('users.get', { userIds }) as IUser[],
         };
     }
 }

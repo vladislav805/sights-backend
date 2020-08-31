@@ -10,21 +10,19 @@ type IParams = {
 };
 
 export default class CitiesGetById extends OpenMethodAPI<IParams, ICity[]> {
-    public handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
         return {
             cityIds: paramToArrayOf(params.cityIds as string, Number),
             extended: 'extended' in params && Boolean(params.extended),
         };
     }
 
-    protected async perform({ cityIds, extended }: IParams, props: IMethodCallProps): Promise<ICity[]> {
-        const db = await this.getDatabase();
-
+    protected async perform({ cityIds, extended }: IParams, { database }: IMethodCallProps): Promise<ICity[]> {
         const returnFields = extended
             ? '*'
             : '`' + CITY_KEYS.join('`, `') + '`';
 
         // безопасно, потому что в handleParams мы обрабатываем все значения в cityIds в Number()
-        return db.query(`select ${returnFields} from \`city\` where \`cityId\` in (${cityIds}) `);
+        return database.select<ICity>(`select ${returnFields} from \`city\` where \`cityId\` in (${cityIds}) `);
     }
 }

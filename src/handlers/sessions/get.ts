@@ -1,7 +1,7 @@
 import { IMethodCallProps, OpenMethodAPI } from '../method';
 import { ISession } from '../../types/session';
 import { IApiParams } from '../../types/api';
-import * as mysql from 'promise-mysql';
+import { select } from '../../database';
 
 type ISessionGetParams = {
     authKey: string;
@@ -9,15 +9,12 @@ type ISessionGetParams = {
 
 const cache: Map<string, ISession> = new Map<string, ISession>();
 
-export const getSessionByAuthKey = async(authKey: string, db: mysql.Pool): Promise<ISession | null> => {
+export const getSessionByAuthKey = async(authKey: string): Promise<ISession | null> => {
     if (cache.has(authKey)) {
         return Promise.resolve(cache.get(authKey)!);
     }
 
-    const query = await db.query({
-        sql: 'select * from `authorize` where `authKey` = ?',
-        values: [authKey],
-    });
+    const query = await select<ISession>('select * from `authorize` where `authKey` = ?', [authKey]);
 
     if (query?.length) {
         const session = query[0];
@@ -31,7 +28,7 @@ export const getSessionByAuthKey = async(authKey: string, db: mysql.Pool): Promi
 };
 
 export default class SessionsGet extends OpenMethodAPI<ISessionGetParams, ISession | null> {
-    public handleParams(params: IApiParams, props: IMethodCallProps): ISessionGetParams {
+    protected handleParams(params: IApiParams, props: IMethodCallProps): ISessionGetParams {
         if (!('authKey' in params)) {
             throw new Error('Not specified authKey');
         }
@@ -39,7 +36,7 @@ export default class SessionsGet extends OpenMethodAPI<ISessionGetParams, ISessi
         return super.handleParams(params, props);
     }
 
-    public async perform({ authKey }: ISessionGetParams, props: IMethodCallProps): Promise<ISession | null> {
-        return getSessionByAuthKey(authKey, await this.getDatabase());
+    protected async perform({ authKey }: ISessionGetParams, props: IMethodCallProps): Promise<ISession | null> {
+        return getSessionByAuthKey(authKey);
     }
 }

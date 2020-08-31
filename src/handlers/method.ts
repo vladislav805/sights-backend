@@ -1,14 +1,16 @@
-import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import { IApiParams } from '../types/api';
+import { IDatabaseBundle } from '../database';
+import { callMethod } from './index';
 
 export interface IMethodProps {
-    getDatabase: () => Promise<mysql.Pool>;
+
 }
 
 export interface IMethodCallProps {
     session: ISession | null;
-    callMethod: (method: string, params: IApiParams) => Promise<unknown>;
+    callMethod: typeof callMethod;
+    database: IDatabaseBundle;
 }
 
 export interface IMethodAPI<Params = unknown, Result = unknown> {
@@ -26,10 +28,6 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      */
     public constructor(props: IMethodProps) {
         this.props = props;
-    }
-
-    protected getDatabase(): Promise<mysql.Pool> {
-        return this.props.getDatabase();
     }
 
     /**

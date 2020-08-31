@@ -1,5 +1,7 @@
 import { IMethodCallProps, OpenMethodAPI } from './method';
 import { IApiParams } from '../types/api';
+import { callMethod } from './index';
+import { IDatabaseBundle } from '../database';
 
 type IParams = {
     a?: number;
@@ -35,7 +37,8 @@ const sum = new Sum({
 
 const props: IMethodCallProps = {
     session: null,
-    callMethod: (method: string, params: IApiParams) => Promise.reject(undefined),
+    callMethod,
+    database: {} as IDatabaseBundle,
 };
 
 describe('Method', () => {

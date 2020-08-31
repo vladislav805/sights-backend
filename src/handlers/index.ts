@@ -1,5 +1,5 @@
 import { IApiParams } from '../types/api';
-import { IMethodAPI, IMethodCallProps, IMethodProps, PrivateMethodAPI } from './method';
+import { IMethodAPI, IMethodCallProps, PrivateMethodAPI } from './method';
 import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import log from '../logger';
@@ -12,10 +12,15 @@ import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
 import CommentsAdd from './comments/add';
 import CommentsRemove from './comments/remove';
+import { getSelectAndApplyFromPool } from '../database';
+
+export interface IInitMethodProps {
+    database: mysql.Pool;
+}
 
 let methods: Record<string, IMethodAPI> = {};
 
-export const initMethods = (props: IMethodProps) => {
+export const initMethods = () => {
     const listOfMethods = {
         'users.get': UsersGet,
 
@@ -36,38 +41,54 @@ export const initMethods = (props: IMethodProps) => {
     const names = Object.keys(listOfMethods);
 
     for (const name of names) {
-        methods[name] = new listOfMethods[name](props);
+        methods[name] = new listOfMethods[name]();
     }
 };
 
-export const hasMethod = (method: string) => method in methods;
 
-export const callMethod = async(method: string, params: IApiParams, db: mysql.Pool) => {
-    if (hasMethod(method)) {
-        const impl = methods[method];
+export const callMethod = async(method: string, params: IApiParams) => {
+    // Если нет метода - кидаем ошибку
+    if (!(method in methods)) {
+        throw new Error('Unknown method called');
+    }
 
-        let session: ISession | null = null;
-        if (impl.needSession() && impl instanceof PrivateMethodAPI) {
-            if (typeof params.authKey === 'string') {
-                session = await getSessionByAuthKey(params.authKey, db);
-            } else {
-                throw new Error('User authorization failed: authKey not specified');
-            }
+    // Инстанс метода
+    const impl = methods[method];
 
-            if (!session) {
-                throw new Error('User authorization failed: session is invalid');
-            }
+    // Сессия
+    let session: ISession | null = null;
+
+    // Если методу нужна сессия или если метод работает только с авторизованным пользователем
+    // то достаём информацию о пользователе
+    if (impl.needSession() || impl instanceof PrivateMethodAPI) {
+        // Если есть authKey - лезем в БД
+        if (typeof params.authKey === 'string') {
+            session = await getSessionByAuthKey(params.authKey);
+        } else { // нет - значит, не авторизован
+            throw new Error('User authorization failed: authKey not specified');
         }
 
-        const props: IMethodCallProps = {
-            session,
-            callMethod: (method: string, params: IApiParams) => callMethod(method, params, db),
-        };
+        // Если после получения сессии из БД её нет - невалидный authKey
+        if (!session) {
+            throw new Error('User authorization failed: session is invalid');
+        }
+    }
 
-        log(`Call ${impl} for ${method} with ${props}`);
+    // Пропсы для выполнения метода
+    const props: IMethodCallProps = {
+        session,
+        callMethod,
+        database: await getSelectAndApplyFromPool(),
+    };
 
+    log(`Call ${impl} for ${method} with ${props}`);
+
+    try {
         return impl.call(params, props);
-    } else {
-        throw new Error('Unknown method called');
+    } catch (e) {
+        console.error(e);
+    } finally {
+        // noinspection ES6MissingAwait
+        void props.database.destroy();
     }
 };

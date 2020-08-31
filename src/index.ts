@@ -1,13 +1,11 @@
 import * as restana from 'restana';
 import * as connectQuery from 'connect-query';
 import * as bodyParser from 'body-parser';
-import * as mysql from 'promise-mysql';
 import { callMethod, initMethods } from './handlers';
 import { getConfigValue, loadConfig } from './config';
 import { IApiParams } from './types/api';
 import log from './logger';
-
-let db: mysql.Pool;
+import connect from './database';
 
 const service = restana();
 
@@ -28,7 +26,7 @@ service.all('/api/:method', async(request, response) => {
 
     try {
         response.send({
-            result: await callMethod(method, apiParams, db),
+            result: await callMethod(method, apiParams),
         });
     } catch (e) {
         response.send({ error: (e as Error).message });
@@ -37,28 +35,7 @@ service.all('/api/:method', async(request, response) => {
 
 loadConfig();
 
-
-async function connect2db(): Promise<mysql.Pool> {
-    if (db) {
-        return db;
-    }
-
-    db = await mysql.createPool({
-        host: getConfigValue<string>('DATABASE_HOST'),
-        user: getConfigValue<string>('DATABASE_USER'),
-        password: getConfigValue<string>('DATABASE_PASSWORD'),
-        database: getConfigValue<string>('DATABASE_NAME'),
-    })
-
-    return db;
-}
-
-service.start(+getConfigValue<number>('PORT')).then(async() => {
-    db = await connect2db();
-
-    initMethods({
-        getDatabase: connect2db,
-    });
-
-    process.stdout.write('Server started\n');
-});
+service.start(+getConfigValue<number>('PORT'))
+    .then(connect)
+    .then(initMethods)
+    .then(() => process.stdout.write('Server started\n'));
