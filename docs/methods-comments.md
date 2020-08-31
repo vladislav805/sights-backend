@@ -1,8 +1,8 @@
 # Документация / API / Комментарии
 ## Список методов API секции comments.*
 * [comments.get](#commentsget)
-* comments.add
-* comments.remove
+* [comments.add](#commentsadd)
+* [comments.remove](#commentsremove)
 * comments.report
 
 ## comments.get
@@ -43,5 +43,44 @@ type Response = IApiListExtended<IComment>;
             }
         ]
     }
+}
+```
+
+## comments.add
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `string text` - текст комментария.
+
+### Формат ответа
+```ts
+type Response = IComment;
+``` 
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "commentId": 113,
+        "sightId": 470,
+        "userId": 1,
+        "date": 1598889118,
+        "text": "123"
+    }
+}
+```
+
+## comments.remove
+### Параметры
+* `commentId` - идентификатор комментария.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
 }
 ```
