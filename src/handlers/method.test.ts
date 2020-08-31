@@ -33,7 +33,10 @@ const sum = new Sum({
     getDatabase: () => Promise.reject(),
 });
 
-const props = { session: null };
+const props: IMethodCallProps = {
+    session: null,
+    callMethod: (method: string, params: IApiParams) => Promise.reject(undefined),
+};
 
 describe('Method', () => {
     it('should call test API method and set default values for skipped params', async() => {
