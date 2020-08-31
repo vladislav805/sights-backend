@@ -11,6 +11,7 @@ import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
 import CommentsAdd from './comments/add';
+import CommentsRemove from './comments/remove';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -27,6 +28,7 @@ export const initMethods = (props: IMethodProps) => {
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
+        'comments.remove': CommentsRemove,
 
         'utils.getTime': UtilsGetTime,
     };
