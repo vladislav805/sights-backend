@@ -2,17 +2,22 @@ import { IApiParams } from '../types/api';
 import { IMethodAPI, IMethodProps} from './method';
 import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
+import log from '../logger';
 import UsersGet from './users/get';
 import SessionsGet, { getSessionByAuthKey } from './sessions/get';
 import UtilsGetTime from './utils/time';
-import log from '../logger';
+import SightsGet from './sights/get';
 
 let methods: Record<string, IMethodAPI> = {};
 
 export const initMethods = (props: IMethodProps) => {
     const listOfMethods = {
         'users.get': UsersGet,
+
+        'sights.get': SightsGet,
+
         'sessions.get': SessionsGet,
+
         'utils.getTime': UtilsGetTime,
     };
 

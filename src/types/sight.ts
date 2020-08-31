@@ -14,7 +14,7 @@ export interface ISight extends IPlace {
     mask: number;
     city?: ICity;
     rating?: ISightRating;
-    photo?: IPhoto;
+    photo?: IPhoto | null;
     category?: ICategory;
 
     visitState?: VisitState;
