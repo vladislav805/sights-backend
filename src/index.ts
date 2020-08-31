@@ -40,7 +40,6 @@ loadConfig();
 
 async function connect2db(): Promise<mysql.Pool> {
     if (db) {
-        console.log(db);
         return db;
     }
 
@@ -54,7 +53,7 @@ async function connect2db(): Promise<mysql.Pool> {
     return db;
 }
 
-service.start(+getConfigValue<number>('PORT')).then(async server => {
+service.start(+getConfigValue<number>('PORT')).then(async() => {
     db = await connect2db();
 
     initMethods({
