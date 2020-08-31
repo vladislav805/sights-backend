@@ -8,6 +8,7 @@ import SessionsGet, { getSessionByAuthKey } from './sessions/get';
 import UtilsGetTime from './utils/time';
 import SightsGet from './sights/get';
 import CitiesGet from './cities/get';
+import CitiesGetById from './cities/get-by-id';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -18,6 +19,7 @@ export const initMethods = (props: IMethodProps) => {
         'sights.get': SightsGet,
 
         'cities.get': CitiesGet,
+        'cities.getById': CitiesGetById,
 
         'sessions.get': SessionsGet,
 
