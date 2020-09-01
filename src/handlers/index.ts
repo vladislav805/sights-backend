@@ -64,12 +64,12 @@ export const callMethod = async(method: string, params: IApiParams) => {
         // Если есть authKey - лезем в БД
         if (typeof params.authKey === 'string') {
             session = await getSessionByAuthKey(params.authKey);
-        } else { // нет - значит, не авторизован
+        } else if (impl instanceof PrivateMethodAPI) { // если нет ключа и метод приватный - ошибка
             throw new Error('User authorization failed: authKey not specified');
         }
 
         // Если после получения сессии из БД её нет - невалидный authKey
-        if (!session) {
+        if (!session && this.needSession()) {
             throw new Error('User authorization failed: session is invalid');
         }
     }
@@ -81,10 +81,10 @@ export const callMethod = async(method: string, params: IApiParams) => {
         database: await getSelectAndApplyFromPool(),
     };
 
-    log(`Call ${impl} for ${method} with ${props}`);
+    log(`Call ${impl} for ${method}`);
 
     try {
-        return impl.call(params, props);
+        return impl.call(params, props).catch(e => console.error(e));
     } catch (e) {
         console.error(e);
     } finally {
