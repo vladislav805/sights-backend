@@ -10,7 +10,7 @@ export interface IPhoto {
 }
 
 export interface IPhotoRaw extends IPhoto {
-    path: string;
+    path?: string;
 }
 
 export const enum PhotoType {
