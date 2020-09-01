@@ -58,20 +58,16 @@ export const callMethod = async(method: string, params: IApiParams) => {
     // Сессия
     let session: ISession | null = null;
 
-    // Если методу нужна сессия или если метод работает только с авторизованным пользователем
-    // то достаём информацию о пользователе
-    if (impl.needSession() || impl instanceof PrivateMethodAPI) {
-        // Если есть authKey - лезем в БД
-        if (typeof params.authKey === 'string') {
-            session = await getSessionByAuthKey(params.authKey);
-        } else if (impl instanceof PrivateMethodAPI) { // если нет ключа и метод приватный - ошибка
-            throw new Error('User authorization failed: authKey not specified');
-        }
+    // Если есть authKey - лезем в БД
+    if (typeof params.authKey === 'string') {
+        session = await getSessionByAuthKey(params.authKey);
 
         // Если после получения сессии из БД её нет - невалидный authKey
-        if (!session && this.needSession()) {
+        if (!session) {
             throw new Error('User authorization failed: session is invalid');
         }
+    } else if (impl instanceof PrivateMethodAPI) { // если нет ключа и метод приватный - ошибка
+        throw new Error('User authorization failed: authKey not specified');
     }
 
     // Пропсы для выполнения метода
@@ -84,11 +80,14 @@ export const callMethod = async(method: string, params: IApiParams) => {
     log(`Call ${impl} for ${method}`);
 
     try {
-        return impl.call(params, props).catch(e => console.error(e));
+        return impl
+            .call(params, props)
+            .then(res => {
+                void props.database.destroy();
+                return res;
+            })
+            .catch(e => console.error(e));
     } catch (e) {
         console.error(e);
-    } finally {
-        // noinspection ES6MissingAwait
-        void props.database.destroy();
     }
 };

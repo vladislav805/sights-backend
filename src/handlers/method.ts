@@ -15,7 +15,8 @@ export interface IMethodCallProps {
 
 export interface IMethodAPI<Params = unknown, Result = unknown> {
     call(params: IApiParams, props: IMethodCallProps): Promise<Result>;
-    needSession(): boolean;
+    /** @deprecated */
+    isSessionRequired(): boolean;
 }
 
 abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Params, Result> {
@@ -32,11 +33,12 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
 
     /**
      * Вызов метода API
-     * @param params Параметры метода, переданные при запросе
+     * @param paramsRaw Параметры метода, переданные при запросе
      * @param props Готовые параметры запроса, такие как сессия
      */
-    public call(params: IApiParams, props: IMethodCallProps): Promise<Result> {
-        return this.perform(this.handleParams(params, props), props);
+    public call(paramsRaw: IApiParams, props: IMethodCallProps): Promise<Result> {
+        const params: Params = this.handleParams(paramsRaw, props);
+        return this.perform(params, props);
     }
 
     /**
@@ -62,9 +64,10 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
 
     /**
      * Нужна ли информация о сессии для работы метода?
+     * @deprecated
      */
-    public needSession(): boolean {
-        return true;
+    public isSessionRequired(): boolean {
+        return false;
     }
 
     public toString(): string {
@@ -89,7 +92,7 @@ export abstract class OpenMethodAPI<P, R> extends Method<P, R> {
  * Метод, который можно выполнить только авторизованным пользователем с передачей authKey
  */
 export abstract class PrivateMethodAPI<P, R> extends Method<P, R> {
-    public needSession(): boolean {
+    public isSessionRequired(): boolean {
         return true;
     }
 
