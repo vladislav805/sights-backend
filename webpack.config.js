@@ -44,5 +44,7 @@ module.exports = {
         /^[a-z\-0-9]+$/,
     ],
 
+    devtool: 'source-map',
+
     stats: 'errors-only',
 };
