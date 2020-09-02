@@ -13,6 +13,8 @@ import CommentsGet from './comments/get';
 import CommentsAdd from './comments/add';
 import CommentsRemove from './comments/remove';
 import { getSelectAndApplyFromPool } from '../database';
+import CategoriesGet from './categories/get';
+import CategoriesGetById from './categories/get-by-id';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -30,6 +32,9 @@ export const initMethods = () => {
         'cities.getById': CitiesGetById,
 
         'sessions.get': SessionsGet,
+
+        'categories.get': CategoriesGet,
+        'categories.getById': CategoriesGetById,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
