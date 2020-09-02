@@ -15,6 +15,9 @@ import CommentsRemove from './comments/remove';
 import { getSelectAndApplyFromPool } from '../database';
 import CategoriesGet from './categories/get';
 import CategoriesGetById from './categories/get-by-id';
+import TagsGet from './tags/get';
+import TagsGetById from './tags/get-by-id';
+import TagsSearch from './tags/search';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -35,6 +38,10 @@ export const initMethods = () => {
 
         'categories.get': CategoriesGet,
         'categories.getById': CategoriesGetById,
+
+        'tags.get': TagsGet,
+        'tags.getById': TagsGetById,
+        'tags.search': TagsSearch,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
