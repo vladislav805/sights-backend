@@ -19,6 +19,7 @@ import TagsGet from './tags/get';
 import TagsGetById from './tags/get-by-id';
 import TagsSearch from './tags/search';
 import PhotosGet from './photos/get';
+import PhotosGetById from './photos/get-by-id';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
@@ -70,6 +71,7 @@ export const initMethods = () => {
         'feed.get': FeedGet,
 
         'photos.get': PhotosGet,
+        'photos.getById': PhotosGetById,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,

@@ -1,7 +1,7 @@
 # Документация / API / Фотографии
 ## Список методов API секции photos.*
-* photos.get
-* photos.getById
+* [photos.get](#photosget)
+* [photos.getById](#photosgetbyid)
 * photos.getUploadUri
 * photos.save
 * photos.getUnsorted
