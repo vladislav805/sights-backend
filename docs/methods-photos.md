@@ -5,7 +5,7 @@
 * photos.getUploadUri
 * photos.save
 * [photos.getUnsorted](#photosgetunsorted)
-* photos.remove
+* [photos.remove](#photosremove)
 * photos.suggest
 * photos.approve
 * photos.decline

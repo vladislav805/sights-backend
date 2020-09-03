@@ -21,6 +21,7 @@ import TagsSearch from './tags/search';
 import PhotosGet from './photos/get';
 import PhotosGetById from './photos/get-by-id';
 import PhotosGetUnsorted from './photos/get-unsorted';
+import PhotosRemove from './photos/remove';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
@@ -74,6 +75,7 @@ export const initMethods = () => {
         'photos.get': PhotosGet,
         'photos.getById': PhotosGetById,
         'photos.getUnsorted': PhotosGetUnsorted,
+        'photos.remove': PhotosRemove,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
