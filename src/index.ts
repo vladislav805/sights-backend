@@ -8,6 +8,9 @@ import { callMethod, initMethods } from './handlers';
 import { IApiParams } from './types/api';
 import log from './logger';
 import connect from './database';
+import multer = require('multer');
+import config from './uploader/config';
+import handleUpload from './uploader';
 import { ApiError, ErrorCode } from './error';
 
 const service = restana();
@@ -40,6 +43,17 @@ service.all('/api/:method', async(request, response) => {
         });
     }
 });
+
+service.get('/ps/upload', (req, res) => {
+    res.setHeader('content-type', 'text/html; charset=utf-8');
+    res.send('<form method="post" enctype="multipart/form-data">'
+        + '<p>Image: <input type="file" name="file" /></p>'
+        + '<p><input type="submit" value="Upload" /></p>'
+        + '</form>');
+});
+
+const upload = multer({ dest: config.directory.temp });
+service.post('/ps/upload', upload.single('file'), handleUpload);
 
 service.start(+getConfigValue<number>('PORT'))
     .then(connect)
