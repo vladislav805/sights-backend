@@ -23,6 +23,9 @@ import PhotosGetById from './photos/get-by-id';
 import PhotosGetUnsorted from './photos/get-unsorted';
 import PhotosRemove from './photos/remove';
 import PhotosGetUploadUri from './photos/getUploadUri';
+import PhotosSuggest from './photos/suggest';
+import PhotosApprove from './photos/approve';
+import PhotosDecline from './photos/decline';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
@@ -78,6 +81,9 @@ export const initMethods = () => {
         'photos.getUnsorted': PhotosGetUnsorted,
         'photos.remove': PhotosRemove,
         'photos.getUploadUri': PhotosGetUploadUri,
+        'photos.suggest': PhotosSuggest,
+        'photos.approve': PhotosApprove,
+        'photos.decline': PhotosDecline,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
