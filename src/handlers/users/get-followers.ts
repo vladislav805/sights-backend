@@ -3,6 +3,8 @@ import { IApiList, IApiParams } from '../../types/api';
 import { IUser } from '../../types/user';
 import UserFieldsManager from '../../utils/users/user-fields-manager';
 import { clamp } from '../../utils/clamp';
+import { toNumber } from '../../utils/to-number';
+import { UnspecifiedParamError } from '../../error';
 
 type IParams = {
     userId: number;
@@ -13,10 +15,10 @@ type IParams = {
 
 export default class UsersGetFollowers extends OpenMethodAPI<IParams, IApiList<IUser>> {
     protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
-        const userId = +params.userId;
+        const userId = toNumber(params.userId, true);
 
         if (!userId) {
-            throw new Error('Not specified userId');
+            throw new UnspecifiedParamError('userId');
         }
 
         return {

@@ -20,6 +20,8 @@ import TagsGetById from './tags/get-by-id';
 import TagsSearch from './tags/search';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
+import UsersSubscribe from './users/subscribe';
+import { ApiError, ErrorCode } from '../error';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -32,6 +34,7 @@ export const initMethods = () => {
         'users.get': UsersGet,
         'users.search': UsersSearch,
         'users.getFollowers': UsersGetFollowers,
+        'users.follow': UsersSubscribe,
 
         'sights.get': SightsGet,
 
@@ -65,7 +68,7 @@ export const initMethods = () => {
 export const callMethod = async(method: string, params: IApiParams) => {
     // Если нет метода - кидаем ошибку
     if (!(method in methods)) {
-        throw new Error('Unknown method called');
+        throw new ApiError(ErrorCode.UNKNOWN_METHOD, 'Unknown method called');
     }
 
     // Инстанс метода
@@ -80,10 +83,10 @@ export const callMethod = async(method: string, params: IApiParams) => {
 
         // Если после получения сессии из БД её нет - невалидный authKey
         if (!session) {
-            throw new Error('User authorization failed: session is invalid');
+            throw new ApiError(ErrorCode.SESSION_INVALID, 'User authorization failed: session is invalid');
         }
     } else if (impl instanceof PrivateMethodAPI) { // если нет ключа и метод приватный - ошибка
-        throw new Error('User authorization failed: authKey not specified');
+        throw new ApiError(ErrorCode.AUTH_KEY_NOT_SPECIFIED, 'User authorization failed: authKey not specified');
     }
 
     // Пропсы для выполнения метода
@@ -101,8 +104,7 @@ export const callMethod = async(method: string, params: IApiParams) => {
             .then(res => {
                 void props.database.destroy();
                 return res;
-            })
-            .catch(e => console.error(e));
+            });
     } catch (e) {
         console.error(e);
     }

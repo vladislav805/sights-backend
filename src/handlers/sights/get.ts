@@ -13,6 +13,7 @@ import { checkBitmaskValid } from '../../utils/check-bitmask-valid';
 import { PHOTO_KEYS } from '../photos/keys';
 import { IPhotoRaw } from '../../types/photo';
 import raw2object from '../../utils/photos/raw-to-object';
+import { ApiError, ErrorCode } from '../../error';
 
 type IPointTuple = [number, number];
 
@@ -58,14 +59,14 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
         const areaRaw = (params.area as string || '').split(';');
 
         if (areaRaw.length !== 2) {
-            throw new Error('Supported only two points');
+            throw new ApiError(ErrorCode.PLACES_ONLY_TWO_POINTS, 'Supported only two points');
         }
 
         const area = areaRaw.map(point => {
             const coords = point.split(',');
 
             if (coords.length !== 2) {
-                throw new Error('Unknown point format');
+                throw new ApiError(ErrorCode.PLACES_INVALID_AREA_FORMAT, 'Unknown point format');
             }
 
             return coords.map(Number);
@@ -78,7 +79,7 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
             : 0;
 
         if (!checkBitmaskValid(filters, filterRules)) {
-            throw new Error('Bitmask conflict');
+            throw new ApiError(ErrorCode.SIGHT_BITMASK_CONFLICT, 'Bitmask conflict');
         }
 
         return {

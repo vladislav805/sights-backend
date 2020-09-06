@@ -29,7 +29,11 @@ service.all('/api/:method', async(request, response) => {
             result: await callMethod(method, apiParams),
         });
     } catch (e) {
-        response.send({ error: (e as Error).message });
+        response.send({
+            error: {
+                message: (e as Error).message,
+            },
+        });
     }
 });
 
