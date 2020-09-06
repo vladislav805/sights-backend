@@ -1,6 +1,7 @@
 import { IMethodCallProps, PrivateMethodAPI } from '../method';
 import { IComment } from '../../types/comment';
 import { IApiParams } from '../../types/api';
+import { ApiError, ErrorCode, UnspecifiedParamError } from '../../error';
 
 type IParams = {
     sightId: number;
@@ -12,13 +13,13 @@ export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
         const sightId = +params.sightId;
 
         if (!sightId) {
-            throw new Error('Parameter sightId is missing');
+            throw new UnspecifiedParamError('sightId');
         }
 
         const text = (params.text as string)?.trim();
 
         if (!text) {
-            throw new Error('Parameter text is missing');
+            throw new UnspecifiedParamError('text');
         }
 
         return { sightId, text };
@@ -39,7 +40,7 @@ export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
             return comment[0];
         } catch (e) {
             switch (e.errno) {
-                case 1452: throw new Error('Sight not found');
+                case 1452: throw new ApiError(ErrorCode.SIGHT_NOT_FOUND, 'Sight not found');
                 default: throw e;
             }
         }

@@ -1,8 +1,10 @@
+export const wrapIdentify = (name: string) => `\`${name}\``;
+
 export const packIdentitiesToSql = (table: string, prefix: string, names: string[]) => {
     const result: string[] = [];
 
     for (const name of names) {
-        result.push(`\`${table}\`.\`${name}\` as \`${prefix}_${name}\``);
+        result.push(`${wrapIdentify(table)}.${wrapIdentify(name)} as ${wrapIdentify(`${prefix}_${name}`)}`);
     }
 
     return result;

@@ -3,6 +3,7 @@ import { IApiListExtended, IApiParams } from '../../types/api';
 import { IComment } from '../../types/comment';
 import { clamp } from '../../utils/clamp';
 import { IUser } from '../../types/user';
+import { toNumber } from '../../utils/to-number';
 
 type IParams = {
     sightId: number;
@@ -12,11 +13,7 @@ type IParams = {
 
 export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended<IComment>> {
     protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
-        const sightId = Number(params.sightId);
-
-        if (isNaN(sightId)) {
-            throw new Error('Invalid sightId');
-        }
+        const sightId = toNumber(params.sightId);
 
         return {
             sightId,

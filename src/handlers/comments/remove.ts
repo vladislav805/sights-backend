@@ -1,5 +1,7 @@
 import { IMethodCallProps, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
+import { toNumber } from '../../utils/to-number';
+import { UnspecifiedParamError } from '../../error';
 
 type IParams = {
     commentId: number;
@@ -7,15 +9,13 @@ type IParams = {
 
 export default class CommentsRemove extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
-        const commentId = +params.commentId;
+        const commentId = toNumber(params.commentId, true);
 
         if (!commentId) {
-            throw new Error('Parameter commentId not specified');
+            throw new UnspecifiedParamError('commentId');
         }
 
-        return {
-            commentId,
-        };
+        return { commentId };
     }
 
     protected async perform(params: IParams, { database, session }: IMethodCallProps): Promise<boolean> {

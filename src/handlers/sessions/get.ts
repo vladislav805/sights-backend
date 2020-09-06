@@ -2,6 +2,7 @@ import { IMethodCallProps, OpenMethodAPI } from '../method';
 import { ISession } from '../../types/session';
 import { IApiParams } from '../../types/api';
 import { select } from '../../database';
+import { ApiError, ErrorCode } from '../../error';
 
 type ISessionGetParams = {
     authKey: string;
@@ -30,7 +31,7 @@ export const getSessionByAuthKey = async(authKey: string): Promise<ISession | nu
 export default class SessionsGet extends OpenMethodAPI<ISessionGetParams, ISession | null> {
     protected handleParams(params: IApiParams, props: IMethodCallProps): ISessionGetParams {
         if (!('authKey' in params)) {
-            throw new Error('Not specified authKey');
+            throw new ApiError(ErrorCode.AUTH_KEY_NOT_SPECIFIED, 'Not specified authKey');
         }
 
         return super.handleParams(params, props);
