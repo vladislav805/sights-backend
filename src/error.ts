@@ -1,4 +1,5 @@
 export const enum ErrorCode {
+    UNKNOWN = 970,
     UNKNOWN_METHOD = 1,
     UNSPECIFIED_PARAM = 2,
 
@@ -8,6 +9,7 @@ export const enum ErrorCode {
 
     ALREADY_FOLLOWING = 21,
     NOT_FOLLOWING = 22,
+    FOLLOW_YOURSELF = 23,
 
     SIGHT_NOT_FOUND = 30,
     PLACES_ONLY_TWO_POINTS = 31,
@@ -16,7 +18,7 @@ export const enum ErrorCode {
 }
 
 export class ApiError extends Error {
-    protected code;
+    public readonly code;
 
     public constructor(code: ErrorCode, message?: string) {
         super(message);
