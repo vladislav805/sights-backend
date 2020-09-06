@@ -18,6 +18,7 @@ import CategoriesGetById from './categories/get-by-id';
 import TagsGet from './tags/get';
 import TagsGetById from './tags/get-by-id';
 import TagsSearch from './tags/search';
+import UsersSearch from './users/search';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -28,6 +29,7 @@ let methods: Record<string, IMethodAPI> = {};
 export const initMethods = () => {
     const listOfMethods = {
         'users.get': UsersGet,
+        'users.search': UsersSearch,
 
         'sights.get': SightsGet,
 
