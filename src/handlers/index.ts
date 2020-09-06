@@ -19,6 +19,7 @@ import TagsGet from './tags/get';
 import TagsGetById from './tags/get-by-id';
 import TagsSearch from './tags/search';
 import UsersSearch from './users/search';
+import UsersGetFollowers from './users/get-followers';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -30,6 +31,7 @@ export const initMethods = () => {
     const listOfMethods = {
         'users.get': UsersGet,
         'users.search': UsersSearch,
+        'users.getFollowers': UsersGetFollowers,
 
         'sights.get': SightsGet,
 
