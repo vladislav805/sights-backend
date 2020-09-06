@@ -1,40 +1,30 @@
 import { IMethodCallProps, OpenMethodAPI } from '../method';
 import { IUser } from '../../types/user';
 import { ApiParam } from '../../types/api';
-import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
-import { IPhotoRaw } from '../../types/photo';
-import raw2object from '../../utils/photos/raw-to-object';
-import { ICity } from '../../types/city';
-import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_PHOTO, USERS_GET_FIELDS_ALLOWED } from './keys';
-import { PHOTO_KEYS } from '../photos/keys';
-import { CITY_KEYS } from '../cities/keys';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
 import db from '../../database';
+import UserFieldsManager from '../../utils/users/user-fields-manager';
 
 type UsersGetParams = {
     userIds: (number | string)[];
-    fields: string[];
+    fields: UserFieldsManager;
 };
 
 class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
     protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: IMethodCallProps): UsersGetParams {
-        let fields = params.fields;
+        let userIds: string[] = paramToArrayOf(params.userIds as string);
 
-        let ids: string[] = paramToArrayOf(params.userIds as string);
-
-        if (!ids.length) {
+        if (!userIds.length) {
             if (props.session) {
-                ids = [String(props.session.userId)];
+                userIds = [String(props.session.userId)];
             } else {
-                ids = [];
+                userIds = [];
             }
         }
 
-        fields = paramToArrayOf<string>(fields as string);
-
         return {
-            userIds: ids,
-            fields: fields.filter(key => USERS_GET_FIELDS_ALLOWED.includes(key)),
+            userIds: userIds,
+            fields: new UserFieldsManager(typeof params.fields === 'string' ? params.fields : ''),
         };
     }
 
@@ -43,59 +33,17 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
             return [];
         }
 
-        const cols: string[] = USER_KEYS.slice(0); // copy array
-        const joins: string[] = [];
-        const needPhoto: boolean = fields.includes(USERS_GET_FIELD_PHOTO);
-        const needCity: boolean = fields.includes(USERS_GET_FIELD_CITY);
-        const needFollowers: boolean = fields.includes(USERS_GET_FIELD_FOLLOWERS);
-
-        const photoKey = 'pht';
-        const cityKey = 'ct';
-
-        // fields=photo
-        if (needPhoto) {
-            cols.push(...packIdentitiesToSql('photo', photoKey, PHOTO_KEYS));
-            joins.push('left join `photo` on `photo`.`photoId` = `user`.`photoId`');
-        }
-
-        // fields=city
-        if (needCity) {
-            cols.push(...packIdentitiesToSql('city', cityKey, CITY_KEYS));
-            joins.push('left join `city` on `city`.`cityId` = `user`.`cityId`');
-        }
-
-        // fields=followers
-        if (needFollowers) {
-            cols.push('getUserFollowersCount(`userId`) as `followers`');
-        }
-
         const _db = await db();
-
-        const columns = cols.join(',');
         const ids = userIds.map(value => _db.escape(value)).join(',');
 
+        const { joins, columns } = fields.build();
+
         const users = await database.select<IUser>(
-            `select ${columns} from \`user\` ${joins.join(' ')} where \`userId\` in (${ids})`,
+            `select ${columns} from \`user\` ${joins} where \`userId\` in (${ids})`,
             [],
         );
 
-        return users.map((user: IUser) => {
-            if (needPhoto) {
-                const photo = unpackObject<IUser, IPhotoRaw>(user, photoKey, PHOTO_KEYS);
-
-                user.photo = photo.photoId
-                    ? raw2object(photo)
-                    : null;
-            }
-
-            if (needCity) {
-                const city = unpackObject<IUser, ICity>(user, cityKey, CITY_KEYS);
-
-                user.city = city.cityId ? city : null;
-            }
-
-            return user;
-        });
+        return users.map(fields.handleResult);
     }
 }
 
