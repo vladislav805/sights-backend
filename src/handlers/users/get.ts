@@ -16,9 +16,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         if (!userIds.length) {
             if (props.session) {
-                userIds = [String(props.session.userId)];
-            } else {
-                userIds = [];
+                userIds.push(String(props.session.userId));
             }
         }
 
@@ -36,7 +34,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         const _db = await db();
         const ids = userIds.map(value => _db.escape(value)).join(',');
 
-        const { joins, columns } = fields.build();
+        const { joins, columns } = fields.build(session);
 
         const users = await database.select<IUser>(
             `select ${columns} from \`user\` ${joins} where \`userId\` in (${ids})`,

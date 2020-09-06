@@ -14,6 +14,7 @@ export interface IUser {
     photo?: IPhoto | null;
     city?: ICity | null;
     followers?: number;
+    isFollowed?: boolean;
 }
 
 export const enum Sex {

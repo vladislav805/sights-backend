@@ -1,5 +1,5 @@
 import { IUser } from '../../types/user';
-import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_PHOTO } from '../../handlers/users/keys';
+import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_IS_FOLLOWING, USERS_GET_FIELD_PHOTO } from '../../handlers/users/keys';
 import { packIdentitiesToSql, unpackObject } from '../sql-packer-id';
 import { PHOTO_KEYS } from '../../handlers/photos/keys';
 import { CITY_KEYS } from '../../handlers/cities/keys';
@@ -7,12 +7,13 @@ import { IPhotoRaw } from '../../types/photo';
 import raw2object from '../photos/raw-to-object';
 import { ICity } from '../../types/city';
 import { BuildResult, FieldsManager } from '../fields-manager';
+import { ISession } from '../../types/session';
 
 const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
 
-export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 'followers', IUser> {
-    public build(): BuildResult {
+export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 'followers' | 'isFollowing', IUser> {
+    public build(session: ISession | null): BuildResult {
         const joins: string[] = [];
         const columns: string[] = USER_KEYS.slice(0); // copy array
 
@@ -31,6 +32,11 @@ export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 
         // fields=followers
         if (this.is(USERS_GET_FIELD_FOLLOWERS)) {
             columns.push('getUserFollowersCount(`userId`) as `followers`');
+        }
+
+        // fields=isFollowing
+        if (this.is(USERS_GET_FIELD_IS_FOLLOWING) && session !== null) {
+            columns.push(`isUserFollowed(${session.userId}, \`userId\`) as \`isFollowed\``);
         }
 
         return {
@@ -52,6 +58,10 @@ export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 
             const city = unpackObject<IUser, ICity>(user, UFM_CITY, CITY_KEYS);
 
             user.city = city.cityId ? city : null;
+        }
+
+        if (this.is(USERS_GET_FIELD_IS_FOLLOWING) && 'isFollowed' in user) {
+            user.isFollowed = Boolean(user.isFollowed);
         }
 
         return user;
