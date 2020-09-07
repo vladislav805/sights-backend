@@ -1,8 +1,10 @@
+import { getConfigValue, loadConfig } from './config';
+loadConfig();
+
 import * as restana from 'restana';
 import * as connectQuery from 'connect-query';
 import * as bodyParser from 'body-parser';
 import { callMethod, initMethods } from './handlers';
-import { getConfigValue, loadConfig } from './config';
 import { IApiParams } from './types/api';
 import log from './logger';
 import connect from './database';
@@ -38,8 +40,6 @@ service.all('/api/:method', async(request, response) => {
         });
     }
 });
-
-loadConfig();
 
 service.start(+getConfigValue<number>('PORT'))
     .then(connect)

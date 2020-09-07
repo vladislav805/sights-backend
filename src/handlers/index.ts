@@ -22,6 +22,7 @@ import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
 import { ApiError, ErrorCode } from '../error';
+import AccountCreate from './account/create';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -35,6 +36,8 @@ export const initMethods = () => {
         'users.search': UsersSearch,
         'users.getFollowers': UsersGetFollowers,
         'users.follow': UsersSubscribe,
+
+        'account.create': AccountCreate,
 
         'sights.get': SightsGet,
 
@@ -99,13 +102,14 @@ export const callMethod = async(method: string, params: IApiParams) => {
     log(`Call ${impl} for ${method}`);
 
     try {
-        return impl
-            .call(params, props)
-            .then(res => {
-                void props.database.destroy();
-                return res;
-            });
+        const result = await impl.call(params, props);
+
+        // noinspection ES6MissingAwait
+        void props.database.destroy();
+
+        return result;
     } catch (e) {
-        console.error(e);
+        console.error('In invoker', e);
+        throw e;
     }
 };
