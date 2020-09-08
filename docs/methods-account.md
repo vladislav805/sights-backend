@@ -2,7 +2,7 @@
 ## account (непубличное API)
 * account.create
 * account.activate
-* account.authorize
+* [account.authorize](#accountauthorize)
 * account.edit
 * account.changePassword
 * account.setProfilePhoto
@@ -71,6 +71,28 @@ type Response = boolean;
 ```json5
 {
     "result": true
+}
+```
+
+## account.authorize
+### Параметры
+* `string login` - логин или email;
+* `string password` - пароль.
+
+### Формат ответа
+```ts
+type Response = ISession;
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "userId": 1,
+        "authKey": "aaaaaaaaaaaaaaaaaaaa...aaaaaaaaaaaaaaaaaaaa",
+        "date": 1599601997,
+        "authId": 328
+    }
 }
 ```
 
