@@ -24,6 +24,7 @@ import UsersSubscribe from './users/subscribe';
 import { ApiError, ErrorCode } from '../error';
 import AccountCreate from './account/create';
 import AccountSetOnline from './account/set-online';
+import AccountAuthorize from './account/authorize';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -39,6 +40,7 @@ export const initMethods = () => {
         'users.follow': UsersSubscribe,
 
         'account.create': AccountCreate,
+        'account.authorize': AccountAuthorize,
         'account.setOnline': AccountSetOnline,
 
         'sights.get': SightsGet,
