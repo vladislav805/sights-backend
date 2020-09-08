@@ -23,6 +23,7 @@ import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
 import { ApiError, ErrorCode } from '../error';
 import AccountCreate from './account/create';
+import AccountSetOnline from './account/set-online';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -38,6 +39,7 @@ export const initMethods = () => {
         'users.follow': UsersSubscribe,
 
         'account.create': AccountCreate,
+        'account.setOnline': AccountSetOnline,
 
         'sights.get': SightsGet,
 

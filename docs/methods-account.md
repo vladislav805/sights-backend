@@ -6,7 +6,7 @@
 * account.edit
 * account.changePassword
 * account.setProfilePhoto
-* account.setOnline
+* [account.setOnline](#accountsetonline)
 
 ## Варианты входа в аккаунт на сайте
 ### Основная регистрация
