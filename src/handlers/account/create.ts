@@ -12,6 +12,7 @@ import { getVkUser } from '../../utils/vk/get-user';
 import { sendMail, SendMessageResult } from '../../utils/send-mail';
 import { getConfigValue } from '../../config';
 import { createHash } from 'crypto';
+import { hashPassword } from '../../utils/account/password';
 
 type IParams = {
     isSocial: boolean;
@@ -104,7 +105,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
                 firstName,
                 lastName,
                 login,
-                password,
+                password: hashPassword(password as string),
                 email,
                 sex,
             };
