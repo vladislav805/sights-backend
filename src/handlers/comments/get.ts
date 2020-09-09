@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiListExtended, IApiParams } from '../../types/api';
 import { IComment } from '../../types/comment';
 import { clamp } from '../../utils/clamp';
@@ -12,7 +12,7 @@ type IParams = {
 };
 
 export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended<IComment>> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         const sightId = toNumber(params.sightId);
 
         return {
@@ -22,7 +22,7 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
         };
     }
 
-    protected async perform(params: IParams, { database, session, callMethod }: IMethodCallProps): Promise<IApiListExtended<IComment>> {
+    protected async perform(params: IParams, { database, session, callMethod }: ICallPropsOpen): Promise<IApiListExtended<IComment>> {
         const count = await database.select<{ count: number }>(
             'select count(*) as `count` from `comment` where `sightId` = ?',
             [params.sightId],

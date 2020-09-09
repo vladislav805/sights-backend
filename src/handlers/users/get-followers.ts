@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { IUser } from '../../types/user';
 import UserFieldsManager from '../../utils/users/user-fields-manager';
@@ -14,7 +14,7 @@ type IParams = {
 };
 
 export default class UsersGetFollowers extends OpenMethodAPI<IParams, IApiList<IUser>> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         const userId = toNumber(params.userId, true);
 
         if (!userId) {
@@ -29,7 +29,7 @@ export default class UsersGetFollowers extends OpenMethodAPI<IParams, IApiList<I
         };
     }
 
-    protected async perform({ userId, fields, count, offset }: IParams, { session, database }: IMethodCallProps): Promise<IApiList<IUser>> {
+    protected async perform({ userId, fields, count, offset }: IParams, { session, database }: ICallPropsOpen): Promise<IApiList<IUser>> {
         const { columns, joins } = fields.build(session);
 
         const allCount = await database.count(

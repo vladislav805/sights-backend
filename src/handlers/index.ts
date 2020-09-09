@@ -1,5 +1,5 @@
 import { IApiParams } from '../types/api';
-import { IMethodAPI, IMethodCallProps, PrivateMethodAPI } from './method';
+import { ICallPropsOpen, IMethodAPI, PrivateMethodAPI } from './method';
 import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import log from '../logger';
@@ -22,6 +22,13 @@ import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
 import { ApiError, ErrorCode } from '../error';
+import AccountCreate from './account/create';
+import AccountSetOnline from './account/set-online';
+import AccountAuthorize from './account/authorize';
+import AccountActivate from './account/activate';
+import AccountSetProfilePhoto from './account/set-profile-photo';
+import AccountEdit from './account/edit';
+import AccountChangePassword from './account/change-password';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -35,6 +42,14 @@ export const initMethods = () => {
         'users.search': UsersSearch,
         'users.getFollowers': UsersGetFollowers,
         'users.follow': UsersSubscribe,
+
+        'account.create': AccountCreate,
+        'account.authorize': AccountAuthorize,
+        'account.activate': AccountActivate,
+        'account.edit': AccountEdit,
+        'account.changePassword': AccountChangePassword,
+        'account.setProfilePhoto': AccountSetProfilePhoto,
+        'account.setOnline': AccountSetOnline,
 
         'sights.get': SightsGet,
 
@@ -90,7 +105,7 @@ export const callMethod = async(method: string, params: IApiParams) => {
     }
 
     // Пропсы для выполнения метода
-    const props: IMethodCallProps = {
+    const props: ICallPropsOpen = {
         session,
         callMethod,
         database: await getSelectAndApplyFromPool(),
@@ -99,13 +114,14 @@ export const callMethod = async(method: string, params: IApiParams) => {
     log(`Call ${impl} for ${method}`);
 
     try {
-        return impl
-            .call(params, props)
-            .then(res => {
-                void props.database.destroy();
-                return res;
-            });
+        const result = await impl.call(params, props);
+
+        // noinspection ES6MissingAwait
+        void props.database.destroy();
+
+        return result;
     } catch (e) {
-        console.error(e);
+        console.error('In invoker', e);
+        throw e;
     }
 };

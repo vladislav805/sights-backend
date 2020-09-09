@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
@@ -55,7 +55,7 @@ type ISightsGetParams = {
 };
 
 export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISight>> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): ISightsGetParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): ISightsGetParams {
         const areaRaw = (params.area as string || '').split(';');
 
         if (areaRaw.length !== 2) {
@@ -89,7 +89,7 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
         };
     }
 
-    protected async perform(params: ISightsGetParams, { database }: IMethodCallProps): Promise<IApiList<ISight>> {
+    protected async perform(params: ISightsGetParams, { database }: ICallPropsOpen): Promise<IApiList<ISight>> {
         const photoKey = 'ph';
         const cityKey = 'ct';
         const categoryKey = 'cg';

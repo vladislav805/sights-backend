@@ -9,7 +9,7 @@ export interface IUser {
     sex: Sex;
     lastSeen: number;
     isOnline?: boolean;
-    status?: string;
+    status?: 'INACTIVE' | 'USER' | 'MODERATOR' | 'ADMIN' | 'BANNED';
     bio?: string;
     photo?: IPhoto | null;
     city?: ICity | null;

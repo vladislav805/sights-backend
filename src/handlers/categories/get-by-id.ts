@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, IMethodCallProps, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ICategory } from '../../types/category';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
@@ -8,7 +8,7 @@ type IParams = {
 };
 
 export default class CategoriesGetById extends OpenMethodAPI<IParams, ICategory[]> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         const categoryIds = paramToArrayOf(params.categoryIds as string, Number);
         return { categoryIds };
     }

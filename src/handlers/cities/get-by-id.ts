@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ICity } from '../../types/city';
 import { CITY_KEYS } from './keys';
@@ -10,14 +10,14 @@ type IParams = {
 };
 
 export default class CitiesGetById extends OpenMethodAPI<IParams, ICity[]> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         return {
             cityIds: paramToArrayOf(params.cityIds as string, Number),
             extended: 'extended' in params && Boolean(params.extended),
         };
     }
 
-    protected async perform({ cityIds, extended }: IParams, { database }: IMethodCallProps): Promise<ICity[]> {
+    protected async perform({ cityIds, extended }: IParams, { database }: ICallPropsOpen): Promise<ICity[]> {
         const returnFields = extended
             ? '*'
             : '`' + CITY_KEYS.join('`, `') + '`';

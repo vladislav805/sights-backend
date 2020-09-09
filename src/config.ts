@@ -6,5 +6,5 @@ export const getConfigValue = <T extends string | number = string>(name: string)
 };
 
 export const loadConfig = () => config({
-    path: path.resolve('dev.env'),
+    path: path.resolve(process.cwd(), 'dev.env'),
 });
