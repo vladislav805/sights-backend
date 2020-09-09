@@ -96,6 +96,22 @@ type Response = ISession;
 }
 ```
 
+## account.setProfilePhoto
+### Параметры
+* `int photoId` - идентификатор фотографии (если нужно просто удалить фотографию профиля - передать "-1").
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
 ## account.setOnline
 ### Параметры
 _Нет параметров_
