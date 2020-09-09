@@ -29,6 +29,7 @@ import AccountActivate from './account/activate';
 import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
+import FeedGet from './feed/get';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -64,6 +65,8 @@ export const initMethods = () => {
         'tags.get': TagsGet,
         'tags.getById': TagsGetById,
         'tags.search': TagsSearch,
+
+        'feed.get': FeedGet,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,

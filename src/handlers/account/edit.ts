@@ -5,6 +5,7 @@ import { ApiError, ErrorCode } from '../../error';
 import { inRange } from '../../utils/in-range';
 import { toNumber } from '../../utils/to-number';
 import { wrapIdentify } from '../../utils/sql-packer-id';
+import { time } from '../../utils/time';
 
 type IParams = {
     firstName?: string;
@@ -75,7 +76,7 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
         const keys = Object.keys(params) as (keyof IParams)[];
         const values = [
             ...Object.values(params),
-            Math.floor(Date.now() / 1000),
+            time(),
             props.session.userId,
         ];
 

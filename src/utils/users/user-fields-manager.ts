@@ -1,5 +1,5 @@
 import { IUser } from '../../types/user';
-import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_IS_FOLLOWING, USERS_GET_FIELD_PHOTO } from '../../handlers/users/keys';
+import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_IS_FOLLOWING, USERS_GET_FIELD_IS_ONLINE, USERS_GET_FIELD_PHOTO } from '../../handlers/users/keys';
 import { packIdentitiesToSql, unpackObject, wrapIdentify } from '../sql-packer-id';
 import { PHOTO_KEYS } from '../../handlers/photos/keys';
 import { CITY_KEYS } from '../../handlers/cities/keys';
@@ -8,11 +8,13 @@ import raw2object from '../photos/raw-to-object';
 import { ICity } from '../../types/city';
 import { BuildResult, FieldsManager } from '../fields-manager';
 import { ISession } from '../../types/session';
+import { time } from '../time';
+import { MINUTE } from '../../date';
 
 const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
 
-export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 'followers' | 'isFollowing', IUser> {
+export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 'followers' | 'isFollowing' | 'isOnline', IUser> {
     public build(session: ISession | null, tableName: string = 'user'): BuildResult {
         const joins: string[] = [];
         const columns: string[] = USER_KEYS.map(key => `${wrapIdentify(tableName)}.${wrapIdentify(key)}`);
@@ -62,6 +64,10 @@ export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 
 
         if (this.is(USERS_GET_FIELD_IS_FOLLOWING) && 'isFollowed' in user) {
             user.isFollowed = Boolean(user.isFollowed);
+        }
+
+        if (this.is(USERS_GET_FIELD_IS_ONLINE)) {
+            user.isOnline = time() - user.lastSeen < 7 * MINUTE;
         }
 
         return user;
