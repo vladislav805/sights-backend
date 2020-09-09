@@ -16,6 +16,7 @@ import { hashPassword } from '../../utils/account/password';
 import { createSession } from '../../utils/account/create-session';
 import { IDatabaseBundle } from '../../database';
 import { ISession } from '../../types/session';
+import { time } from '../../utils/time';
 
 type IParams = {
     isSocial: boolean;
@@ -145,7 +146,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
             }
 
             // Если обычная регистрация, то шлём письмо с активацией на указанное мыло
-            const now = Date.now();
+            const now = time();
             const hash = createHash('md5')
                 .update(`${userId}${now & Math.floor(Math.random() * now / 2048)}`)
                 .digest('hex')
