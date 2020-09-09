@@ -1,5 +1,5 @@
 import { IMethodCallProps, OpenMethodAPI } from '../method';
-import { Sex } from '../../types/user';
+import { IUser, Sex } from '../../types/user';
 import { ApiParam, IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
 import { inRange } from '../../utils/in-range';
@@ -13,6 +13,9 @@ import { sendMail, SendMessageResult } from '../../utils/send-mail';
 import { getConfigValue } from '../../config';
 import { createHash } from 'crypto';
 import { hashPassword } from '../../utils/account/password';
+import { createSession } from '../../utils/account/create-session';
+import { IDatabaseBundle } from '../../database';
+import { ISession } from '../../types/session';
 
 type IParams = {
     isSocial: boolean;
@@ -86,9 +89,9 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
         };
     }
 
-    protected async perform(params: IParams, props: IMethodCallProps): Promise<IResult> {
+    protected async perform(params: IParams, props: IMethodCallProps): Promise<IResult | ISession> {
         const { isSocial, vkCode, telegramData } = params;
-        let info: IUserInfo;
+        let info!: IUserInfo;
 
         if (isSocial) {
             if (vkCode) {
@@ -115,64 +118,80 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
             }
         }
 
-        const columns = Object.keys(info!).map(wrapIdentify).join(', ');
-        const values = Object.values(info!);
+        const columns = Object.keys(info).map(wrapIdentify);
+        const values = Object.values(info);
+
+        // Если регистрация/авторизация через соцсети, то сразу же активируем аккаунт
+        if (isSocial) {
+            columns.push(wrapIdentify('status'));
+            values.push('USER');
+        }
+
         const placeholders = Array(values.length).fill('?').join(', ');
 
         try {
+            // Пытаемся создать пользователя
             const res = await props.database.apply(
-                `insert into \`user\` (${columns}) values (${placeholders})`,
+                `insert into \`user\` (${columns.join(', ')}) values (${placeholders})`,
                 values,
             );
 
-            const result: IResult = {
-                userId: res.insertId,
-            };
+            // Если всё ок, получаем его идентификатор
+            const userId = res.insertId;
 
-            if (!isSocial) {
-                const now = Date.now();
-                const hash = createHash('md5')
-                    .update(`${result.userId}${now & Math.floor(Math.random() * now / 2048)}`)
-                    .digest('hex')
-                    .substring(0, 10);
-
-                await props.database.apply(
-                    'insert into `activate` (`userId`, `hash`) values (?, ?)',
-                    [result.userId, hash],
-                );
-
-                const mailResult: SendMessageResult = await this.sendActivationMail(params.email as string, hash);
-
-                result.sent = mailResult.accepted.length > 0;
+            // Если авторизация через соцсеть, то сразу же возвращаем сессию
+            if (isSocial) {
+                return this.createSocialSession(props.database, Boolean(telegramData), info.vkId ?? info.telegramId!);
             }
 
-            return result;
+            // Если обычная регистрация, то шлём письмо с активацией на указанное мыло
+            const now = Date.now();
+            const hash = createHash('md5')
+                .update(`${userId}${now & Math.floor(Math.random() * now / 2048)}`)
+                .digest('hex')
+                .substring(0, 10);
+
+            await props.database.apply(
+                'insert into `activate` (`userId`, `hash`) values (?, ?)',
+                [userId, hash],
+            );
+
+            const mailResult: SendMessageResult = await this.sendActivationMail(params.email as string, hash);
+
+            return {
+                userId,
+                sent: mailResult.accepted.length > 0,
+            };
         } catch (e) {
+            // Если регистрация провалилась из-за дубликата
             if (e.errno === 1062) {
+                // Какой ключ дублируется?
                 const match = e.sqlMessage.match(/for key '([^']+)'/);
                 const key = match[1];
 
                 let code: ErrorCode = ErrorCode.ETC_REGISTER_ERROR;
                 let message: string = 'unknown error';
                 switch (key) {
+                    // Мыло? Оно регнуто
                     case 'email': {
                         code = ErrorCode.EMAIL_ALREADY_REGISTERED;
                         message = 'This email already registered';
                         break;
                     }
 
+                    // Логин? Он занят
                     case 'user_login_uindex': {
                         code = ErrorCode.LOGIN_ALREADY_TAKEN;
                         message = 'This login already taken';
                         break;
                     }
 
+                    // Идентификатор ВК или Telegram? Аккаунт уже создан, нужно авторизоваться
                     case 'vkId':
                     case 'telegramId': {
                         const isTelegram = e.sqlMessage.includes('telegramId');
-                        code = ErrorCode.ACCOUNT_TAKEN;
-                        message = `Account already exists associated with this ${isTelegram ? 'Telegram' : 'VK'} account`
-                        break;
+
+                        return this.createSocialSession(props.database, isTelegram, info.vkId ?? info.telegramId!);
                     }
 
                     default: {
@@ -221,5 +240,21 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
 https://${getConfigValue('DOMAIN_MAIN')}/island/activation?hash=${hash}
 
 Если Вы не регистрировались, просто проигнорируйте или удалите это письмо. Возможно, кто-то по ошибке ввёл Ваш адрес.`);
+    }
+
+    // noinspection JSMethodCanBeStatic
+    /**
+     * Вызывается только тогда, когда такой юзер точно существует
+     * Поэтому проверки на то, что такой юзер не найдется нет
+     */
+    private async createSocialSession(database: IDatabaseBundle, isTelegram: boolean, id: number): Promise<ISession> {
+        const key = wrapIdentify(isTelegram ? 'telegramId' : 'vkId');
+
+        const user = await database.select<IUser>(
+            `select \`userId\` from \`user\` where ${key} = ?`,
+            [id],
+        );
+
+        return createSession(database, user[0].userId);
     }
 }
