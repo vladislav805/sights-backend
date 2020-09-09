@@ -1,11 +1,11 @@
 # Документация / API / Аккаунт
 ## account (непубличное API)
-* account.create
+* [account.create](#accountcreate)
 * [account.activate](#accountactivate)
 * [account.authorize](#accountauthorize)
 * account.edit
 * account.changePassword
-* account.setProfilePhoto
+* [account.setProfilePhoto](#accountsetprofilephoto)
 * [account.setOnline](#accountsetonline)
 
 ## Варианты входа в аккаунт на сайте
@@ -94,6 +94,40 @@ type Response = ISession;
         "authId": 328
     }
 }
+```
+
+## account.edit
+### Параметры
+* `string? firstName` - имя;
+* `string? lastName` - фамилия;
+* `string? login` - логин (можно изменить только если он ещё не установлен);
+* `int? cityId` - идентификатор города.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+
+```
+
+## account.changePassword
+### Параметры
+* `string oldPassword` - старый пароль;
+* `string newPassword` - новый пароль.
+
+### Формат ответа
+```ts
+type Response = {
+    authKey: string;
+};
+```
+
+### Пример ответа
+```json5
+
 ```
 
 ## account.setProfilePhoto
