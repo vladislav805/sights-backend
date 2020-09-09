@@ -2,7 +2,7 @@
 ## Список методов секции users.*
 * [users.get](#usersget)
 * [users.search](#userssearch)
-* users.subscribe
+* [users.subscribe](#userssearch)
 * [users.getFollowers](#usersgetfollowers)
 
 #### etc

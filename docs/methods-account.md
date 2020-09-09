@@ -3,7 +3,7 @@
 * [account.create](#accountcreate)
 * [account.activate](#accountactivate)
 * [account.authorize](#accountauthorize)
-* account.edit
+* [account.edit](#accountedit)
 * account.changePassword
 * [account.setProfilePhoto](#accountsetprofilephoto)
 * [account.setOnline](#accountsetonline)
@@ -101,6 +101,7 @@ type Response = ISession;
 * `string? firstName` - имя;
 * `string? lastName` - фамилия;
 * `string? login` - логин (можно изменить только если он ещё не установлен);
+* `int? sex` - пол (см. [здесь](methods-users.md#sex));
 * `int? cityId` - идентификатор города.
 
 ### Формат ответа
@@ -110,12 +111,14 @@ type Response = boolean;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": true
+}
 ```
 
 ## account.changePassword
 ### Параметры
-* `string oldPassword` - старый пароль;
+* `string? oldPassword` - старый пароль (не указывается, если его ещё не было, например, вход через соцсети);
 * `string newPassword` - новый пароль.
 
 ### Формат ответа
@@ -127,7 +130,11 @@ type Response = {
 
 ### Пример ответа
 ```json5
-
+{
+    "result": {
+        "authKey": "aaaaaaaa...aaaaaaaa"
+    }
+}
 ```
 
 ## account.setProfilePhoto

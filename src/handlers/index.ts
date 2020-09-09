@@ -27,6 +27,7 @@ import AccountSetOnline from './account/set-online';
 import AccountAuthorize from './account/authorize';
 import AccountActivate from './account/activate';
 import AccountSetProfilePhoto from './account/set-profile-photo';
+import AccountEdit from './account/edit';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -44,6 +45,7 @@ export const initMethods = () => {
         'account.create': AccountCreate,
         'account.authorize': AccountAuthorize,
         'account.activate': AccountActivate,
+        'account.edit': AccountEdit,
         'account.setProfilePhoto': AccountSetProfilePhoto,
         'account.setOnline': AccountSetOnline,
 
