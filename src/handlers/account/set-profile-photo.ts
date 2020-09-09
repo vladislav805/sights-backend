@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
 import { ApiError, ErrorCode } from '../../error';
@@ -8,7 +8,7 @@ type IParams = {
 };
 
 export default class AccountSetProfilePhoto extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const photoId = toNumber(params.photoId as string);
 
         if (photoId < 0 && photoId !== -1) {
@@ -18,7 +18,7 @@ export default class AccountSetProfilePhoto extends PrivateMethodAPI<IParams, bo
         return { photoId };
     }
 
-    protected async perform({ photoId }: IParams, { session, database, callMethod }: IMethodCallProps): Promise<boolean> {
+    protected async perform({ photoId }: IParams, { session, database, callMethod }: ICallPropsPrivate): Promise<boolean> {
         const oldData = await database.select<{ photoId: number }>(
             'select `photoId` from `user` where `userId` = ?',
             [session!.userId],

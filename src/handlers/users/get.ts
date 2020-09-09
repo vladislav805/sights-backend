@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IUser } from '../../types/user';
 import { ApiParam } from '../../types/api';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
@@ -11,7 +11,7 @@ type UsersGetParams = {
 };
 
 class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
-    protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: IMethodCallProps): UsersGetParams {
+    protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: ICallPropsOpen): UsersGetParams {
         let userIds: string[] = paramToArrayOf(params.userIds as string);
 
         if (!userIds.length) {
@@ -26,7 +26,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         };
     }
 
-    protected async perform({ userIds, fields }: UsersGetParams, { session, database }: IMethodCallProps): Promise<IUser[]> {
+    protected async perform({ userIds, fields }: UsersGetParams, { session, database }: ICallPropsOpen): Promise<IUser[]> {
         if (userIds.length === 0) {
             return [];
         }

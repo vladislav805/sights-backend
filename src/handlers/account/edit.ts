@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { Sex } from '../../types/user';
 import { ApiError, ErrorCode } from '../../error';
@@ -16,7 +16,7 @@ type IParams = {
 };
 
 export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         let { firstName, lastName, login, bio, sex, cityId } = params;
         const res: IParams = {};
 
@@ -71,12 +71,12 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
         return res;
     }
 
-    protected async perform(params: IParams, props: IMethodCallProps): Promise<boolean> {
+    protected async perform(params: IParams, props: ICallPropsPrivate): Promise<boolean> {
         const keys = Object.keys(params) as (keyof IParams)[];
         const values = [
             ...Object.values(params),
             Math.floor(Date.now() / 1000),
-            props.session!.userId,
+            props.session.userId,
         ];
 
         const where = 'login' in params

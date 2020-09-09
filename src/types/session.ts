@@ -5,7 +5,5 @@ export interface ISession {
     authKey: string;
     userId: number;
     date: number;
-
-    /** @deprecated */
     user?: IUser;
 }

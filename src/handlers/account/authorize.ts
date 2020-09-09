@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { ISession } from '../../types/session';
 import { IApiParams } from '../../types/api';
 import { inRange } from '../../utils/in-range';
@@ -13,7 +13,7 @@ type IParams = {
 };
 
 export default class AccountAuthorize extends OpenMethodAPI<IParams, ISession> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         const login = String(params.login ?? '').toLowerCase();
         const password = String(params.password ?? '');
 
@@ -28,7 +28,7 @@ export default class AccountAuthorize extends OpenMethodAPI<IParams, ISession> {
         return { login, password };
     }
 
-    protected async perform({ login, password }: IParams, { database }: IMethodCallProps): Promise<ISession> {
+    protected async perform({ login, password }: IParams, { database }: ICallPropsOpen): Promise<ISession> {
         const result = await database.select<IUser>(
             'select `userId`, `status` from `user` where (`login` = ? or `email` = ?) and `password` = ?',
             [login, login, hashPassword(password)],

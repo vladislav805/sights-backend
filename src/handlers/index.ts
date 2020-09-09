@@ -1,5 +1,5 @@
 import { IApiParams } from '../types/api';
-import { IMethodAPI, IMethodCallProps, PrivateMethodAPI } from './method';
+import { ICallPropsOpen, IMethodAPI, PrivateMethodAPI } from './method';
 import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import log from '../logger';
@@ -103,7 +103,7 @@ export const callMethod = async(method: string, params: IApiParams) => {
     }
 
     // Пропсы для выполнения метода
-    const props: IMethodCallProps = {
+    const props: ICallPropsOpen = {
         session,
         callMethod,
         database: await getSelectAndApplyFromPool(),

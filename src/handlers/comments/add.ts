@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IComment } from '../../types/comment';
 import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode, UnspecifiedParamError } from '../../error';
@@ -9,7 +9,7 @@ type IParams = {
 };
 
 export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const sightId = +params.sightId;
 
         if (!sightId) {
@@ -25,7 +25,7 @@ export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
         return { sightId, text };
     }
 
-    protected async perform({ sightId, text }: IParams, { session, database }: IMethodCallProps): Promise<IComment> {
+    protected async perform({ sightId, text }: IParams, { session, database }: ICallPropsPrivate): Promise<IComment> {
         try {
             const sql = 'insert into `comment` (`sightId`, `userId`, `date`, `text`)  values (?, ?, unix_timestamp(now()), ?)';
             const res = await database.apply(sql, [sightId, session?.userId, text]);

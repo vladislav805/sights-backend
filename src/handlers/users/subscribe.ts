@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toBoolean } from '../../utils/to-boolean';
 import { toNumber } from '../../utils/to-number';
@@ -10,19 +10,19 @@ type IParams = {
 };
 
 export default class UsersSubscribe extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const userId = toNumber(params.userId);
         const follow = toBoolean(params.follow);
 
-        if (userId === props.session?.userId) {
+        if (userId === props.session.userId) {
             throw new ApiError(ErrorCode.FOLLOW_YOURSELF, 'Can\'t subscribe yourself');
         }
 
         return { userId, follow };
     }
 
-    protected async perform({ userId, follow }: IParams, { database, session }: IMethodCallProps): Promise<boolean> {
-        const isFollowed = Boolean(await database.count('select isUserFollowed(?, ?) as `count`', [session?.userId, userId]));
+    protected async perform({ userId, follow }: IParams, { database, session }: ICallPropsPrivate): Promise<boolean> {
+        const isFollowed = Boolean(await database.count('select isUserFollowed(?, ?) as `count`', [session.userId, userId]));
 
         if (isFollowed === follow) {
             throw new ApiError(
@@ -35,7 +35,7 @@ export default class UsersSubscribe extends PrivateMethodAPI<IParams, boolean> {
             ? 'insert into `subscribe` (`userId`, `targetId`) values (?, ?)'
             : 'delete from `subscribe` where `userId` = ? and `targetId` = ?';
 
-        const result = await database.apply(sql, [session?.userId, userId]);
+        const result = await database.apply(sql, [session.userId, userId]);
 
         return (isFollowed ? result.affectedRows : result.insertId) > 0;
     }

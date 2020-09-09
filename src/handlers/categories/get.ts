@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiList } from '../../types/api';
 import { ICategory } from '../../types/category';
 
@@ -8,7 +8,7 @@ export default class CategoriesGet extends OpenMethodAPI<never, IApiList<ICatego
     private ttl: number = 0;
     private _cache: IApiList<ICategory>;
 
-    protected async perform(params: never, { database }: IMethodCallProps): Promise<IApiList<ICategory>> {
+    protected async perform(params: never, { database }: ICallPropsOpen): Promise<IApiList<ICategory>> {
         const now = Date.now();
 
         if (now - this.ttl <= TTL) {

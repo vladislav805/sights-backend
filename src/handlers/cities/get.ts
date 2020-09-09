@@ -1,4 +1,4 @@
-import { IMethodCallProps, OpenMethodAPI } from '../method';
+import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ICity } from '../../types/city';
 import { CITY_KEYS } from './keys';
@@ -11,7 +11,7 @@ type IParams = {
 };
 
 export default class CitiesGet extends OpenMethodAPI<IParams, IApiList<ICity>> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         return {
             count: +params.count || 50,
             offset: params.offset ? +params.offset : 0,
@@ -20,7 +20,7 @@ export default class CitiesGet extends OpenMethodAPI<IParams, IApiList<ICity>> {
         };
     }
 
-    protected async perform({ count, offset, extended, all }: IParams, { database }: IMethodCallProps): Promise<IApiList<ICity>> {
+    protected async perform({ count, offset, extended, all }: IParams, { database }: ICallPropsOpen): Promise<IApiList<ICity>> {
         const returnFields = extended
             ? '*'
             : '`' + CITY_KEYS.join('`, `') + '`';

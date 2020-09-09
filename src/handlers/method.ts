@@ -7,19 +7,25 @@ export interface IMethodProps {
 
 }
 
-export interface IMethodCallProps {
-    session: ISession | null;
+export interface IMethodCallProps<Session = null> {
+    session: Session;
     callMethod: typeof callMethod;
     database: IDatabaseBundle;
 }
 
-export interface IMethodAPI<Params = unknown, Result = unknown> {
-    call(params: IApiParams, props: IMethodCallProps): Promise<Result>;
+export type ICallPropsOpen = IMethodCallProps<ISession | null>;
+export type ICallPropsPrivate = IMethodCallProps<ISession>;
+
+export interface IMethodAPI<Params = unknown, Result = unknown, Session = unknown> {
+    call(params: IApiParams, props: IMethodCallProps<Session>): Promise<Result>;
     /** @deprecated */
-    isSessionRequired(): boolean;
 }
 
-abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Params, Result> {
+abstract class Method<
+    Params = {},
+    Result = unknown,
+    Session = null,
+> implements IMethodAPI<Params, Result, Session> {
     protected readonly props: IMethodProps;
 
     /**
@@ -36,7 +42,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * @param paramsRaw Параметры метода, переданные при запросе
      * @param props Готовые параметры запроса, такие как сессия
      */
-    public call(paramsRaw: IApiParams, props: IMethodCallProps): Promise<Result> {
+    public call(paramsRaw: IApiParams, props: IMethodCallProps<Session>): Promise<Result> {
         const params: Params = this.handleParams(paramsRaw, props);
         return this.perform(params, props);
     }
@@ -49,7 +55,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * @param props Параметры запроса, такие как сессия
      * @returns Параметры запроса, которые будет ожидать метод
      */
-    protected handleParams(params: IApiParams, props: IMethodCallProps): Params {
+    protected handleParams(params: IApiParams, props: IMethodCallProps<Session>): Params {
         return params as unknown as Params;
     }
 
@@ -60,15 +66,7 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * через handleParams)
      * @param props Готовые параметры запроса, такие как сессия и кэши
      */
-    protected abstract perform(params: Params, props: IMethodCallProps): Promise<Result>;
-
-    /**
-     * Нужна ли информация о сессии для работы метода?
-     * @deprecated
-     */
-    public isSessionRequired(): boolean {
-        return false;
-    }
+    protected abstract perform(params: Params, props: IMethodCallProps<Session>): Promise<Result>;
 
     public toString(): string {
         return `[Method: ${this.constructor.name}]`;
@@ -84,17 +82,13 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
  * Открытый метод
  * Метод, который может быть вызван всегда от любого пользователя
  */
-export abstract class OpenMethodAPI<P, R> extends Method<P, R> {
+export abstract class OpenMethodAPI<P, R> extends Method<P, R, ISession | null> {
 }
 
 /**
  * Закрытый метод
  * Метод, который можно выполнить только авторизованным пользователем с передачей authKey
  */
-export abstract class PrivateMethodAPI<P, R> extends Method<P, R> {
-    public isSessionRequired(): boolean {
-        return true;
-    }
-
-    protected abstract perform(params: P, props: IMethodCallProps): Promise<R>;
+export abstract class PrivateMethodAPI<P, R> extends Method<P, R, ISession> {
+    protected abstract perform(params: P, props: ICallPropsPrivate): Promise<R>;
 }
