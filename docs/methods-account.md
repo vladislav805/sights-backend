@@ -4,7 +4,7 @@
 * [account.activate](#accountactivate)
 * [account.authorize](#accountauthorize)
 * [account.edit](#accountedit)
-* account.changePassword
+* [account.changePassword](#accountchangepassword)
 * [account.setProfilePhoto](#accountsetprofilephoto)
 * [account.setOnline](#accountsetonline)
 
