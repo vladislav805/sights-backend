@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { PhotoType } from '../../types/photo';
@@ -9,7 +9,7 @@ type IParams = {
 };
 
 export default class PhotosSuggest extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const photoId = +params.photoId;
         const sightId = +params.sightId;
 
@@ -24,14 +24,14 @@ export default class PhotosSuggest extends PrivateMethodAPI<IParams, boolean> {
         return { photoId, sightId };
     }
 
-    protected async perform({ photoId, sightId }: IParams, { database, session }: IMethodCallProps): Promise<boolean> {
+    protected async perform({ photoId, sightId }: IParams, { database, session }: ICallPropsPrivate): Promise<boolean> {
         const sights = await database.select<ISight>('select * from `sight` where `sightId` = ?', [sightId]);
 
         if (sights.length !== 1) {
             throw new Error('Sight not found');
         }
 
-        if (sights[0].ownerId === session?.userId) {
+        if (sights[0].ownerId === session.userId) {
             throw new Error('Invalid method used');
         }
 

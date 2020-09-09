@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { PhotoType } from '../../types/photo';
 import { IApiParams } from '../../types/api';
 import { isValidPhotoType } from '../../utils/photos/is-valid-type';
@@ -16,7 +16,7 @@ type IUploadPhotoDest = {
 };
 
 export default class PhotosGetUploadUri extends PrivateMethodAPI<IParams, IUploadPhotoDest> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const type = +params.type;
 
         if (!isValidPhotoType(type)) {
@@ -26,7 +26,7 @@ export default class PhotosGetUploadUri extends PrivateMethodAPI<IParams, IUploa
         return { type, authKey: params.authKey! };
     }
 
-    protected async perform({ type, authKey }: IParams, props: IMethodCallProps): Promise<IUploadPhotoDest> {
+    protected async perform({ type, authKey }: IParams, props: ICallPropsPrivate): Promise<IUploadPhotoDest> {
         const x = Math.random();
         const k = Math.floor(Date.now() * x);
         const s = authKey.split('').map(i => i.charAt(0) + Math.floor(x * 4)).join('');

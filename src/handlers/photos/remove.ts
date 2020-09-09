@@ -1,4 +1,4 @@
-import { IMethodCallProps, PrivateMethodAPI } from '../method';
+import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 
 type IParams = {
@@ -6,7 +6,7 @@ type IParams = {
 };
 
 export default class PhotosRemove extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: IMethodCallProps): IParams {
+    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const photoId = +params.photoId;
 
         if (!photoId) {
@@ -17,10 +17,10 @@ export default class PhotosRemove extends PrivateMethodAPI<IParams, boolean> {
     }
 
     // TODO доделать удаление самих файлов
-    protected async perform({ photoId }: IParams, { database, session }: IMethodCallProps): Promise<boolean> {
+    protected async perform({ photoId }: IParams, { database, session }: ICallPropsPrivate): Promise<boolean> {
         const result = await database.apply(
             'delete from `photo` where `photoId` = ? and `ownerId` = ?',
-            [photoId, session?.userId],
+            [photoId, session.userId],
         );
 
         return result.affectedRows === 0;
