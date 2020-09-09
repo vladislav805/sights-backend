@@ -14,7 +14,7 @@
         "dotenv": "8.2.0",
         "md5": "2.3.0",
         "multer": "1.4.2",
-        "node-gd": "2.1.0",
+        "node-gd": "vladislav805/node-gd#dfb6e0d513a0b3f9abe7c31d3e768c9aea0ff5aa",
         "node-fetch": "2.6.1",
         "nodemailer": "6.4.11",
         "promise-mysql": "4.1.3",

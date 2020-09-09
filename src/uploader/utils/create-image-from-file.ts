@@ -1,13 +1,12 @@
 import * as gd from 'node-gd';
-import { GDImage } from 'node-gd';
 
 /**
  * Создание ресурса изображения по загруженному файлу
  * @param {string} path Путь к файлу
  * @param {string} name Название файла
- * @returns {Promise<GDImage>}
+ * @returns {Promise<gd.Image>}
  */
-export const createImageFromFile = (path: string, name: string): Promise<GDImage> => {
+export const createImageFromFile = (path: string, name: string): Promise<gd.Image> => {
     const dot = name.lastIndexOf('.');
 
     if (dot < 0) {

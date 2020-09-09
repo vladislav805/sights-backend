@@ -1,6 +1,5 @@
 import config from '../config';
-import { GDImage } from 'node-gd';
-import { type } from 'os';
+import * as gd from 'node-gd';
 
 type ImageSize = {
     width: number;
@@ -14,7 +13,7 @@ type ImageSize = {
  * @param text Текст
  * @returns Ширина и высота занимаемая текстом
  */
-export const getTextDimens = (image: GDImage, fontSize: number, text: string): ImageSize => {
+export const getTextDimens = (image: gd.Image, fontSize: number, text: string): ImageSize => {
     const sizes = image.stringFTBBox(
         0x000000, // color
         config.watermark.font.file,

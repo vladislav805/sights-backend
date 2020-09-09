@@ -1,8 +1,8 @@
 import { IUploadPhotoWatermark } from './config';
 import { getTextDimens } from './utils/text-dimens';
-import { GDImage } from 'node-gd';
+import * as gd from 'node-gd';
 
-export const drawWatermark = (image: GDImage, watermark: IUploadPhotoWatermark) => {
+export const drawWatermark = (image: gd.Image, watermark: IUploadPhotoWatermark) => {
     const { width, height } = image;
 
     const blockHeight = Math.round(height * watermark.block.height); // 3% от высоты изображения

@@ -1,4 +1,4 @@
-import { GDImage } from 'node-gd';
+import * as gd from 'node-gd';
 import { PhotoType } from '../../types/photo';
 
 type ISizeRule = {
@@ -23,7 +23,7 @@ const rules: Record<PhotoType, ISizeRule> = {
  * @param type Тип фото
  * @returns true, если всё ок
  */
-export const isRequiredSize = (image: GDImage, type: PhotoType): boolean => {
+export const isRequiredSize = (image: gd.Image, type: PhotoType): boolean => {
     const { width, height } = image;
     const imageSmallestSide = Math.min(width, height);
 
