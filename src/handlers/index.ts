@@ -25,6 +25,7 @@ import { ApiError, ErrorCode } from '../error';
 import AccountCreate from './account/create';
 import AccountSetOnline from './account/set-online';
 import AccountAuthorize from './account/authorize';
+import AccountActivate from './account/activate';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -41,6 +42,7 @@ export const initMethods = () => {
 
         'account.create': AccountCreate,
         'account.authorize': AccountAuthorize,
+        'account.activate': AccountActivate,
         'account.setOnline': AccountSetOnline,
 
         'sights.get': SightsGet,

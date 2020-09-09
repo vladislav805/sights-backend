@@ -1,7 +1,7 @@
 # Документация / API / Аккаунт
 ## account (непубличное API)
 * account.create
-* account.activate
+* [account.activate](#accountactivate)
 * [account.authorize](#accountauthorize)
 * account.edit
 * account.changePassword
