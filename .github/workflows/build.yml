@@ -9,6 +9,8 @@ jobs:
         node-version: [12.x]
     steps:
       - uses: actions/checkout@v1
+      - name: Install gd
+        run: sudo apt install libgd-dev
       - name: Install dependencies
         run: npm ci
       - name: Build

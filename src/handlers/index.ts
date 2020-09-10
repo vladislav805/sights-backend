@@ -18,6 +18,14 @@ import CategoriesGetById from './categories/get-by-id';
 import TagsGet from './tags/get';
 import TagsGetById from './tags/get-by-id';
 import TagsSearch from './tags/search';
+import PhotosGet from './photos/get';
+import PhotosGetById from './photos/get-by-id';
+import PhotosGetUnsorted from './photos/get-unsorted';
+import PhotosRemove from './photos/remove';
+import PhotosGetUploadUri from './photos/getUploadUri';
+import PhotosSuggest from './photos/suggest';
+import PhotosApprove from './photos/approve';
+import PhotosDecline from './photos/decline';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersSubscribe from './users/subscribe';
@@ -30,6 +38,7 @@ import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
 import FeedGet from './feed/get';
+import PhotosSave from './photos/save';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -67,6 +76,16 @@ export const initMethods = () => {
         'tags.search': TagsSearch,
 
         'feed.get': FeedGet,
+
+        'photos.get': PhotosGet,
+        'photos.getById': PhotosGetById,
+        'photos.getUnsorted': PhotosGetUnsorted,
+        'photos.remove': PhotosRemove,
+        'photos.getUploadUri': PhotosGetUploadUri,
+        'photos.save': PhotosSave,
+        'photos.suggest': PhotosSuggest,
+        'photos.approve': PhotosApprove,
+        'photos.decline': PhotosDecline,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
