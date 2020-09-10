@@ -1,33 +1,36 @@
+import * as fs from 'fs';
+import * as md5 from 'md5';
 import { IncomingMessage, ServerResponse } from 'http';
 import { RequestExtensions, ResponseExtensions } from 'restana';
+import { Exifr } from 'exifr';
+import { resolve } from 'path';
+import { getConfigValue } from '../config';
+import config, { IPhotoField } from './config';
+import { drawWatermark } from './draw-watermark';
 import { getUploadSignature } from '../utils/photos/upload-sig';
-import { PhotoType } from '../types/photo';
 import { createImageFromFile } from './utils/create-image-from-file';
 import { isRequiredSize } from './utils/is-required-size';
-import { drawWatermark } from './draw-watermark';
-import config from './config';
-import { resolve } from 'path';
-import * as fs from 'fs';
 import { createPhotoIdentity, IUploadPhotoIdentity } from './utils/create-photo-identity';
 import { resizeToMaxSideSize } from './utils/resize';
-import { Exifr } from 'exifr';
 import fixOrientation from './utils/rotate';
-import md5 = require('md5');
+import { base64encode } from '../utils/base64';
+import { IUploadPayload } from './types';
+import { PhotoType } from '../types/photo';
 
 type IFile = {
     file?: Express.Multer.File;
 };
 
 export default async function handleUpload(req: IncomingMessage & RequestExtensions & IFile, res: ServerResponse & ResponseExtensions) {
-    const { sig, k, s } = req.query;
-    const type: PhotoType = +req.query.type;
-
-    const actualSignature = getUploadSignature(+type, +k, s as string);
-
     try {
-        /*if (sig !== actualSignature) {
+        const { sig, k, s } = req.query;
+        const type: PhotoType = +req.query.type;
+
+        const actualSignature = getUploadSignature(+type, +k, s as string);
+
+        if (sig !== actualSignature) {
             throw new Error('Invalid signature');
-        }*/
+        }
 
         const file = req.file!;
 
@@ -41,10 +44,10 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
             throw new Error('Smallest side of image must me greater than TODO');
         }
 
-        const sizes: Record<string, IUploadPhotoIdentity> = {};
+        const sizes = {} as Record<IPhotoField, IUploadPhotoIdentity>;
 
         const hash = file.filename;
-        const result: Record<string, unknown> = {
+        const result: IUploadPayload = {
             sizes,
             type,
             path: hash,
@@ -56,6 +59,7 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
             gps: true,
             translateKeys: false,
         });
+
         await exr.read(file.path);
         const exif = await exr.parse();
 
@@ -100,10 +104,12 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
 
         image.destroy();
 
-        const payload = atob(JSON.stringify(result));
-        const sig = md5(payload);
+        const payload = base64encode(JSON.stringify(result));
 
-        res.send({ payload, sig });
+        res.send({
+            payload,
+            sig: md5(payload + getConfigValue('SECRET_SAVE')),
+        });
     } catch (e) {
         console.log(e);
         res.send({ error: e.toString() });

@@ -38,6 +38,7 @@ import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
 import FeedGet from './feed/get';
+import PhotosSave from './photos/save';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -81,6 +82,7 @@ export const initMethods = () => {
         'photos.getUnsorted': PhotosGetUnsorted,
         'photos.remove': PhotosRemove,
         'photos.getUploadUri': PhotosGetUploadUri,
+        'photos.save': PhotosSave,
         'photos.suggest': PhotosSuggest,
         'photos.approve': PhotosApprove,
         'photos.decline': PhotosDecline,

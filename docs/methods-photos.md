@@ -2,13 +2,13 @@
 ## Список методов API секции photos.*
 * [photos.get](#photosget)
 * [photos.getById](#photosgetbyid)
-* photos.getUploadUri
-* photos.save
+* [photos.getUploadUri](#photosgetuploaduri)
+* [photos.save](#photossave)
 * [photos.getUnsorted](#photosgetunsorted)
 * [photos.remove](#photosremove)
-* photos.suggest
-* photos.approve
-* photos.decline
+* [photos.suggest](#photossuggest)
+* [photos.approve](#photosapprove)
+* [photos.decline](#photosdecline)
 
 ## photos.get
 ### Параметры
@@ -41,8 +41,9 @@ type Response = IPhoto[];
 ## photos.getUploadUri
 ### Параметры
 * `string type` - тип фотографии:
-    * `sight` - для последующего добавления к достопримечательности;
-    * `profile` - для последующей замены фотографии в профиле пользователя;
+    * `1` - для последующего добавления к достопримечательности;
+    * `2` - для последующей замены фотографии в профиле пользователя;
+    * `4` - для последующего добавления к достопримечательности в целях "предложения".
 
 ### Формат ответа
 ```ts
@@ -58,6 +59,8 @@ type Response = {
 
 ## photos.save
 ### Параметры
+* `string payload` - строка с данными, которую вернул сервер загрузки;
+* `string sig` - строка-подпись, которую вернул сервер загрузки. 
 
 ### Формат ответа
 ```ts

@@ -2,6 +2,7 @@ export const enum ErrorCode {
     UNKNOWN = 970,
     UNKNOWN_METHOD = 1,
     UNSPECIFIED_PARAM = 2,
+    ACCESS_DENIED = 4,
 
     SESSION_INVALID = 7,
     AUTH_KEY_NOT_SPECIFIED = 8,
@@ -31,6 +32,9 @@ export const enum ErrorCode {
     PLACES_ONLY_TWO_POINTS = 41,
     PLACES_INVALID_AREA_FORMAT = 42,
     SIGHT_BITMASK_CONFLICT = 43,
+
+    PHOTO_SAVE_ERROR_SIG = 58,
+    PHOTO_SAVE_ERROR_NOT_EXISTS = 59,
 }
 
 export class ApiError extends Error {

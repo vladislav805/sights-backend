@@ -1,11 +1,12 @@
 import { getConfigValue } from '../config';
 
 export type IUploadPhotoSizeKey = 's' | 'b'; // small, big
+export type IPhotoField = 'photo200' | 'photoMax';
 export type IUploadPhotoVariant = {
     size: number;
     name: IUploadPhotoSizeKey;
     quality: number;
-    key: string;
+    key: IPhotoField;
     needWatermark?: boolean;
     max?: boolean;
 };
