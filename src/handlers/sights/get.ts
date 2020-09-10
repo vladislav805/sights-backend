@@ -1,42 +1,16 @@
 import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
-import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
-import { ICategory } from '../../types/category';
-import { CATEGORY_KEYS } from '../categories/keys';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { isBit } from '../../utils/is-bit';
-import { SIGHTS_GET_FIELD_CITY, SIGHTS_GET_FIELD_PHOTO } from './keys';
-import { CITY_KEYS } from '../cities/keys';
-import { ICity } from '../../types/city';
+import { Filter, filtersMap } from './keys';
 import { checkBitmaskValid } from '../../utils/check-bitmask-valid';
-import { PHOTO_KEYS } from '../photos/keys';
-import { IPhotoRaw } from '../../types/photo';
-import raw2object from '../../utils/photos/raw-to-object';
 import { ApiError, ErrorCode } from '../../error';
+import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 
 type IPointTuple = [number, number];
 
-const enum Filter {
-    VERIFIED = 1 << 1, // 2 as database
-    ARCHIVED = 1 << 2, // 4 as database
-    NOT_VERIFIED = 1 << 11,
-    NOT_ARCHIVED = 1 << 12,
-    WITH_PHOTO = 1 << 13,
-    WITHOUT_PHOTO = 1 << 14,
-}
 
-/**
- * Названия значений фильтров их битовая маска
- */
-const filtersMap: Record<string, number> = {
-    'verified': Filter.VERIFIED,
-    '!verified': Filter.NOT_VERIFIED,
-    'archived': Filter.NOT_ARCHIVED,
-    '!archived': Filter.ARCHIVED,
-    'photo': Filter.WITH_PHOTO,
-    '!photo': Filter.WITHOUT_PHOTO,
-}
 
 /**
  * Правила для проверки корректности фильтров
@@ -51,7 +25,7 @@ const filterRules: number[][] = [
 type ISightsGetParams = {
     area: [IPointTuple, IPointTuple]; // NE, SW
     filters: number;
-    fields: string[];
+    fields: SightFieldsManager;
 };
 
 export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISight>> {
@@ -85,36 +59,15 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
         return {
             area,
             filters,
-            fields: paramToArrayOf(params.fields as string),
+            fields: new SightFieldsManager(params.fields as string),
         };
     }
 
-    protected async perform(params: ISightsGetParams, { database }: ICallPropsOpen): Promise<IApiList<ISight>> {
-        const photoKey = 'ph';
-        const cityKey = 'ct';
-        const categoryKey = 'cg';
-
+    protected async perform(params: ISightsGetParams, { database, session }: ICallPropsOpen): Promise<IApiList<ISight>> {
         // координаты области, которую нужно вернуть
         const [[lat1, lng1], [lat2, lng2]] = params.area;
 
-        // Нужно ли возвращать информацию о городах
-        const needCity = params.fields.includes(SIGHTS_GET_FIELD_CITY);
-
-        // Есть ли фильтр по фоткам или запрашивается ли фотка, тогда нужно join'ить таблицы с фотками
-        const photoFilter = isBit(params.filters, Filter.WITH_PHOTO) || isBit(params.filters, Filter.WITHOUT_PHOTO);
-        const needPhoto = params.fields.includes(SIGHTS_GET_FIELD_PHOTO);
-        const needJoinPhoto = needPhoto || photoFilter;
-
-        // Возвращаем всё из `place` и `sight`, а также категории
-        const returnFields = [
-            packIdentitiesToSql('category', categoryKey, CATEGORY_KEYS),
-        ];
-
-        // Делаем выборку по координатам в `place`, выполняем join с `sight` и `category` по `sight`
-        const filterJoin: string[] = [
-            'left join `sight` on `place`.`placeId` = `sight`.`placeId`',
-            'left join `category` on `category`.`categoryId` = `sight`.`categoryId`'
-        ];
+        params.fields.setFilter(params.filters);
 
         // Для фильтров
         const filterWhere: string[] = [];
@@ -136,63 +89,21 @@ export default class SightsGet extends OpenMethodAPI<ISightsGetParams, IApiList<
             filterWhere.push('(`sight`.`mask` & 4) = 0');
         }
 
-        // Если в запросе нужна информация по фоткам
-        if (needJoinPhoto) {
-            // join их
-            filterJoin.push('left join `sightPhoto` on `sightPhoto`.`sightId` = `sight`.`sightId`');
-            filterJoin.push('left join `photo` as `p` on `sightPhoto`.`photoId` = `p`.`photoId`');
-
-            // Если нужны фотки
-            if (needPhoto) {
-                returnFields.push(packIdentitiesToSql('p', photoKey, PHOTO_KEYS));
-            }
-
-            // Если фильтр
-            if (isBit(params.filters, Filter.WITH_PHOTO)) {
-                filterWhere.push('`p`.`photoId` is not null');
-            } else if (isBit(params.filters, Filter.WITHOUT_PHOTO)) {
-                filterWhere.push('`p`.`photoId` is null');
-            }
+        // Если фильтр
+        if (isBit(params.filters, Filter.WITH_PHOTO)) {
+            filterWhere.push('`p`.`photoId` is not null');
+        } else if (isBit(params.filters, Filter.WITHOUT_PHOTO)) {
+            filterWhere.push('`p`.`photoId` is null');
         }
 
-        // Если нужны города
-        if (needCity) {
-            returnFields.push(packIdentitiesToSql('city', cityKey, CITY_KEYS));
-            filterJoin.push('left join `city` on `sight`.`cityId` = `city`.`cityId`');
-        }
+        const { joins, columns } = params.fields.build(session);
 
-        const sql =
-'select ' +
-    '`place`.*,' +
-    '`sight`.*,' +
-    returnFields.join(', ') +
-' from ' +
-    '`place` ' + filterJoin.join(' ') +
-' where ' +
-    '(`place`.`latitude` between ? and ?) and ' +
-    '(`place`.`longitude` between ? and ?) ' +
-    (filterWhere.length ? ' and ' + filterWhere.join(' and ') : '') +
-' limit 20';
+        // noinspection SqlResolve
+        const sql = `select \`place\`.*, ${columns} from \`place\` ${joins} where (\`place\`.\`latitude\` between ? and ?) and (\`place\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit 20`;
 
         const raw = await database.select<ISight>(sql, values);
 
-        const items = raw.map(sight => {
-            sight.category = unpackObject<ISight, ICategory>(sight, categoryKey, CATEGORY_KEYS);
-
-            if (needCity) {
-                sight.city = unpackObject<ISight, ICity>(sight, cityKey, CITY_KEYS);
-            }
-
-            if (needPhoto) {
-                const photo: IPhotoRaw = unpackObject<ISight, IPhotoRaw>(sight, photoKey, PHOTO_KEYS);
-
-                sight.photo = photo
-                    ? raw2object(photo)
-                    : null;
-            }
-
-            return sight;
-        });
+        const items = raw.map(params.fields.handleResult);
 
         return { items };
     }

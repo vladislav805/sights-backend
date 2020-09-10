@@ -1,5 +1,4 @@
 import { paramToArrayOf } from './param-to-array-of';
-import { USERS_GET_FIELDS_ALLOWED } from '../handlers/users/keys';
 import { ISession } from '../types/session';
 
 export type BuildResult = {
@@ -15,8 +14,8 @@ export interface IFieldsManager<Field extends string, ObjectType> {
 export abstract class FieldsManager<Field extends string, ObjectType> implements IFieldsManager<Field, ObjectType> {
     private fields: Field[];
 
-    public constructor(fields: string) {
-        this.fields = paramToArrayOf<Field>(fields).filter(key => USERS_GET_FIELDS_ALLOWED.includes(key));
+    public constructor(fields: string, allowed: string[]) {
+        this.fields = paramToArrayOf<Field>(fields).filter(key => allowed.includes(key));
     }
 
     protected is = (field: Field): boolean => this.fields.includes(field)

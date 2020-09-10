@@ -1,5 +1,5 @@
 import { IUser } from '../../types/user';
-import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_IS_FOLLOWING, USERS_GET_FIELD_IS_ONLINE, USERS_GET_FIELD_PHOTO } from '../../handlers/users/keys';
+import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_IS_FOLLOWING, USERS_GET_FIELD_IS_ONLINE, USERS_GET_FIELD_PHOTO, USERS_GET_FIELDS_ALLOWED } from '../../handlers/users/keys';
 import { packIdentitiesToSql, unpackObject, wrapIdentify } from '../sql-packer-id';
 import { PHOTO_KEYS } from '../../handlers/photos/keys';
 import { CITY_KEYS } from '../../handlers/cities/keys';
@@ -15,6 +15,10 @@ const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
 
 export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 'followers' | 'isFollowing' | 'isOnline', IUser> {
+    public constructor(fields: string) {
+        super(fields, USERS_GET_FIELDS_ALLOWED);
+    }
+
     public build(session: ISession | null, tableName: string = 'user'): BuildResult {
         const joins: string[] = [];
         const columns: string[] = USER_KEYS.map(key => `${wrapIdentify(tableName)}.${wrapIdentify(key)}`);

@@ -12,10 +12,11 @@ export interface ISight extends IPlace {
     title: string;
     description: string;
     mask: number;
-    city?: ICity;
+    categoryId: number;
+    city?: ICity | null;
     rating?: ISightRating;
     photo?: IPhoto | null;
-    category?: ICategory;
+    category?: ICategory | null;
 
     visitState?: VisitState;
     canModify?: boolean;
