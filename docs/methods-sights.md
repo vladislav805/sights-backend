@@ -5,24 +5,25 @@
 * sights.add
 * sights.edit
 * sights.remove
-* <s>sights.setTags</s> (заменено параметром `tags` в `sights.edit`)
+* sights.setTags
 * sights.setPhotos
 * sights.setVisitState
-* <s>sights.setVerify</s> (заменено параметром `mask` в `sights.edit`/`sights.add`)
-* <s>sights.setArchived</s> (заменено параметром `mask` в `sights.edit`/`sights.add`)
+* sights.setMask
+* <s>sights.setVerify</s> (заменено методом `sights.setMask`)
+* <s>sights.setArchived</s> (заменено методом `sights.setMask`)
 * sights.getNearby
 * sights.getRandomSightId
 * sights.search
 * sights.getCounts
-* <s>sights.getOwns</s> (заменено параметром `ownerId` в `sights.get`) 
+* sights.getOwns
+
+#### etc
+* Дополнительные поля - [fields](#sight-fields)
 
 ## sights.get
 ### Параметры
 * `string? area` - область карты, для которой необходимо получить объекты; строка в формате `NE_lat,NE_lng;SW_lat,SW_lng`;
-* <s>`int? ownerId` - идентификатор пользователя, объекты которого необходимо вернуть;</s>
-* `string[]? fields` - дополнительная информация, которую можно получить, допустимые значения:
-  * `city` - город;
-  * `photo` - фотография;
+* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields);
 * `string[]? filters` - фильтрация объектов, которые нужно получить, допустимые значения:
   * `verified` - подтверждённые;
   * `!verified` - неподтверждённые;
@@ -33,10 +34,12 @@
 
 ### Ответ
 ```ts
-// Если fields не содержит ключ author
 type Response = IApiList<ISight>;
-
-// Если fields содержит ключ author
-type Response = IApiListExtended<ISight>;
 ```
 
+## Sight fields
+В некоторых методах возможно передать параметр `fields` для получения опциональной дополнительной информации о достопримечательностях. Чтобы получить информацию, нужно перечислить через запятую ключи. Доступны следующие ключи: 
+* `author` - вернуть объект пользователя, который добавил достопримечательность;
+* `photo` - вернуть объект фотографии достопримечательности;
+* `city` - вернуть объект города, в котором достопримечательность находится;
+* `tags` - вернуть массив идентификаторов тегов у достопримечательности.
