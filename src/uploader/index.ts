@@ -10,19 +10,12 @@ import { resolve } from 'path';
 import * as fs from 'fs';
 import { createPhotoIdentity, IUploadPhotoIdentity } from './utils/create-photo-identity';
 import { resizeToMaxSideSize } from './utils/resize';
-
-interface MulterFile {
-    fieldname: string;
-    originalname: string;
-    mimetype: string;
-    size: number;
-    destination: string;
-    filename: string;
-    path: string;
-}
+import { Exifr } from 'exifr';
+import fixOrientation from './utils/rotate';
+import md5 = require('md5');
 
 type IFile = {
-    file?: MulterFile;
+    file?: Express.Multer.File;
 };
 
 export default async function handleUpload(req: IncomingMessage & RequestExtensions & IFile, res: ServerResponse & ResponseExtensions) {
@@ -36,7 +29,7 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
             throw new Error('Invalid signature');
         }*/
 
-        const file = req.file;
+        const file = req.file!;
 
         if (!file) {
             throw new Error('File not specified');
@@ -51,13 +44,27 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
         const sizes: Record<string, IUploadPhotoIdentity> = {};
 
         const hash = file.filename;
-        const result = {
+        const result: Record<string, unknown> = {
             sizes,
             type,
             path: hash,
             width: -1,
             height: -1,
         };
+
+        const exr = new Exifr({
+            gps: true,
+            translateKeys: false,
+        });
+        await exr.read(file.path);
+        const exif = await exr.parse();
+
+        image = await fixOrientation(image, exif);
+
+        if ('latitude' in exif && 'longitude' in exif) {
+            result.latitude = exif.latitude;
+            result.longitude = exif.longitude;
+        }
 
         for (const { size, name, quality, key, max, needWatermark } of config.variants) {
             // Объект с полями path и name
@@ -78,7 +85,7 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
             const resized = await resizeToMaxSideSize(image, size);
 
             if (needWatermark) {
-                drawWatermark(image, config.watermark);
+                drawWatermark(resized, config.watermark);
             }
 
             await resized.saveJpeg(imagePath, quality);
@@ -93,11 +100,12 @@ export default async function handleUpload(req: IncomingMessage & RequestExtensi
 
         image.destroy();
 
-        res.send({ result });
+        const payload = atob(JSON.stringify(result));
+        const sig = md5(payload);
+
+        res.send({ payload, sig });
     } catch (e) {
         console.log(e);
         res.send({ error: e.toString() });
     }
-
-    res.send(`ok ${type} ${sig}`);
 }
