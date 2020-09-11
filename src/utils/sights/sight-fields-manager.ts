@@ -7,7 +7,7 @@ import { ICity } from '../../types/city';
 import { BuildResult, FieldsManager } from '../fields-manager';
 import { ISession } from '../../types/session';
 import { ISight } from '../../types/sight';
-import { Filter, SIGHT_KEYS, SIGHTS_GET_FIELD_CITY, SIGHTS_GET_FIELD_PHOTO, SIGHTS_GET_FIELD_TAGS, SIGHTS_GET_FIELDS_ALLOWED } from '../../handlers/sights/keys';
+import { Filter, SIGHT_KEYS, SIGHTS_GET_FIELD_CITY, SIGHTS_GET_FIELD_PHOTO, SIGHTS_GET_FIELD_TAGS, SIGHTS_GET_FIELD_VISIT_STATE, SIGHTS_GET_FIELDS_ALLOWED } from '../../handlers/sights/keys';
 import { CATEGORY_KEYS } from '../../handlers/categories/keys';
 import { isBit } from '../is-bit';
 import { ICategory } from '../../types/category';
@@ -16,7 +16,7 @@ const SFM_CATEGORY = 'cg';
 const SFM_PHOTO = 'pt';
 const SFM_CITY = 'ct';
 
-export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags', ISight> {
+export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags' | 'visitState', ISight> {
     private filter: number = 0;
 
     public constructor(fields: string) {
@@ -59,6 +59,11 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
         if (this.is(SIGHTS_GET_FIELD_TAGS)) {
             columns.push('group_concat(distinct `sightTag`.`tagId`) as `t_tagIds`');
             joins.push('left join `sightTag` on `sightTag`.`sightId` = `sight`.`sightId`');
+        }
+
+        if (this.is(SIGHTS_GET_FIELD_VISIT_STATE) && !!session) {
+            columns.push('ifnull(`sightVisit`.`state`, 0) as `visitState`');
+            joins.push('left join `sightVisit` on `sightVisit`.`sightId` = `sight`.`sightId` and `sightVisit`.`userId` = ' + session.userId);
         }
 
         return {
