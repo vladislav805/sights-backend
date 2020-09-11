@@ -17,7 +17,7 @@ const SFM_PHOTO = 'pt';
 const SFM_CITY = 'ct';
 
 export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags', ISight> {
-    private filter: number;
+    private filter: number = 0;
 
     public constructor(fields: string) {
         super(fields, SIGHTS_GET_FIELDS_ALLOWED);
