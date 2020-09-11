@@ -14,7 +14,7 @@
 * sights.getNearby
 * [sights.getRandomSightId](#sightsgetrandomsightid)
 * sights.search
-* sights.getCounts
+* [sights.getCounts](#sightsgetcounts)
 
 #### etc
 * Дополнительные поля - [fields](#sight-fields)
@@ -98,6 +98,32 @@ type Response = number;
 ```json5
 {
     "result": 777
+}
+```
+
+## sights.getCounts
+### Параметры
+_Нет параметров_
+
+### Формат ответа
+```ts
+type Response = {
+    total: number;
+    verified: number;
+    archive: number;
+    active: number;
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "total": 2187,
+        "verified": 27,
+        "active": 1499,
+        "archived": 66
+    }
 }
 ```
 

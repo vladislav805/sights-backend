@@ -42,6 +42,7 @@ import PhotosSave from './photos/save';
 import SightsGetById from './sights/get-by-id';
 import SightsGet from './sights/get';
 import SightsGetRandomSightId from './sights/get-random-sight-id';
+import SightsGetCounts from './sights/get-counts';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -69,6 +70,7 @@ export const initMethods = () => {
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
         'sights.getRandomSightId': SightsGetRandomSightId,
+        'sights.getCounts': SightsGetCounts,
 
         'cities.get': CitiesGet,
         'cities.getById': CitiesGetById,
