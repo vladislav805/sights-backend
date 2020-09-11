@@ -14,7 +14,7 @@ import { MINUTE } from '../../date';
 const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
 
-export default class UserFieldsManager extends FieldsManager<'photo' | 'city' | 'followers' | 'isFollowing' | 'isOnline', IUser> {
+export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'followers' | 'isFollowing' | 'isOnline', IUser> {
     public constructor(fields: string) {
         super(fields, USERS_GET_FIELDS_ALLOWED);
     }
