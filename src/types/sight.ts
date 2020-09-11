@@ -29,7 +29,8 @@ export interface ISightStat {
 
 export interface ISightRating {
     value: number;
-    userRating?: number;
+    count: number;
+    rated?: number;
 }
 
 export const enum VisitState {
@@ -38,7 +39,7 @@ export const enum VisitState {
     DESIRED = 2,
 }
 
-export type ISightDistance = {
+export interface ISightDistance {
     sightId: number;
     distance: number;
-};
+}

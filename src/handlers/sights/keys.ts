@@ -22,12 +22,14 @@ export const SIGHTS_GET_FIELD_PHOTO = 'photo';
 export const SIGHTS_GET_FIELD_TAGS = 'tags';
 export const SIGHTS_GET_FIELD_CITY = 'city';
 export const SIGHTS_GET_FIELD_VISIT_STATE = 'visitState';
+export const SIGHTS_GET_FIELD_RATING = 'rating';
 
 export const SIGHTS_GET_FIELDS_ALLOWED = [
     SIGHTS_GET_FIELD_PHOTO,
     SIGHTS_GET_FIELD_TAGS,
     SIGHTS_GET_FIELD_CITY,
     SIGHTS_GET_FIELD_VISIT_STATE,
+    SIGHTS_GET_FIELD_RATING,
 ];
 
 export const enum Filter {

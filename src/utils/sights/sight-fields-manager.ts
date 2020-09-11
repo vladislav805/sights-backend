@@ -6,8 +6,8 @@ import raw2object from '../photos/raw-to-object';
 import { ICity } from '../../types/city';
 import { BuildResult, FieldsManager } from '../fields-manager';
 import { ISession } from '../../types/session';
-import { ISight } from '../../types/sight';
-import { Filter, SIGHT_KEYS, SIGHTS_GET_FIELD_CITY, SIGHTS_GET_FIELD_PHOTO, SIGHTS_GET_FIELD_TAGS, SIGHTS_GET_FIELD_VISIT_STATE, SIGHTS_GET_FIELDS_ALLOWED } from '../../handlers/sights/keys';
+import { ISight, ISightRating } from '../../types/sight';
+import { Filter, SIGHT_KEYS, SIGHTS_GET_FIELD_CITY, SIGHTS_GET_FIELD_PHOTO, SIGHTS_GET_FIELD_RATING, SIGHTS_GET_FIELD_TAGS, SIGHTS_GET_FIELD_VISIT_STATE, SIGHTS_GET_FIELDS_ALLOWED } from '../../handlers/sights/keys';
 import { CATEGORY_KEYS } from '../../handlers/categories/keys';
 import { isBit } from '../is-bit';
 import { ICategory } from '../../types/category';
@@ -15,8 +15,9 @@ import { ICategory } from '../../types/category';
 const SFM_CATEGORY = 'cg';
 const SFM_PHOTO = 'pt';
 const SFM_CITY = 'ct';
+const SFM_RATING = 'rg';
 
-export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags' | 'visitState', ISight> {
+export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags' | 'visitState' | 'rating', ISight> {
     private filter: number = 0;
 
     public constructor(fields: string) {
@@ -66,6 +67,16 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
             joins.push('left join `sightVisit` on `sightVisit`.`sightId` = `sight`.`sightId` and `sightVisit`.`userId` = ' + session.userId);
         }
 
+        if (this.is(SIGHTS_GET_FIELD_RATING)) {
+            joins.push('left join `rating` `ra` on `ra`.`sightId` = `sight`.`sightId`');
+            columns.push('`sight`.`rating` as `' + SFM_RATING + '_value`');
+            columns.push('count(`ra`.`rate`) as `' + SFM_RATING + '_count`');
+            if (!!session) {
+                columns.push('`rs`.`rate` as `' + SFM_RATING + '_rated`');
+                joins.push('left join `rating` `rs` on `rs`.`sightId` = `sight`.`sightId` and `rs`.`userId` = ' + session.userId);
+            }
+        }
+
         return {
             joins: joins.join(' '),
             columns: columns.join(', '),
@@ -94,6 +105,10 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
         if (this.is(SIGHTS_GET_FIELD_TAGS)) {
             const { tagIds = '' } = unpackObject<ISight, { tagIds: string }>(sight, 't', ['tagIds']);
             sight.tags = (tagIds || '').split(',').map(Number).filter(Boolean);
+        }
+
+        if (this.is(SIGHTS_GET_FIELD_RATING)) {
+            sight.rating = unpackObject<ISight, ISightRating>(sight, SFM_RATING, ['rated', 'value', 'count']);
         }
 
         return sight;
