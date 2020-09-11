@@ -12,7 +12,7 @@
 * <s>sights.setVerify</s> (заменено методом `sights.setMask`)
 * <s>sights.setArchived</s> (заменено методом `sights.setMask`)
 * sights.getNearby
-* sights.getRandomSightId
+* [sights.getRandomSightId](#sightsgetrandomsightid)
 * sights.search
 * sights.getCounts
 
@@ -82,6 +82,22 @@ type Response = ISight[];
             }
         }]
     }
+}
+```
+
+## sights.getRandomSightId
+### Параметры
+_Нет параметров_
+
+### Формат ответа
+```ts
+type Response = number;
+```
+
+### Пример ответа
+```json5
+{
+    "result": 777
 }
 ```
 
