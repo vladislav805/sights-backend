@@ -15,49 +15,39 @@
 * sights.getRandomSightId
 * sights.search
 * sights.getCounts
-* sights.getOwns
 
 #### etc
 * Дополнительные поля - [fields](#sight-fields)
 
 ## sights.get
 ### Параметры
-* `string? area` - область карты, для которой необходимо получить объекты; строка в формате `NE_lat,NE_lng;SW_lat,SW_lng`;
-* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields);
-* `string[]? filters` - фильтрация объектов, которые нужно получить, допустимые значения:
-  * `verified` - подтверждённые;
-  * `!verified` - неподтверждённые;
-  * `archived` - архивные;
-  * `!archived` - не архивные;
-  * `photo` - с фотографиями;
-  * `!photo` - без фотографий.
+* `int ownerId` - идентификатор владельца достопримечательностей;
+* `int? count = 50` - количество требуемых достопримечательностей;
+* `int? offset = 0` - сдвиг выборки.
 
 ### Формат ответа
 ```ts
 type Response = IApiList<ISight>;
-```
+``` 
 
 ### Пример ответа
 ```json5
 {
     "result": {
         "items": [{
-            "placeId": 293,
-            "latitude": 59.864436,
-            "longitude": 29.925346,
-            "sightId": 293,
+            "sightId": 777,
             "ownerId": 1,
-            "title": "Памятник Штиглицу",
-            "description": "Штиглиц - барон, крупнейший российский финансист ...",
-            "mask": 0,
+            "title": "Простоквашино",
+            "description": "К 290-летию города Колпино (Санкт-Петербург) ...",
+            "mask": 2,
             "categoryId": 4,
-            "dateCreated": 1498989065,
-            "dateUpdated": 1509829981,
+            "dateCreated": 1523738164,
+            "dateUpdated": 1523773274,
             "category": {
                 "categoryId": 4,
                 "title": "Скульптура"
             }
-        }, /* ... */ ]
+        }]
     }
 }
 ```

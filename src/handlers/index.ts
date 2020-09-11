@@ -6,7 +6,7 @@ import log from '../logger';
 import UsersGet from './users/get';
 import SessionsGet, { getSessionByAuthKey } from './sessions/get';
 import UtilsGetTime from './utils/time';
-import SightsGet from './sights/get';
+import MapGet from './map/get';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
@@ -40,6 +40,7 @@ import AccountChangePassword from './account/change-password';
 import FeedGet from './feed/get';
 import PhotosSave from './photos/save';
 import SightsGetById from './sights/get-by-id';
+import SightsGet from './sights/get';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -61,6 +62,8 @@ export const initMethods = () => {
         'account.changePassword': AccountChangePassword,
         'account.setProfilePhoto': AccountSetProfilePhoto,
         'account.setOnline': AccountSetOnline,
+
+        'map.get': MapGet,
 
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
