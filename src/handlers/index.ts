@@ -39,6 +39,7 @@ import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
 import FeedGet from './feed/get';
 import PhotosSave from './photos/save';
+import SightsGetById from './sights/get-by-id';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -62,6 +63,7 @@ export const initMethods = () => {
         'account.setOnline': AccountSetOnline,
 
         'sights.get': SightsGet,
+        'sights.getById': SightsGetById,
 
         'cities.get': CitiesGet,
         'cities.getById': CitiesGetById,
