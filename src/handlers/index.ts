@@ -43,6 +43,7 @@ import SightsGetById from './sights/get-by-id';
 import SightsGet from './sights/get';
 import SightsGetRandomSightId from './sights/get-random-sight-id';
 import SightsGetCounts from './sights/get-counts';
+import SightsGetNearby from './sights/get-nearby';
 
 export interface IInitMethodProps {
     database: mysql.Pool;
@@ -70,6 +71,7 @@ export const initMethods = () => {
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
         'sights.getRandomSightId': SightsGetRandomSightId,
+        'sights.getNearby': SightsGetNearby,
         'sights.getCounts': SightsGetCounts,
 
         'cities.get': CitiesGet,

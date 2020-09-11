@@ -33,9 +33,8 @@ export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
     protected async perform(params: IParams, props: ICallPropsOpen): Promise<IResult> {
         const { columns, joins } = params.fields.build(props.session);
 
-        // noinspection SqlResolve
         const result = await props.database.select<ISight>(
-            `select ${columns} from \`place\` ${joins} where \`sight\`.\`sightId\` in (?) `,
+            `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`sightId\` in (?) `,
             [params.sightIds],
         );
 

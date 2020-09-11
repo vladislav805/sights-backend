@@ -30,8 +30,8 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
 
     public build(session: ISession | null, tableName: string = 'sight'): BuildResult {
         const joins: string[] = [
-            'left join `sight` on `place`.`placeId` = `sight`.`placeId`',
-            'left join `category` on `category`.`categoryId` = `sight`.`categoryId`',
+            `left join \`sight\` on \`pl\`.\`placeId\` = \`sight\`.\`placeId\``,
+            `left join \`category\` on \`category\`.\`categoryId\` = \`sight\`.\`categoryId\``,
         ];
         const columns: string[] = SIGHT_KEYS.map(key => `${wrapIdentify(tableName)}.${wrapIdentify(key)}`);
 
@@ -49,7 +49,7 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
 
         if (needJoinPhoto) {
             joins.push('left join `sightPhoto` on `sightPhoto`.`sightId` = `sight`.`sightId`');
-            joins.push('left join `photo` as `p` on `sightPhoto`.`photoId` = `p`.`photoId`');
+            joins.push('left join `photo` `p` on `sightPhoto`.`photoId` = `p`.`photoId`');
 
             if (this.is(SIGHTS_GET_FIELD_PHOTO)) {
                 columns.push(...packIdentitiesToSql('p', SFM_PHOTO, PHOTO_KEYS));

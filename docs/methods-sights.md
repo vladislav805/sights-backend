@@ -11,7 +11,7 @@
 * sights.setMask
 * <s>sights.setVerify</s> (заменено методом `sights.setMask`)
 * <s>sights.setArchived</s> (заменено методом `sights.setMask`)
-* sights.getNearby
+* [sights.getNearby](#sightsgetnearby)
 * [sights.getRandomSightId](#sightsgetrandomsightid)
 * sights.search
 * [sights.getCounts](#sightsgetcounts)
@@ -83,6 +83,30 @@ type Response = ISight[];
         }]
     }
 }
+```
+
+## sights.getNearby
+### Параметры
+`double latitude` - широта;
+`double longitude` - долгота;
+`int? distance = 1000` - дистанция от места в метрах;
+`int? count = 20` - количество запрашиваемых достопримечательностей.
+
+### Формат ответа
+```ts
+type DistanceItem = {
+    sightId: number;
+    distance: number;
+};
+
+type Response = IApiList<> & {
+    distances: DistanceItem[];
+}
+```
+
+### Пример ответа
+```json5
+
 ```
 
 ## sights.getRandomSightId

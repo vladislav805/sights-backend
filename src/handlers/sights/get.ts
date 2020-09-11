@@ -38,9 +38,8 @@ export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> 
             [ownerId],
         );
 
-        // noinspection SqlResolve
         const result = await props.database.select<ISight>(
-            `select ${columns} from \`place\` ${joins} where \`sight\`.\`ownerId\` = ? order by \`sightId\` ${sort} limit ?, ?`,
+            `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`ownerId\` = ? order by \`sightId\` ${sort} limit ?, ?`,
             [ownerId, offset, limit],
         );
 
