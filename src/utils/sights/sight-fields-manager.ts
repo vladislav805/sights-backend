@@ -87,9 +87,7 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
         }
 
         if (this.is(SIGHTS_GET_FIELD_TAGS)) {
-            console.log(sight)
             const { tagIds = '' } = unpackObject<ISight, { tagIds: string }>(sight, 't', ['tagIds']);
-            console.log(sight, tagIds)
             sight.tags = (tagIds || '').split(',').map(Number).filter(Boolean);
         }
 
