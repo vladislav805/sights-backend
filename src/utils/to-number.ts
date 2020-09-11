@@ -6,10 +6,10 @@ function toNumber(val: ApiParam, defaultValue: number): number;
 function toNumber(val: ApiParam, silent: boolean): number | undefined;
 function toNumber(val: ApiParam, defaultValue: boolean | number = false): number | undefined {
     if (typeof val === 'undefined') {
-        return undefined;
+        val = NaN;
     }
 
-    if (typeof val === 'number') {
+    if (typeof val === 'number' && !isNaN(val)) {
         return val;
     }
 
