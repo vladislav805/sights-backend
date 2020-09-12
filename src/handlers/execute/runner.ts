@@ -41,6 +41,7 @@ const col = <T>(obj: T[], key: keyof T): T[keyof T][] => {
 };
 
 export const transformCode = (code: string) => babel.transformSync(code, {
+    highlightCode: false,
     parserOpts: {
         allowReturnOutsideFunction: true,
         allowAwaitOutsideFunction: true,
@@ -50,7 +51,7 @@ export const transformCode = (code: string) => babel.transformSync(code, {
     },
     plugins: [() => ({
         visitor: {
-            Identifier: (path: babel.NodePath<babel.types.Identifier>) => {
+            Identifier: (path: babel.NodePath<t.Identifier>) => {
                 if (path.node.name === 'API') {
                     const caller = path.findParent(p => p.type === 'CallExpression');
 
@@ -59,6 +60,42 @@ export const transformCode = (code: string) => babel.transformSync(code, {
                         caller.skip();
                     }
                 }
+            },
+            FunctionDeclaration: (path: babel.NodePath<t.FunctionDeclaration>) => {
+                throw new Error('Functions not supported');
+            },
+            ArrowFunctionExpression: (path: babel.NodePath<t.ArrowFunctionExpression>) => {
+                throw new Error('Functions not supported');
+            },
+            ForStatement: (path: babel.NodePath<t.ForStatement>) => {
+                throw new Error('for(;;) not supported');
+            },
+            ForInStatement: (path: babel.NodePath<t.ForInStatement>) => {
+                throw new Error('for( in ) not supported');
+            },
+            ForOfStatement: (path: babel.NodePath<t.ForOfStatement>) => {
+                throw new Error('for( of ) not supported');
+            },
+            WhileStatement: (path: babel.NodePath<t.WhileStatement>) => {
+                throw new Error('while not supported');
+            },
+            DoWhileStatement: (path: babel.NodePath<t.DoWhileStatement>) => {
+                throw new Error('do-while not supported');
+            },
+            ImportDeclaration: (path: babel.NodePath<t.ImportDeclaration>) => {
+                throw new Error('import not supported');
+            },
+            ExportNamedDeclaration: (path: babel.NodePath<t.ExportNamedDeclaration>) => {
+                throw new Error('export not supported');
+            },
+            TryStatement: (path: babel.NodePath<t.TryStatement>) => {
+                throw new Error('try-catch-finally not supported');
+            },
+            ThrowStatement: (path: babel.NodePath<t.ThrowStatement>) => {
+                throw new Error('throw not supported');
+            },
+            YieldExpression: (path: babel.NodePath<t.YieldExpression>) => {
+                throw new Error('yield not supported');
             },
         },
     })],
@@ -80,6 +117,7 @@ export const runExecute = (code: string, params: IApiParams) => {
 
     vm.runInNewContext(`Object.defineProperty(A, '__result', { value: (async() => {${code}})(), enumerable: false });`, context, {
         filename: 'execute.js',
+        timeout: 2000,
     });
 
     return context.A.__result;
