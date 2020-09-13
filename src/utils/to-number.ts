@@ -2,9 +2,9 @@ import { ApiParam } from '../types/api';
 import { ApiError, ErrorCode } from '../error';
 
 function toNumber(val: ApiParam): number;
-function toNumber(val: ApiParam, defaultValue: number): number;
-function toNumber(val: ApiParam, silent: boolean): number | undefined;
-function toNumber(val: ApiParam, defaultValue: boolean | number = false): number | undefined {
+function toNumber(val: ApiParam, defaultValue: number | null): number;
+function toNumber(val: ApiParam, silent: boolean): number | null;
+function toNumber(val: ApiParam, defaultValue: boolean | number | null = false): number | null {
     if (typeof val === 'undefined') {
         val = NaN;
     }
@@ -20,8 +20,8 @@ function toNumber(val: ApiParam, defaultValue: boolean | number = false): number
             return defaultValue;
         }
 
-        if (defaultValue) {
-            return undefined;
+        if (defaultValue || defaultValue === null) {
+            return null;
         }
 
         throw new ApiError(ErrorCode.EXPECTED_NUMBER, 'Expected number');

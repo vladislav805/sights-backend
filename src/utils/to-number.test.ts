@@ -15,8 +15,8 @@ describe('to-number', () => {
     });
 
     it('shouldn\'t throw exception on invalid number and return undefined', () => {
-        expect(toNumber('number', true)).toEqual(undefined);
-        expect(toNumber('to2', true)).toEqual(undefined);
+        expect(toNumber('number', true)).toBeNull();
+        expect(toNumber('to2', true)).toBeNull();
     });
 
     it('should return default value', () => {

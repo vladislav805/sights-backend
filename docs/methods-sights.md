@@ -85,6 +85,31 @@ type Response = ISight[];
 }
 ```
 
+## sights.add
+### Параметры
+* `int placeId` - идентификатор места;
+* `string title` - название;
+* `string? description` - описание;
+* `int? cityId` - идентификатор города;
+* `int? categoryId` - идентификатор категории;
+* `int[]? tagIds` - идентификаторы тегов.
+
+### Формат ответа
+```ts
+type Response = {
+    sightId: number;
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "sightId": 123
+    }
+}
+```
+
 ## sights.getNearby
 ### Параметры
 `double latitude` - широта;

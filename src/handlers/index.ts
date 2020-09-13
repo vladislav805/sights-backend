@@ -1,6 +1,5 @@
 import { IApiParams } from '../types/api';
 import { ICallPropsOpen, IMethodAPI, PrivateMethodAPI } from './method';
-import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import log from '../logger';
 import UsersGet from './users/get';
@@ -44,10 +43,7 @@ import SightsGet from './sights/get';
 import SightsGetRandomSightId from './sights/get-random-sight-id';
 import SightsGetCounts from './sights/get-counts';
 import SightsGetNearby from './sights/get-nearby';
-
-export interface IInitMethodProps {
-    database: mysql.Pool;
-}
+import SightsAdd from './sights/add';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -70,6 +66,7 @@ export const initMethods = () => {
 
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
+        'sights.add': SightsAdd,
         'sights.getRandomSightId': SightsGetRandomSightId,
         'sights.getNearby': SightsGetNearby,
         'sights.getCounts': SightsGetCounts,
