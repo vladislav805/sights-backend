@@ -48,7 +48,7 @@ export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
         const sightId = result.insertId;
 
         if (params.tagIds.length) {
-            await setTags(props.database, sightId, params.tagIds);
+            await setTags(props, sightId, params.tagIds);
         }
 
         return { sightId };

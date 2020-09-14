@@ -2,10 +2,10 @@
 ## Список методов API секции sights.*
 * [sights.get](#sightsget)
 * [sights.getById](#sightsgetbyid)
-* sights.add
+* [sights.add](#sightsadd)
 * sights.edit
 * sights.remove
-* sights.setTags
+* [sights.setTags](#sightssettags)
 * sights.setPhotos
 * sights.setVisitState
 * sights.setMask
@@ -107,6 +107,23 @@ type Response = {
     "result": {
         "sightId": 123
     }
+}
+```
+
+## sights.setTags
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int[] tagIds` - идентификаторы тегов.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
 }
 ```
 

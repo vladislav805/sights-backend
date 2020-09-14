@@ -44,6 +44,7 @@ import SightsGetRandomSightId from './sights/get-random-sight-id';
 import SightsGetCounts from './sights/get-counts';
 import SightsGetNearby from './sights/get-nearby';
 import SightsAdd from './sights/add';
+import SightsSetTags from './sights/set-tags';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -67,6 +68,7 @@ export const initMethods = () => {
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
         'sights.add': SightsAdd,
+        'sights.setTags': SightsSetTags,
         'sights.getRandomSightId': SightsGetRandomSightId,
         'sights.getNearby': SightsGetNearby,
         'sights.getCounts': SightsGetCounts,
