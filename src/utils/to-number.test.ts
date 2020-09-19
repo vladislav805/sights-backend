@@ -24,4 +24,8 @@ describe('to-number', () => {
         expect(toNumber('', 45)).toEqual(45);
         expect(toNumber('qwerty', 45)).toEqual(45);
     });
+
+    it('should throw exception with custom message', () => {
+        expect(() => toNumber('zzz', 'CustomErrorText')).toThrow(/CustomErrorText/);
+    });
 });
