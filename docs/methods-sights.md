@@ -8,7 +8,7 @@
 * [sights.setTags](#sightssettags)
 * sights.setPhotos
 * sights.setVisitState
-* sights.setMask
+* [sights.setMask](#sightssetmask)
 * <s>sights.setVerify</s> (заменено методом `sights.setMask`)
 * <s>sights.setArchived</s> (заменено методом `sights.setMask`)
 * [sights.getNearby](#sightsgetnearby)
@@ -127,6 +127,23 @@ type Response = boolean;
 }
 ```
 
+## sights.setMask
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int mask` - новое значение битовой маски.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
 ## sights.getNearby
 ### Параметры
 `double latitude` - широта;
@@ -200,3 +217,7 @@ type Response = {
 * `city` - вернуть объект города, в котором достопримечательность находится;
 * `tags` - вернуть массив идентификаторов тегов у достопримечательности
 * ... при передаче `extended=1`, в методах, которые поддерживают этот параметр для возвращения информации о пользователях, также в `fields` можно передать [ключи для объекта пользователя](methods-users.md#user-fields), например, `ava`, `isFollowing`, `followers` и `city` (при добавлении последнего город будет возвращаться и в достопримечательностях, и в пользователе).
+
+## Sight bitmask
+* `2` = `1 << 1` - верифицирована;
+* `4` = `1 << 2` - архивирована. 

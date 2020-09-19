@@ -7,10 +7,6 @@ import { ApiError, ErrorCode } from '../../error';
 export default async function setTags({ database, session }: ICallPropsPrivate, sightId: number, newIds: number[]): Promise<boolean> {
     const sight = await getSightById(database, sightId);
 
-    if (!sight) {
-        throw new ApiError(ErrorCode.SIGHT_NOT_FOUND, 'Sight not exists');
-    }
-
     if (sight.ownerId !== session.userId) {
         throw new ApiError(ErrorCode.ACCESS_DENIED, 'Access denied');
     }
