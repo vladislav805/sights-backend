@@ -7,7 +7,7 @@
 * sights.remove
 * [sights.setTags](#sightssettags)
 * sights.setPhotos
-* sights.setVisitState
+* [sights.setVisitState](#sightssetvisitstate)
 * [sights.setMask](#sightssetmask)
 * <s>sights.setVerify</s> (заменено методом `sights.setMask`)
 * <s>sights.setArchived</s> (заменено методом `sights.setMask`)
@@ -56,7 +56,7 @@ type Response = IApiList<ISight>;
 ## sights.getById
 ### Параметры
 * `int[] sightIds` - идентификаторы достопримечательностей, которые нужно получить;
-* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields);
+* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields).
 
 ### Формат ответа
 ```ts
@@ -127,10 +127,27 @@ type Response = boolean;
 }
 ```
 
+## sights.setVisitState
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int state` - [статус посещения](#sight-visit).
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
 ## sights.setMask
 ### Параметры
 * `int sightId` - идентификатор достопримечательности;
-* `int mask` - новое значение битовой маски.
+* `int mask` - новое значение [битовой маски](#sight-bitmask).
 
 ### Формат ответа
 ```ts
@@ -149,7 +166,8 @@ type Response = boolean;
 `double latitude` - широта;
 `double longitude` - долгота;
 `int? distance = 1000` - дистанция от места в метрах;
-`int? count = 20` - количество запрашиваемых достопримечательностей.
+`int? count = 20` - количество запрашиваемых достопримечательностей;
+* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields).
 
 ### Формат ответа
 ```ts
@@ -221,3 +239,8 @@ type Response = {
 ## Sight bitmask
 * `2` = `1 << 1` - верифицирована;
 * `4` = `1 << 2` - архивирована. 
+
+## Sight visit
+* `0` - не посещено;
+* `1` - посещено;
+* `2` - желаемое.

@@ -13,7 +13,7 @@ export type IDatabaseBundle = {
     destroy: () => Promise<void>;
 };
 
-type IDatabaseApplyQuery = {
+export type IDatabaseApplyQuery = {
     insertId: number;
     affectedRows: number;
     threadId: number;
