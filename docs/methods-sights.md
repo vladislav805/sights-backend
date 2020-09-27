@@ -9,8 +9,6 @@
 * sights.setPhotos
 * [sights.setVisitState](#sightssetvisitstate)
 * [sights.setMask](#sightssetmask)
-* <s>sights.setVerify</s> (заменено методом `sights.setMask`)
-* <s>sights.setArchived</s> (заменено методом `sights.setMask`)
 * [sights.getNearby](#sightsgetnearby)
 * [sights.getRandomSightId](#sightsgetrandomsightid)
 * sights.search
