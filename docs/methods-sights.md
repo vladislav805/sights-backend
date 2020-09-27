@@ -4,7 +4,7 @@
 * [sights.getById](#sightsgetbyid)
 * [sights.add](#sightsadd)
 * sights.edit
-* sights.remove
+* [sights.remove](#sightsremove)
 * [sights.setTags](#sightssettags)
 * sights.setPhotos
 * [sights.setVisitState](#sightssetvisitstate)
@@ -107,6 +107,22 @@ type Response = {
     "result": {
         "sightId": 123
     }
+}
+```
+
+## sights.remove
+### Параметры
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
 }
 ```
 

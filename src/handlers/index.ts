@@ -47,6 +47,7 @@ import SightsAdd from './sights/add';
 import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
 import SightsSetVisitState from './sights/set-visit-state';
+import SightsRemove from './sights/remove';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -70,6 +71,7 @@ export const initMethods = () => {
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
         'sights.add': SightsAdd,
+        'sights.remove': SightsRemove,
         'sights.setTags': SightsSetTags,
         'sights.setVisitState': SightsSetVisitState,
         'sights.setMask': SightsSetMask,
