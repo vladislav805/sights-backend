@@ -1,42 +1,260 @@
 # Документация / API / Достопримечательности
 ## Список методов API секции sights.*
 * [sights.get](#sightsget)
-* sights.getById
-* sights.add
+* [sights.getById](#sightsgetbyid)
+* [sights.add](#sightsadd)
 * sights.edit
-* sights.remove
-* <s>sights.setTags</s> (заменено параметром `tags` в `sights.edit`)
+* [sights.remove](#sightsremove)
+* [sights.setTags](#sightssettags)
 * sights.setPhotos
-* sights.setVisitState
-* <s>sights.setVerify</s> (заменено параметром `mask` в `sights.edit`/`sights.add`)
-* <s>sights.setArchived</s> (заменено параметром `mask` в `sights.edit`/`sights.add`)
-* sights.getNearby
-* sights.getRandomSightId
+* [sights.setVisitState](#sightssetvisitstate)
+* [sights.setMask](#sightssetmask)
+* [sights.getNearby](#sightsgetnearby)
+* [sights.getRandomSightId](#sightsgetrandomsightid)
 * sights.search
-* sights.getCounts
-* <s>sights.getOwns</s> (заменено параметром `ownerId` в `sights.get`) 
+* [sights.getCounts](#sightsgetcounts)
+
+#### etc
+* Дополнительные поля - [fields](#sight-fields)
 
 ## sights.get
 ### Параметры
-* `string? area` - область карты, для которой необходимо получить объекты; строка в формате `NE_lat,NE_lng;SW_lat,SW_lng`;
-* <s>`int? ownerId` - идентификатор пользователя, объекты которого необходимо вернуть;</s>
-* `string[]? fields` - дополнительная информация, которую можно получить, допустимые значения:
-  * `city` - город;
-  * `photo` - фотография;
-* `string[]? filters` - фильтрация объектов, которые нужно получить, допустимые значения:
-  * `verified` - подтверждённые;
-  * `!verified` - неподтверждённые;
-  * `archived` - архивные;
-  * `!archived` - не архивные;
-  * `photo` - с фотографиями;
-  * `!photo` - без фотографий.
+* `int ownerId` - идентификатор владельца достопримечательностей;
+* `int? count = 50` - количество требуемых достопримечательностей;
+* `int? offset = 0` - сдвиг выборки;
+* `string? sort = 'desc'` - сортировка (`asc` по возрастанию; `desc` по убыванию).
 
-### Ответ
+### Формат ответа
 ```ts
-// Если fields не содержит ключ author
 type Response = IApiList<ISight>;
+``` 
 
-// Если fields содержит ключ author
-type Response = IApiListExtended<ISight>;
+### Пример ответа
+```json5
+{
+    "result": {
+        "items": [{
+            "sightId": 777,
+            "ownerId": 1,
+            "title": "Простоквашино",
+            "description": "К 290-летию города Колпино (Санкт-Петербург) ...",
+            "mask": 2,
+            "categoryId": 4,
+            "dateCreated": 1523738164,
+            "dateUpdated": 1523773274,
+            "category": {
+                "categoryId": 4,
+                "title": "Скульптура"
+            }
+        }]
+    }
+}
 ```
 
+## sights.getById
+### Параметры
+* `int[] sightIds` - идентификаторы достопримечательностей, которые нужно получить;
+* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields).
+
+### Формат ответа
+```ts
+type Response = ISight[];
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "items": [{
+            "sightId": 777,
+            "ownerId": 1,
+            "title": "Простоквашино",
+            "description": "К 290-летию города Колпино (Санкт-Петербург) ...",
+            "mask": 2,
+            "categoryId": 4,
+            "dateCreated": 1523738164,
+            "dateUpdated": 1523773274,
+            "category": {
+                "categoryId": 4,
+                "title": "Скульптура"
+            }
+        }]
+    }
+}
+```
+
+## sights.add
+### Параметры
+* `int placeId` - идентификатор места;
+* `string title` - название;
+* `string? description` - описание;
+* `int? cityId` - идентификатор города;
+* `int? categoryId` - идентификатор категории;
+* `int[]? tagIds` - идентификаторы тегов.
+
+### Формат ответа
+```ts
+type Response = {
+    sightId: number;
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "sightId": 123
+    }
+}
+```
+
+## sights.remove
+### Параметры
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## sights.setTags
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int[] tagIds` - идентификаторы тегов.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## sights.setVisitState
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int state` - [статус посещения](#sight-visit).
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## sights.setMask
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int mask` - новое значение [битовой маски](#sight-bitmask).
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## sights.getNearby
+### Параметры
+`double latitude` - широта;
+`double longitude` - долгота;
+`int? distance = 1000` - дистанция от места в метрах;
+`int? count = 20` - количество запрашиваемых достопримечательностей;
+* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields).
+
+### Формат ответа
+```ts
+type DistanceItem = {
+    sightId: number;
+    distance: number;
+};
+
+type Response = IApiList<> & {
+    distances: DistanceItem[];
+}
+```
+
+### Пример ответа
+```json5
+
+```
+
+## sights.getRandomSightId
+### Параметры
+_Нет параметров_
+
+### Формат ответа
+```ts
+type Response = number;
+```
+
+### Пример ответа
+```json5
+{
+    "result": 777
+}
+```
+
+## sights.getCounts
+### Параметры
+_Нет параметров_
+
+### Формат ответа
+```ts
+type Response = {
+    total: number;
+    verified: number;
+    archive: number;
+    active: number;
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "total": 2187,
+        "verified": 27,
+        "active": 1499,
+        "archived": 66
+    }
+}
+```
+
+## Sight fields
+В некоторых методах возможно передать параметр `fields` для получения опциональной дополнительной информации о достопримечательностях. Чтобы получить информацию, нужно перечислить через запятую ключи. Доступны следующие ключи: 
+* `author` - вернуть объект пользователя, который добавил достопримечательность;
+* `photo` - вернуть объект фотографии достопримечательности;
+* `city` - вернуть объект города, в котором достопримечательность находится;
+* `tags` - вернуть массив идентификаторов тегов у достопримечательности
+* ... при передаче `extended=1`, в методах, которые поддерживают этот параметр для возвращения информации о пользователях, также в `fields` можно передать [ключи для объекта пользователя](methods-users.md#user-fields), например, `ava`, `isFollowing`, `followers` и `city` (при добавлении последнего город будет возвращаться и в достопримечательностях, и в пользователе).
+
+## Sight bitmask
+* `2` = `1 << 1` - верифицирована;
+* `4` = `1 << 2` - архивирована. 
+
+## Sight visit
+* `0` - не посещено;
+* `1` - посещено;
+* `2` - желаемое.

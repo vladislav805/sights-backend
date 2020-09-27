@@ -12,10 +12,11 @@ export interface ISight extends IPlace {
     title: string;
     description: string;
     mask: number;
-    city?: ICity;
+    categoryId: number;
+    city?: ICity | null;
     rating?: ISightRating;
     photo?: IPhoto | null;
-    category?: ICategory;
+    category?: ICategory | null;
 
     visitState?: VisitState;
     canModify?: boolean;
@@ -28,11 +29,17 @@ export interface ISightStat {
 
 export interface ISightRating {
     value: number;
-    userRating?: number;
+    count: number;
+    rated?: number;
 }
 
 export const enum VisitState {
     NOT_VISITED = 0,
     VISITED = 1,
     DESIRED = 2,
+}
+
+export interface ISightDistance {
+    sightId: number;
+    distance: number;
 }

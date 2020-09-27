@@ -13,7 +13,7 @@ type IParams = {
     login?: string;
     bio?: string;
     sex?: Sex;
-    cityId?: number;
+    cityId?: number | null;
 };
 
 export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {

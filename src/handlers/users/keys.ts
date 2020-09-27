@@ -11,7 +11,7 @@ export const USER_KEYS: (keyof IUser)[] = [
     'lastSeen',
 ];
 
-export const USERS_GET_FIELD_PHOTO = 'photo';
+export const USERS_GET_FIELD_PHOTO = 'ava';
 export const USERS_GET_FIELD_CITY = 'city';
 export const USERS_GET_FIELD_FOLLOWERS = 'followers';
 export const USERS_GET_FIELD_IS_FOLLOWING = 'isFollowing';

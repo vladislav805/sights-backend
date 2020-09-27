@@ -29,7 +29,7 @@ type IUserInfo = {
     lastName: string;
     sex?: Sex;
     email?: string;
-    cityId?: number;
+    cityId?: number | null;
     telegramId?: number;
     vkId?: number;
 };
@@ -81,7 +81,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
             login: login as string,
             password: password as string,
             email: email as string,
-            cityId: !isSocial ? toNumber(cityId, true) : 0,
+            cityId: !isSocial ? toNumber(cityId, true) : null,
             sex: sex as Sex,
             vkCode: vkCode as string,
             telegramData: typeof telegramData === 'string'

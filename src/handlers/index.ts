@@ -1,12 +1,11 @@
 import { IApiParams } from '../types/api';
 import { ICallPropsOpen, IMethodAPI, PrivateMethodAPI } from './method';
-import * as mysql from 'promise-mysql';
 import { ISession } from '../types/session';
 import log from '../logger';
 import UsersGet from './users/get';
 import SessionsGet, { getSessionByAuthKey } from './sessions/get';
 import UtilsGetTime from './utils/time';
-import SightsGet from './sights/get';
+import MapGet from './map/get';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
@@ -39,10 +38,16 @@ import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
 import FeedGet from './feed/get';
 import PhotosSave from './photos/save';
-
-export interface IInitMethodProps {
-    database: mysql.Pool;
-}
+import SightsGetById from './sights/get-by-id';
+import SightsGet from './sights/get';
+import SightsGetRandomSightId from './sights/get-random-sight-id';
+import SightsGetCounts from './sights/get-counts';
+import SightsGetNearby from './sights/get-nearby';
+import SightsAdd from './sights/add';
+import SightsSetTags from './sights/set-tags';
+import SightsSetMask from './sights/set-mask';
+import SightsSetVisitState from './sights/set-visit-state';
+import SightsRemove from './sights/remove';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -61,7 +66,18 @@ export const initMethods = () => {
         'account.setProfilePhoto': AccountSetProfilePhoto,
         'account.setOnline': AccountSetOnline,
 
+        'map.get': MapGet,
+
         'sights.get': SightsGet,
+        'sights.getById': SightsGetById,
+        'sights.add': SightsAdd,
+        'sights.remove': SightsRemove,
+        'sights.setTags': SightsSetTags,
+        'sights.setVisitState': SightsSetVisitState,
+        'sights.setMask': SightsSetMask,
+        'sights.getRandomSightId': SightsGetRandomSightId,
+        'sights.getNearby': SightsGetNearby,
+        'sights.getCounts': SightsGetCounts,
 
         'cities.get': CitiesGet,
         'cities.getById': CitiesGetById,

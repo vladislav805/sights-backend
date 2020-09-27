@@ -31,9 +31,7 @@ class Sum extends OpenMethodAPI<IParams, IResult> {
     }
 }
 
-const sum = new Sum({
-    getDatabase: () => Promise.reject(),
-});
+const sum = new Sum({});
 
 const props: IMethodCallProps = {
     session: null,
