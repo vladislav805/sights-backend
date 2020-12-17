@@ -2,6 +2,7 @@ import { ICity } from './city';
 import { IPhoto } from './photo';
 import { IPlace } from './place';
 import { ICategory } from './category';
+import { ISightField } from './field';
 
 export interface ISight extends IPlace {
     sightId: number;
@@ -20,6 +21,7 @@ export interface ISight extends IPlace {
 
     visitState?: VisitState;
     canModify?: boolean;
+    fields?: ISightField[];
 }
 
 export interface ISightStat {

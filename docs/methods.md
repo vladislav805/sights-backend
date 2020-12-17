@@ -6,6 +6,7 @@
 * [map.*](methods-map.md) - информация о карте;
 * [sights.*](methods-sights.md) - информация о достопримечательностях;
 * [categories.*](methods-categories.md) - информация о категориях;
+* [fields.*](methods-fields.md) - информация о полях;
 * [tags.*](methods-tags.md) - информация о тегах;
 * [photos.*](methods-photos.md) - информация о фотографиях;
 * [comments.*](methods-comments.md) - информация о комментариях;

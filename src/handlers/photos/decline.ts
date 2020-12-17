@@ -34,6 +34,6 @@ export default class PhotosDecline extends PrivateMethodAPI<IParams, boolean> {
             throw new Error('Invalid method used');
         }
 
-        return await callMethod('photos.remove', { photoId, sightId }) as Promise<boolean>;
+        return callMethod('photos.remove', { photoId, sightId });
     }
 }

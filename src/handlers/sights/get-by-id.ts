@@ -6,6 +6,8 @@ import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { toBoolean } from '../../utils/to-boolean';
 import { IUser } from '../../types/user';
 import { getUsers } from '../../utils/users/get-users';
+import { ApiError, ErrorCode } from "../../error";
+import { SIGHTS_GET_FIELD_FIELDS } from "./keys";
 
 type IParams = {
     sightIds: number[];
@@ -21,9 +23,15 @@ type IResult = {
 
 export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+        const sightIds = paramToArrayOf(params.sightIds as string, Number);
+
+        if (!sightIds || !sightIds.length) {
+            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Sight id not specified');
+        }
+
         const extended = toBoolean(params.extended);
         return {
-            sightIds: paramToArrayOf(params.sightIds as string, Number),
+            sightIds,
             fields: new SightFieldsManager(params.fields as string),
             extended,
             fieldsStr: extended ? params.fields as string : '',
@@ -42,6 +50,12 @@ export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
 
         if (params.extended) {
             users = await getUsers(result.map(sight => sight.ownerId), params.fieldsStr, props.session);
+        }
+
+        if (result.length === 1 && params.fields.is(SIGHTS_GET_FIELD_FIELDS)) {
+            result[0].fields = await props.callMethod('sights.getFieldsOfSight', {
+                sightId: params.sightIds,
+            });
         }
 
         return {

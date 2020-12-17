@@ -48,6 +48,8 @@ import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
 import SightsSetVisitState from './sights/set-visit-state';
 import SightsRemove from './sights/remove';
+import FieldsGetOfSight from './fields/get-fields-of-sight';
+import FieldsGetAll from './fields/get-all';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -78,6 +80,9 @@ export const initMethods = () => {
         'sights.getRandomSightId': SightsGetRandomSightId,
         'sights.getNearby': SightsGetNearby,
         'sights.getCounts': SightsGetCounts,
+
+        'fields.getOfSight': FieldsGetOfSight,
+        'fields.getAll': FieldsGetAll,
 
         'cities.get': CitiesGet,
         'cities.getById': CitiesGetById,
@@ -118,14 +123,14 @@ export const initMethods = () => {
 };
 
 
-export const callMethod = async(method: string, params: IApiParams) => {
+export const callMethod = async<T = unknown>(method: string, params: IApiParams): Promise<T> => {
     // Если нет метода - кидаем ошибку
     if (!(method in methods)) {
         throw new ApiError(ErrorCode.UNKNOWN_METHOD, 'Unknown method called');
     }
 
     // Инстанс метода
-    const impl = methods[method];
+    const impl = methods[method] as IMethodAPI<unknown, T>;
 
     // Сессия
     let session: ISession | null = null;

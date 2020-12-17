@@ -17,7 +17,7 @@ const SFM_PHOTO = 'pt';
 const SFM_CITY = 'ct';
 const SFM_RATING = 'rg';
 
-export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags' | 'visitState' | 'rating', ISight> {
+export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags' | 'visitState' | 'rating' | 'fields', ISight> {
     private filter: number = 0;
 
     public constructor(fields: string) {
