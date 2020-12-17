@@ -30,4 +30,4 @@ jobs:
       - run: npm run build
       # Deploy
       - run: cd dist && rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress . vlad805@135.181.147.70:/home/vlad805/projects/sights-backend/
-      - run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -t vlad805@135.181.147.70 -c "cd /home/vlad805/projects/sights-backend/ && npm ci && pm2 restart sights-backend"
+      - run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -t vlad805@135.181.147.70 "cd /home/vlad805/projects/sights-backend/ && npm ci && pm2 restart sights-backend"
