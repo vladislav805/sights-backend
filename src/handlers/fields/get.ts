@@ -10,7 +10,7 @@ type IParams = {
 
 type IResult = ISightField[];
 
-export default class FieldsGetOfSight extends OpenMethodAPI<IParams, IResult> {
+export default class FieldsGet extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         const sightId = toNumber(params.sightId as string);
 

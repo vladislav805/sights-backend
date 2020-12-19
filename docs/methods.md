@@ -1,5 +1,5 @@
-# Документация / API
-## Секции методов API
+# Документация / Методы API
+## Секции методов
 * [users.*](methods-users.md) - информация о пользователях;
 * [account.*](methods-account.md) - информация об аккаунте;
 * [cities.*](methods-cities.md) - информация о городах;
@@ -15,22 +15,3 @@
 * [collections.*](methods-collections.md) - информация о коллекциях.
 
 # Объекты
-* IUser
-* ICity
-* ISight
-* ICategory
-* ITag
-* IPhoto
-* IComment
-* INotification
-* ```ts
-  interface IApiList<T> {
-    count?: number;
-    items: T[];
-  }
-  ```
-* ```ts
-  interface IApiListExtended<T> extends IApiList<T> {
-    users: IUser[];
-  }
-  ```

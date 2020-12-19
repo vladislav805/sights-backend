@@ -48,8 +48,9 @@ import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
 import SightsSetVisitState from './sights/set-visit-state';
 import SightsRemove from './sights/remove';
-import FieldsGetOfSight from './fields/get-fields-of-sight';
+import FieldsGet from './fields/get';
 import FieldsGetAll from './fields/get-all';
+import FieldsSet from './fields/set';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -81,8 +82,9 @@ export const initMethods = () => {
         'sights.getNearby': SightsGetNearby,
         'sights.getCounts': SightsGetCounts,
 
-        'fields.getOfSight': FieldsGetOfSight,
+        'fields.get': FieldsGet,
         'fields.getAll': FieldsGetAll,
+        'fields.set': FieldsSet,
 
         'cities.get': CitiesGet,
         'cities.getById': CitiesGetById,

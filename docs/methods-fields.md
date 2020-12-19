@@ -1,7 +1,8 @@
 # Документация / API / Поля
-## Список методов API секции sights.*
+## Список методов API секции fields.*
 * [fields.getAll](#fieldsgetall)
-* [fields.getOfSight](#fieldsgetofsight)
+* [fields.get](#fieldsget)
+* [fields.set](#fieldsset)
 
 ## fields.getAll
 ### Параметры
@@ -27,7 +28,7 @@ type Response = IField[];
 ```
 
 
-## fields.getOfSight
+## fields.get
 ### Параметры
 * `int[] sightId` - идентификатор достопримечательности, поля о которой необходимо получить.
 
@@ -50,5 +51,30 @@ type Response = ISightField[];
             "title_ru": "Общедоступно"
         }]
     }
+}
+```
+
+## fields.set
+### Параметры
+* `int[] sightId` - идентификатор достопримечательности, поля о которой необходимо изменить;
+* `string details` - JSON-строка, в которой описан объект со всеми полями, например:
+  ```json
+  {
+      "verified": "1",
+      "...": "..."  
+  }
+  ```
+  Поддерживаются только строковые данные.
+
+### Формат ответа
+
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
 }
 ```
