@@ -3,6 +3,6 @@ import { PhotoType } from '../../types/photo';
 
 describe('Utils / photos / upload sig', () => {
     it('should return signature by input data', () => {
-        expect(getUploadSignature(PhotoType.SIGHT, 444, 'abcdef')).toEqual('0dc6e2474df58caecb67580e672bfb01');
+        expect(getUploadSignature(PhotoType.SIGHT, 444, 'abcdef')).toEqual('e927f946b466fd2782d06e08244a0d96');
     });
 });

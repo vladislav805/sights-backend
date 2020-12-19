@@ -1,10 +1,11 @@
 import { IPhoto, IPhotoRaw, PhotoType } from '../../types/photo';
 import { joinPhotoPath } from './join-path';
 import raw2object from './raw-to-object';
+import config from '../../config';
 
 describe('Photos: raw to object', () => {
     it('should remove path field and generate photo200 and photoMax fields', () => {
-        const domain = process.env.DOMAIN_MEDIA = 'media.domain.net';
+        const domain = config.domain.MEDIA;
         const path = 'ab/cd';
         const raw: IPhotoRaw = {
             ownerId: 0,
