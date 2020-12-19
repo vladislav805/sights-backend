@@ -1,7 +1,5 @@
 import * as md5 from 'md5';
 import { PhotoType } from '../../types/photo';
-import { getConfigValue } from '../../config';
+import config from '../../config';
 
-const secret = getConfigValue<string>('SECRET_UPLOAD');
-
-export const getUploadSignature = (type: PhotoType, k: number, pSig: string): string => md5(`upload_${type}_${k}_${pSig}_${secret}`);
+export const getUploadSignature = (type: PhotoType, k: number, pSig: string): string => md5(`upload_${type}_${k}_${pSig}_${config.secret.UPLOAD_UPLOAD}`);

@@ -1,10 +1,8 @@
 name: Deploy
-
 on:
   push:
     branches:
       - master
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,22 +10,29 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
+      # Checkout
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
       # Setup key
       - run: set -eu
       - run: mkdir "$HOME/.ssh"
       - run: echo "${{ secrets.ssh_key }}" > "$HOME/.ssh/key"
       - run: chmod 600 "$HOME/.ssh/key"
-      # Install soft dependencies
-      - name: Install gd
-        run: sudo apt install libgd-dev
-      # Install paakges dependencies
+      # Install dependencies
       - run: npm ci
       # Build
       - run: npm run build
       # Deploy
-      - run: cd dist && rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress . vlad805@135.181.147.70:/home/vlad805/projects/sights-backend/
-      - run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -t vlad805@135.181.147.70 "cd /home/vlad805/projects/sights-backend/ && npm ci && pm2 restart sights-backend"
+      - run: cd dist && rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress . vlad805@${{ secrets.ssh_host }}:/home/vlad805/projects/@sights/backend/
+      # Restart server
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ssh_host }}
+          username: vlad805
+          key: ${{ secrets.ssh_key }}
+          script_stop: true
+          script: |
+            export PATH=$PATH:/usr/bin/:/home/vlad805/.nvm/versions/node/v12.19.0/bin/
+            cd /home/vlad805/projects/@sights/backend/
+            npm ci
+            pm2 restart sights-backend
+            exit

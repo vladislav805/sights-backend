@@ -18,3 +18,20 @@ export const enum PhotoType {
     PROFILE = 2,
     SIGHT_SUGGEST = 4,
 }
+
+export type IUploadPhotoIdentity = {
+    path: string;
+    name: string;
+};
+
+export interface IUploadPayload {
+    sizes: Record<string, IUploadPhotoIdentity>;
+    type: number;
+    path: string;
+    width: number;
+    height: number;
+    latitude?: number;
+    longitude?: number;
+    ownerId?: number;
+    date?: number;
+}

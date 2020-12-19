@@ -1,10 +1,10 @@
+import * as qs from 'querystring';
+import config from '../../config';
 import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { PhotoType } from '../../types/photo';
 import { IApiParams } from '../../types/api';
 import { isValidPhotoType } from '../../utils/photos/is-valid-type';
-import { getConfigValue } from '../../config';
 import { getUploadSignature } from '../../utils/photos/upload-sig';
-import * as qs from 'querystring';
 
 type IParams = {
     type: PhotoType;
@@ -34,7 +34,7 @@ export default class PhotosGetUploadUri extends PrivateMethodAPI<IParams, IUploa
         const query = qs.stringify({ type, sig, k, s });
 
         return {
-            uri: `https://${getConfigValue<string>('DOMAIN_MAIN')}/ps/upload?${query}`,
+            uri: `https://${config.domain.MEDIA}/upload?${query}`,
         };
     }
 }

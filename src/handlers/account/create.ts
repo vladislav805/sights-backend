@@ -1,3 +1,4 @@
+import config from '../../config';
 import { ICallPropsOpen, OpenMethodAPI } from '../method';
 import { IUser, Sex } from '../../types/user';
 import { ApiParam, IApiParams } from '../../types/api';
@@ -10,7 +11,6 @@ import { checkTelegramHash } from '../../utils/telegram/check-hash';
 import { getVkToken } from '../../utils/vk/get-token';
 import { getVkUser } from '../../utils/vk/get-user';
 import { sendMail, SendMessageResult } from '../../utils/send-mail';
-import { getConfigValue } from '../../config';
 import { createHash } from 'crypto';
 import { hashPassword } from '../../utils/account/password';
 import { createSession } from '../../utils/account/create-session';
@@ -238,7 +238,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
     private sendActivationMail(email: string, hash: string): Promise<SendMessageResult> {
         return sendMail(email, 'Подтверждение регистрации', `Некто (надеемся, что это Вы) указал этот адрес электронной почты для регистрации на сайте Sights Map.
 Для активации аккаунта, пожалуйста, перейдите по ссылке:
-https://${getConfigValue('DOMAIN_MAIN')}/island/activation?hash=${hash}
+https://${config.domain.MAIN}/island/activation?hash=${hash}
 
 Если Вы не регистрировались, просто проигнорируйте или удалите это письмо. Возможно, кто-то по ошибке ввёл Ваш адрес.`);
     }

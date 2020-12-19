@@ -1,15 +1,14 @@
+import * as md5 from 'md5';
+import raw2object from '../../utils/photos/raw-to-object';
 import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
-import { IPhoto, IPhotoRaw } from '../../types/photo';
+import { IPhoto, IPhotoRaw, IUploadPayload } from '../../types/photo';
 import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
-import * as md5 from 'md5';
-import { getConfigValue } from '../../config';
-import { IUploadPayload } from '../../uploader/types';
-import savePhotoPermanent from '../../uploader/save';
-import raw2object from '../../utils/photos/raw-to-object';
 import { base64decode } from '../../utils/base64';
 import { wrapIdentify } from '../../utils/sql-packer-id';
 import { time } from '../../utils/time';
+import { remoteCommand } from '../../utils/photos/remote-command';
+import config from '../../config';
 
 type IParams = {
     payload: IUploadPayload;
@@ -26,7 +25,7 @@ export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter sig is missing');
         }
 
-        if (md5(payload + getConfigValue('SECRET_SAVE')) !== sig) {
+        if (md5(payload + config.secret.UPLOAD_SAVE) !== sig) {
             throw new ApiError(ErrorCode.PHOTO_SAVE_ERROR_SIG, 'Invalid payload with sig');
         }
 
@@ -36,7 +35,12 @@ export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
     protected async perform({ payload }: IParams, props: ICallPropsPrivate): Promise<IPhoto> {
         const { sizes, ...rest } = payload;
 
-        await savePhotoPermanent(sizes);
+        const json = JSON.stringify(sizes);
+
+        await remoteCommand('save', {
+            s: encodeURIComponent(json),
+            sig: md5(config.secret.UPLOAD_SAVE + json),
+        });
 
         rest.path = sizes.photoMax.path;
         rest.ownerId = props.session.userId;

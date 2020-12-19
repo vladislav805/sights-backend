@@ -1,5 +1,5 @@
 import * as mysql from 'promise-mysql';
-import { getConfigValue } from './config';
+import config from './config';
 
 let database: mysql.Pool;
 
@@ -24,12 +24,7 @@ export const connect = async() => {
         return database;
     }
 
-    database = await mysql.createPool({
-        host: getConfigValue<string>('DATABASE_HOST'),
-        user: getConfigValue<string>('DATABASE_USER'),
-        password: getConfigValue<string>('DATABASE_PASSWORD'),
-        database: getConfigValue<string>('DATABASE_NAME'),
-    })
+    database = await mysql.createPool(config.db);
 
     return database;
 };

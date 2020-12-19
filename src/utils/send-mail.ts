@@ -1,4 +1,4 @@
-import { getConfigValue } from '../config';
+import config from '../config';
 import { createTransport, TransportOptions } from 'nodemailer';
 
 export type SendMessageResult = {
@@ -21,13 +21,13 @@ export const sendMail = (to: string, subject: string, text: string): Promise<Sen
         port: 465,
         secure: true,
         auth: {
-            user: getConfigValue('EMAIL_LOGIN'),
-            pass: getConfigValue('EMAIL_PASSWORD'),
+            user: config.secret.EMAIL_LOGIN,
+            pass: config.secret.EMAIL_PASSWORD,
         },
     } as TransportOptions);
 
     return transporter.sendMail({
-        from: `Sights NoReply <${getConfigValue('EMAIL_LOGIN')}>`,
+        from: `Sights NoReply <${config.secret.EMAIL_LOGIN}>`,
         to,
         subject,
         text,

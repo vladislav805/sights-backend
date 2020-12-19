@@ -1,3 +1,3 @@
-import { VK_CLIENT_ID, VK_REDIRECT_URI } from './common';
+import config from '../../config';
 
-export const getVkClientAuthorize = () => `https://oauth.vk.com/authorize?client_id=${VK_CLIENT_ID}&display=page&redirect_uri=${VK_REDIRECT_URI}&scope=4194304&response_type=code&v=5.122`;
+export const getVkClientAuthorize = () => `https://oauth.vk.com/authorize?client_id=${config.ThirdParty.VK.CLIENT_ID}&display=page&redirect_uri=${config.ThirdParty.VK.REDIRECT_URI}&scope=4194304&response_type=code&v=${config.ThirdParty.VK.API_VERSION}`;

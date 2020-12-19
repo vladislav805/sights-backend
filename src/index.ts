@@ -1,16 +1,11 @@
-import { getConfigValue, loadConfig } from './config';
-loadConfig();
-
 import * as restana from 'restana';
 import * as connectQuery from 'connect-query';
 import * as bodyParser from 'body-parser';
-import { callMethod, initMethods } from './handlers';
-import { IApiParams } from './types/api';
+import config from './config';
 import log from './logger';
 import connect from './database';
-import multer = require('multer');
-import config from './uploader/config';
-import handleUpload from './uploader';
+import { callMethod, initMethods } from './handlers';
+import { IApiParams } from './types/api';
 import { ApiError, ErrorCode } from './error';
 
 const service = restana();
@@ -44,18 +39,7 @@ service.all('/api/:method', async(request, response) => {
     }
 });
 
-service.get('/ps/upload', (req, res) => {
-    res.setHeader('content-type', 'text/html; charset=utf-8');
-    res.send('<form method="post" enctype="multipart/form-data">'
-        + '<p>Image: <input type="file" name="file" /></p>'
-        + '<p><input type="submit" value="Upload" /></p>'
-        + '</form>');
-});
-
-const upload = multer({ dest: config.directory.temp });
-service.post('/ps/upload', upload.single('file'), handleUpload);
-
-service.start(+getConfigValue<number>('PORT'))
+service.start(config.PORT_MAIN)
     .then(connect)
     .then(initMethods)
-    .then(() => process.stdout.write('Server started\n'));
+    .then(() => process.stdout.write(`Main server started on port ${config.PORT_MAIN}\n`));

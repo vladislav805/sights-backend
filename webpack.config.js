@@ -30,7 +30,6 @@ module.exports = {
             '.ts',
             '.tsx',
             '.js',
-            '.mjs',
         ],
         modules: [
             path.resolve('node_modules')

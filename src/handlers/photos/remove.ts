@@ -1,9 +1,10 @@
 import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
-import { existsSync, unlinkSync } from 'fs';
 import { IPhotoRaw } from '../../types/photo';
 import { ApiError, ErrorCode } from '../../error';
-import { getFullFilePath } from '../../uploader/utils/get-full-file-path';
+import { remoteCommand } from '../../utils/photos/remote-command';
+import * as md5 from 'md5';
+import config from '../../config';
 
 type IParams = {
     photoId: number;
@@ -33,10 +34,15 @@ export default class PhotosRemove extends PrivateMethodAPI<IParams, boolean> {
 
         const photo = photos[0];
 
-        [photo.photo200, photo.photoMax]
-            .map(name => getFullFilePath(photo.path!, name))
-            .filter(path => existsSync(path))
-            .forEach(path => unlinkSync(path));
+
+        [photo.photo200, photo.photoMax].forEach(name => {
+            const path = `${photo.path!}\n${name}`;
+
+            remoteCommand('remove', {
+                path,
+                sig: md5(config.secret.UPLOAD_REMOVE + path),
+            });
+        });
 
         const result = await database.apply(
             'delete from `photo` where `photoId` = ? and `ownerId` = ?',

@@ -1,8 +1,7 @@
 import * as crypto from 'crypto';
-import { getConfigValue } from '../../config';
+import config from '../../config';
 
-const salt = getConfigValue<string>('SALT_PASSWORD');
-
-export const hashPassword = (str: string): string => crypto.createHash('sha512')
-    .update(`${str}${salt}`)
+export const hashPassword = (str: string): string => crypto
+    .createHash('sha512')
+    .update(`${str}${config.salt.PASSWORD}`)
     .digest('hex');
