@@ -28,7 +28,7 @@ import PhotosApprove from './photos/approve';
 import PhotosDecline from './photos/decline';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
-import UsersSubscribe from './users/subscribe';
+import UsersFollow from './users/follow';
 import { ApiError, ErrorCode } from '../error';
 import AccountCreate from './account/create';
 import AccountSetOnline from './account/set-online';
@@ -61,7 +61,7 @@ export const initMethods = () => {
         'users.get': UsersGet,
         'users.search': UsersSearch,
         'users.getFollowers': UsersGetFollowers,
-        'users.follow': UsersSubscribe,
+        'users.follow': UsersFollow,
 
         'account.create': AccountCreate,
         'account.authorize': AccountAuthorize,

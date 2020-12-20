@@ -9,19 +9,24 @@ type IParams = {
     follow: boolean;
 };
 
-export default class UsersSubscribe extends PrivateMethodAPI<IParams, boolean> {
+type IResult = {
+    result: boolean;
+    count: number;
+};
+
+export default class UsersFollow extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
         const userId = toNumber(params.userId);
         const follow = toBoolean(params.follow);
 
         if (userId === props.session.userId) {
-            throw new ApiError(ErrorCode.FOLLOW_YOURSELF, 'Can\'t subscribe yourself');
+            throw new ApiError(ErrorCode.FOLLOW_YOURSELF, 'Can\'t follow to yourself');
         }
 
         return { userId, follow };
     }
 
-    protected async perform({ userId, follow }: IParams, { database, session }: ICallPropsPrivate): Promise<boolean> {
+    protected async perform({ userId, follow }: IParams, { database, session }: ICallPropsPrivate): Promise<IResult> {
         const isFollowed = Boolean(await database.count('select isUserFollowed(?, ?) as `count`', [session.userId, userId]));
 
         if (isFollowed === follow) {
@@ -37,6 +42,13 @@ export default class UsersSubscribe extends PrivateMethodAPI<IParams, boolean> {
 
         const result = await database.apply(sql, [session.userId, userId]);
 
-        return (isFollowed ? result.affectedRows : result.insertId) > 0;
+        const count = await database.count('select count(*) as `count` from `subscribe` where `targetId` = ?', [
+            userId,
+        ]);
+
+        return {
+            result: (isFollowed ? result.affectedRows : result.insertId) > 0,
+            count,
+        };
     }
 }

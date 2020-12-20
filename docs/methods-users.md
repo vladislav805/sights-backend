@@ -2,7 +2,7 @@
 ## Список методов секции users.*
 * [users.get](#usersget)
 * [users.search](#userssearch)
-* [users.subscribe](#userssearch)
+* [users.follow](#usersfollow)
 * [users.getFollowers](#usersgetfollowers)
 
 #### etc
@@ -69,7 +69,7 @@ type Response = IApiList<IUser>;
 }
 ```
 
-## users.subscribe
+## users.follow
 Подписаться или отписаться от пользователя.
 ### Параметры
 * `int userId` - идентификатор пользователя;
@@ -77,14 +77,20 @@ type Response = IApiList<IUser>;
 
 ### Формат ответа
 ```ts
-type Response = boolean;
+type Response = { 
+    result: boolean;
+    count: number;
+};
 ```
 
 ### Пример ответа
 > `userId=1&follow=1`
 ```json5
 {
-    "result": true
+    "result": {
+        "result": true,
+        "count": 3
+    }
 }
 ```
 
