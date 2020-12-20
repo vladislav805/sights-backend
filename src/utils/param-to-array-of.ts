@@ -24,5 +24,7 @@ export function paramToArrayOf<T = string>(input: InputType, handler?: OutHandle
         return [];
     }
 
-    return map<T>(handler, input.split(',').map(str => str.trim()).filter(Boolean));
+    return map<T>(handler, input.split(',')
+        .map(str => str.trim())
+        .filter(Boolean));
 }

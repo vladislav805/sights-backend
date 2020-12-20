@@ -39,11 +39,11 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         const _db = await db();
 
         const ids = userIds
-            .filter(item => typeof item === 'number')
+            .filter(item => !isNaN(+item))
             .join(',');
 
         const logins = userIds
-            .filter(item => typeof item === 'string')
+            .filter(item => isNaN(+item))
             .map(value => _db.escape(value))
             .join(',');
 
