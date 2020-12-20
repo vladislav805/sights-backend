@@ -12,9 +12,16 @@ const service = restana();
 
 service.use(connectQuery());
 service.use(bodyParser.json());
-service.use(bodyParser.urlencoded({ extended: true }));
 
-service.all('/api/:method', async(request, response) => {
+service.options('/api/:method', async(req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    res.send();
+});
+
+const methodHandler = async(request, response) => {
     const { params, query, body } = request;
     const { method } = params;
 
@@ -38,7 +45,10 @@ service.all('/api/:method', async(request, response) => {
             },
         });
     }
-});
+};
+
+service.get('/api/:method', methodHandler);
+service.post('/api/:method', methodHandler);
 
 service.start(config.PORT_MAIN)
     .then(connect)
