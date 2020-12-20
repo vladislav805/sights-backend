@@ -106,7 +106,7 @@ export default class MapGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISi
         const { joins, columns } = params.fields.build(session);
 
         // noinspection SqlResolve
-        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit 20`;
+        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit 500`;
 
         const raw = await database.select<ISight>(sql, values);
 
