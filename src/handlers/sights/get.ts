@@ -20,7 +20,6 @@ const isValidSort = (str: ApiParam): str is Sort => SORT.includes(str as Sort);
 
 export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> {
     protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
-        console.log(params.count);
         return {
             ownerId: toNumber(params.ownerId),
             sort: isValidSort(params.sort) ? params.sort : SORT[0],
@@ -39,7 +38,7 @@ export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> 
         );
 
         const result = await props.database.select<ISight>(
-            `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`ownerId\` = ? order by \`sightId\` ${sort} limit ?, ?`,
+            `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`ownerId\` = ? group by \`sight\`.\`sightId\` order by \`sightId\` ${sort} limit ?, ?`,
             [ownerId, offset, limit],
         );
 
