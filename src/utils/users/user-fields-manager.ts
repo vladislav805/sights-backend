@@ -1,5 +1,13 @@
 import { IUser } from '../../types/user';
-import { USER_KEYS, USERS_GET_FIELD_CITY, USERS_GET_FIELD_FOLLOWERS, USERS_GET_FIELD_IS_FOLLOWING, USERS_GET_FIELD_IS_ONLINE, USERS_GET_FIELD_PHOTO, USERS_GET_FIELDS_ALLOWED } from '../../handlers/users/keys';
+import {
+    USER_KEYS,
+    USERS_GET_FIELD_CITY,
+    USERS_GET_FIELD_FOLLOWERS,
+    USERS_GET_FIELD_IS_FOLLOWING,
+    USERS_GET_FIELD_IS_ONLINE,
+    USERS_GET_FIELD_PHOTO,
+    USERS_GET_FIELDS_ALLOWED,
+} from '../../handlers/users/keys';
 import { packIdentitiesToSql, unpackObject, wrapIdentify } from '../sql-packer-id';
 import { PHOTO_KEYS } from '../../handlers/photos/keys';
 import { CITY_KEYS } from '../../handlers/cities/keys';
@@ -14,7 +22,7 @@ import { MINUTE } from '../../date';
 const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
 
-export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'followers' | 'isFollowing' | 'isOnline', IUser> {
+export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'followers' | 'isFollowed' | 'isOnline', IUser> {
     public constructor(fields: string) {
         super(fields, USERS_GET_FIELDS_ALLOWED);
     }
@@ -40,7 +48,7 @@ export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'f
             columns.push(`getUserFollowersCount(\`${tableName}\`.\`userId\`) as \`followers\``);
         }
 
-        // fields=isFollowing
+        // fields=isFollowed
         if (this.is(USERS_GET_FIELD_IS_FOLLOWING) && session !== null) {
             columns.push(`isUserFollowed(${session.userId}, \`${tableName}\`.\`userId\`) as \`isFollowed\``);
         }
