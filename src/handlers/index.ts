@@ -5,7 +5,8 @@ import log from '../logger';
 import UsersGet from './users/get';
 import SessionsGet, { getSessionByAuthKey } from './sessions/get';
 import UtilsGetTime from './utils/time';
-import MapGet from './map/get';
+import MapGetSights from './map/get-sights';
+import MapGetCities from './map/get-cities';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
@@ -69,7 +70,8 @@ export const initMethods = () => {
         'account.setProfilePhoto': AccountSetProfilePhoto,
         'account.setOnline': AccountSetOnline,
 
-        'map.get': MapGet,
+        'map.getSights': MapGetSights,
+        'map.getCities': MapGetCities,
 
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,

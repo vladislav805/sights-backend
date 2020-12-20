@@ -7,10 +7,7 @@ import { Filter, filtersMap } from '../sights/keys';
 import { checkBitmaskValid } from '../../utils/check-bitmask-valid';
 import { ApiError, ErrorCode } from '../../error';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
-
-type IPointTuple = [number, number];
-
-
+import { IFieldsGetParamsBase, parseAndCheckArea } from './area';
 
 /**
  * Правила для проверки корректности фильтров
@@ -22,29 +19,14 @@ const filterRules: number[][] = [
     [Filter.WITH_PHOTO, Filter.WITHOUT_PHOTO],
 ];
 
-type ISightsGetParams = {
-    area: [IPointTuple, IPointTuple]; // NE, SW
+type IFieldsGetParams = IFieldsGetParamsBase & {
     filters: number;
     fields: SightFieldsManager;
 };
 
-export default class MapGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISight>> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): ISightsGetParams {
-        const areaRaw = (params.area as string || '').split(';');
-
-        if (areaRaw.length !== 2) {
-            throw new ApiError(ErrorCode.PLACES_ONLY_TWO_POINTS, 'Supported only two points');
-        }
-
-        const area = areaRaw.map(point => {
-            const coords = point.split(',');
-
-            if (coords.length !== 2) {
-                throw new ApiError(ErrorCode.PLACES_INVALID_AREA_FORMAT, 'Unknown point format');
-            }
-
-            return coords.map(Number);
-        }) as [IPointTuple, IPointTuple];
+export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiList<ISight>> {
+    protected handleParams(params: IApiParams, props: ICallPropsOpen): IFieldsGetParams {
+        const area = parseAndCheckArea(params.area as string);
 
         const filters = params.filters
             ? paramToArrayOf(params.filters as string)
@@ -63,16 +45,9 @@ export default class MapGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISi
         };
     }
 
-    private static fixCoordinates([[a1, n1], [a2, n2]]: [IPointTuple, IPointTuple]): [IPointTuple, IPointTuple] {
-        return [
-            [Math.min(a1, a2), Math.min(n1, n2)],
-            [Math.max(a1, a2), Math.max(n1, n2)],
-        ] as [IPointTuple, IPointTuple];
-    }
-
-    protected async perform(params: ISightsGetParams, { database, session }: ICallPropsOpen): Promise<IApiList<ISight>> {
+    protected async perform(params: IFieldsGetParams, { database, session }: ICallPropsOpen): Promise<IApiList<ISight>> {
         // координаты области, которую нужно вернуть
-        const [[lat1, lng1], [lat2, lng2]] = MapGet.fixCoordinates(params.area);
+        const [[lat1, lng1], [lat2, lng2]] = params.area;
 
         params.fields.setFilter(params.filters);
 
