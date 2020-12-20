@@ -63,9 +63,16 @@ export default class MapGet extends OpenMethodAPI<ISightsGetParams, IApiList<ISi
         };
     }
 
+    private static fixCoordinates([[a1, n1], [a2, n2]]: [IPointTuple, IPointTuple]): [IPointTuple, IPointTuple] {
+        return [
+            [Math.min(a1, a2), Math.min(n1, n2)],
+            [Math.max(a1, a2), Math.max(n1, n2)],
+        ] as [IPointTuple, IPointTuple];
+    }
+
     protected async perform(params: ISightsGetParams, { database, session }: ICallPropsOpen): Promise<IApiList<ISight>> {
         // координаты области, которую нужно вернуть
-        const [[lat1, lng1], [lat2, lng2]] = params.area;
+        const [[lat1, lng1], [lat2, lng2]] = MapGet.fixCoordinates(params.area);
 
         params.fields.setFilter(params.filters);
 
