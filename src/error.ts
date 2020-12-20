@@ -21,6 +21,7 @@ export const enum ErrorCode {
     ACCOUNT_NOT_ACTIVE = 21,
     INVALID_ACTIVATION_HASH = 22,
     INVALID_PASSWORD = 23,
+    ACCOUNT_BANNED = 24,
 
     TELEGRAM_INVALID_HASH = 25,
 

@@ -12,7 +12,9 @@ type IParams = {
     password: string;
 };
 
-export default class AccountAuthorize extends OpenMethodAPI<IParams, ISession> {
+type IResult = ISession & { user: IUser };
+
+export default class AccountAuthorize extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
         const login = String(params.login ?? '').toLowerCase();
         const password = String(params.password ?? '');
@@ -28,7 +30,7 @@ export default class AccountAuthorize extends OpenMethodAPI<IParams, ISession> {
         return { login, password };
     }
 
-    protected async perform({ login, password }: IParams, { database }: ICallPropsOpen): Promise<ISession> {
+    protected async perform({ login, password }: IParams, { database, callMethod }: ICallPropsOpen): Promise<IResult> {
         const result = await database.select<IUser>(
             'select `userId`, `status` from `user` where (`login` = ? or `email` = ?) and `password` = ?',
             [login, login, hashPassword(password)],
@@ -38,14 +40,20 @@ export default class AccountAuthorize extends OpenMethodAPI<IParams, ISession> {
             throw new ApiError(ErrorCode.INVALID_PAIR_AUTH, 'Invalid login and password');
         }
 
-        const user = result[0];
-
-        const { userId, status } = user;
+        const { userId, status } = result[0];
 
         if (status === 'INACTIVE') {
-            throw new ApiError(ErrorCode.ACCOUNT_NOT_ACTIVE, 'Account not active');
+            throw new ApiError(ErrorCode.ACCOUNT_NOT_ACTIVE, 'Account is not active');
         }
 
-        return createSession(database, userId);
+        if (status === 'BANNED') {
+            throw new ApiError(ErrorCode.ACCOUNT_BANNED, 'Account is banned');
+        }
+
+        return Promise.all([
+            createSession(database, userId),
+            callMethod<IUser[]>('users.get', { userIds: userId, fields: 'ava' })
+                .then(users => users[0]),
+        ]).then(([session, user]) => ({ ...session, user }));
     }
 }
