@@ -26,6 +26,7 @@ service.all('/api/:method', async(request, response) => {
     log(`Request to ${method} with ${apiParams}`);
 
     try {
+        response.setHeader('access-control-allow-origin', '*');
         response.send({
             result: await callMethod(method, apiParams),
         });
