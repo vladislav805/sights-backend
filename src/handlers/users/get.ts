@@ -20,6 +20,11 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
             }
         }
 
+        // TODO из массива в строку, внутри manager'ов из строки в массив, нелогично!
+        if (Array.isArray(params.fields)) {
+            params.fields = params.fields.join(',');
+        }
+
         return {
             userIds: userIds,
             fields: new UserFieldsManager(typeof params.fields === 'string' ? params.fields : ''),
@@ -32,12 +37,25 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         }
 
         const _db = await db();
-        const ids = userIds.map(value => _db.escape(value)).join(',');
+
+        const ids = userIds
+            .filter(item => typeof item === 'number')
+            .join(',');
+
+        const logins = userIds
+            .filter(item => typeof item === 'string')
+            .map(value => _db.escape(value))
+            .join(',');
 
         const { joins, columns } = fields.build(session);
 
+        const where = [
+            ids.length && `\`userId\` in (${ids})`,
+            logins.length && `\`login\` in (${logins})`,
+        ].filter(Boolean).join(' or ');
+
         const users = await database.select<IUser>(
-            `select ${columns} from \`user\` ${joins} where \`userId\` in (${ids})`,
+            `select ${columns} from \`user\` ${joins} where ${where}`,
             [],
         );
 
