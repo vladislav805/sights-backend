@@ -52,6 +52,7 @@ import SightsRemove from './sights/remove';
 import FieldsGet from './fields/get';
 import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
+import SightsGetRecent from './sights/get-recent';
 
 let methods: Record<string, IMethodAPI> = {};
 
@@ -82,6 +83,7 @@ export const initMethods = () => {
         'sights.setMask': SightsSetMask,
         'sights.getRandomSightId': SightsGetRandomSightId,
         'sights.getNearby': SightsGetNearby,
+        'sights.getRecent': SightsGetRecent,
         'sights.getCounts': SightsGetCounts,
 
         'fields.get': FieldsGet,

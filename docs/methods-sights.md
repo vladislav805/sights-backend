@@ -12,6 +12,7 @@
 * [sights.getNearby](#sightsgetnearby)
 * [sights.getRandomSightId](#sightsgetrandomsightid)
 * sights.search
+* [sights.getRecent](#sightsgetrecent)
 * [sights.getCounts](#sightsgetcounts)
 
 #### etc
@@ -177,10 +178,10 @@ type Response = boolean;
 
 ## sights.getNearby
 ### Параметры
-`double latitude` - широта;
-`double longitude` - долгота;
-`int? distance = 1000` - дистанция от места в метрах;
-`int? count = 20` - количество запрашиваемых достопримечательностей;
+* `double latitude` - широта;
+* `double longitude` - долгота;
+* `int? distance = 1000` - дистанция от места в метрах;
+* `int? count = 20` - количество запрашиваемых достопримечательностей;
 * `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields).
 
 ### Формат ответа
@@ -213,6 +214,43 @@ type Response = number;
 ```json5
 {
     "result": 777
+}
+```
+
+## sights.getRecent
+### Параметры
+* `int count` - количество достопримечательностей, которых необходимо вернуть;
+* `string[] fields` - [дополнительная информация о достопримечательности](#sight-fields).
+
+### Формат ответа
+
+```ts
+type Response = {
+    count: number;
+    items: ISight[];
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "count": 1,
+        "items": [{
+            "placeId": 470,
+            "latitude": 5.55186193,
+            "longitude": -0.18161557,
+            "sightId": 2524,
+            "ownerId": 1,
+            "title": "test",
+            "description": "",
+            "mask": 0,
+            "categoryId": null,
+            "dateCreated": 1600011358,
+            "dateUpdated": 0,
+            "category": null
+        }]
+    }
 }
 ```
 
