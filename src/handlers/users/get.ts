@@ -16,7 +16,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         if (!userIds.length) {
             if (props.session) {
-                userIds.push(String(props.session.userId));
+                userIds.push(props.session.user!.login);
             }
         }
 
@@ -26,7 +26,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         }
 
         return {
-            userIds: userIds,
+            userIds,
             fields: new UserFieldsManager(typeof params.fields === 'string' ? params.fields : ''),
         };
     }

@@ -18,22 +18,24 @@ export const getSessionByAuthKey = async(authKey: string): Promise<ISession | nu
         return Promise.resolve(cache.get(authKey)!);
     }
 
+    const prefix = 'u';
+
     const query = await select<ISession>(
-        `select \`authorize\`.*, ${packIdentitiesToSql('user', 'u', USER_KEYS)} from \`authorize\` left join \`user\` on \`authorize\`.\`userId\` = \`user\`.\`userId\` where \`authKey\` = ?`,
+        `select \`authorize\`.*, ${packIdentitiesToSql('user', prefix, USER_KEYS)} from \`authorize\` left join \`user\` on \`authorize\`.\`userId\` = \`user\`.\`userId\` where \`authKey\` = ?`,
         [authKey],
     );
 
-    if (query?.length) {
-        const session = query[0];
-
-        session.user = unpackObject<ISession, IUser>(session, 'u', USER_KEYS);
-
-        cache.set(authKey, session);
-
-        return session;
+    if (!query?.length) {
+        return null;
     }
 
-    return null;
+    const [session] = query;
+
+    session.user = unpackObject<ISession, IUser>(session, prefix, USER_KEYS);
+
+    cache.set(authKey, session);
+
+    return session;
 };
 
 export default class SessionsGet extends OpenMethodAPI<ISessionGetParams, ISession | null> {
