@@ -1,5 +1,4 @@
 import { ISight } from './sight';
-import { IUser } from './user';
 import { IPhoto } from './photo';
 
 export type IFeedItem = IFeedItemSight | IFeedItemPhoto;
@@ -16,4 +15,5 @@ export type IFeedItemPhoto = {
     ownerId: number;
     date: number;
     photo: IPhoto;
+    sight: ISight;
 };
