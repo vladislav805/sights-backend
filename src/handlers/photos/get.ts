@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { IPhoto, IPhotoRaw } from '../../types/photo';
 import raw2object from '../../utils/photos/raw-to-object';
@@ -8,7 +8,7 @@ type IParam = {
 };
 
 export default class PhotosGet extends OpenMethodAPI<IParam, IApiList<IPhoto>> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParam {
+    protected handleParams(params: IApiParams, props: ICompanion): IParam {
         const sightId = +params.sightId;
 
         if (!sightId || sightId <= 0) {
@@ -18,7 +18,7 @@ export default class PhotosGet extends OpenMethodAPI<IParam, IApiList<IPhoto>> {
         return { sightId };
     }
 
-    protected async perform({ sightId }: IParam, { database }: ICallPropsOpen): Promise<IApiList<IPhoto>> {
+    protected async perform({ sightId }: IParam, { database }: ICompanion): Promise<IApiList<IPhoto>> {
         const sql = 'select `photo`.* from `sightPhoto` left join `photo` on `sightPhoto`.`photoId` = `photo`.`photoId` where  `sightPhoto`.`sightId` = ?';
         const items = await database.select<IPhotoRaw>(sql, [sightId]);
 

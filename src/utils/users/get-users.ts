@@ -1,15 +1,14 @@
 import { IUser } from '../../types/user';
-import { select } from '../../database';
 import UserFieldsManager from './user-fields-manager';
-import { ISession } from '../../types/session';
+import { ICompanion } from '../../handlers/method';
 
-export const getUsers = async(ids: number[], fields: string, session: ISession | null): Promise<IUser[]> => {
+export const getUsers = async(ids: number[], fields: string, companion: ICompanion): Promise<IUser[]> => {
     const uniqueIds = [...new Set(ids)];
     const manager = new UserFieldsManager(fields);
-    const { columns, joins } = manager.build(session);
+    const { columns, joins } = manager.build(companion.session);
 
     // noinspection SqlResolve
-    const users = await select<IUser>(
+    const users = await companion.database.select<IUser>(
         `select ${columns} from \`user\` ${joins} where \`user\`.\`userId\` in (?)`,
         [uniqueIds],
     );

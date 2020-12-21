@@ -1,16 +1,15 @@
 import * as mysql from 'promise-mysql';
 import config from './config';
+import log from './logger';
 
-let database: mysql.Pool;
+let database: mysql.Pool | undefined;
 
-type IDatabaseCount = (sql: string, values?: unknown[], connect?: mysql.Connection | mysql.Pool | mysql.PoolConnection) => Promise<number>;
-type IDatabaseSelect = <T>(sql: string, values?: unknown[], connect?: mysql.Connection | mysql.Pool | mysql.PoolConnection) => Promise<T[]>;
-type IDatabaseApply = (sql: string, values?: unknown[], connect?: mysql.Connection | mysql.Pool | mysql.PoolConnection) => Promise<IDatabaseApplyQuery>;
 export type IDatabaseBundle = {
-    select: IDatabaseSelect;
-    apply: IDatabaseApply;
-    count: IDatabaseCount;
-    destroy: () => Promise<void>;
+    select<T>(sql: string, values?: unknown[]): Promise<T[]>;
+    apply(sql: string, values?: unknown[]): Promise<IDatabaseApplyQuery>;
+    count(sql: string, values?: unknown[]): Promise<number>;
+    destroy(): Promise<void>;
+    escape(string: string): string;
 };
 
 export type IDatabaseApplyQuery = {
@@ -19,25 +18,33 @@ export type IDatabaseApplyQuery = {
     threadId: number;
 };
 
-export const connect = async() => {
+export const connect = async(): Promise<mysql.Pool> => {
     if (database) {
+        log('Used exists database pool');
         return database;
     }
 
     database = await mysql.createPool(config.db);
+    log('Created database pool');
+
+    database.on('error', () => {
+        database = undefined;
+        log('Database pool error occurred');
+        connect();
+    });
 
     return database;
 };
 
-export const select: IDatabaseSelect = (sql, values, connect = database) => connect.query({ sql, values });
-export const apply: IDatabaseApply = (sql, values, connect = database) => connect.query({ sql, values });
-export const count: IDatabaseCount = (sql, values, connect = database) => connect.query({ sql, values }).then(res => res?.[0]?.count);
-
-export const getSelectAndApplyFromPool = (): Promise<IDatabaseBundle> => database.getConnection().then(connection => ({
-    select: (sql, values) => select(sql, values, connection),
-    apply: (sql, values) => apply(sql, values, connection),
-    count: (sql, values) => count(sql, values, connection),
-    destroy: () => connection.destroy(),
-}));
+export const createConnectionFromPool = (): Promise<IDatabaseBundle> => connect()
+    .then(conn => conn.getConnection())
+    .then(connection => ({
+        select: (sql, values) => connection.query({ sql, values }),
+        apply: (sql, values) => connection.query(sql, values),
+        count: (sql, values) => connection.query({ sql, values })
+            .then(res => res?.[0]?.count),
+        destroy: async() => connection.destroy(),
+        escape: (string: string) => database?.escape(string) ?? '',
+    }));
 
 export default connect;

@@ -1,8 +1,7 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IUser } from '../../types/user';
 import { ApiParam } from '../../types/api';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
-import db from '../../database';
 import UserFieldsManager from '../../utils/users/user-fields-manager';
 
 type UsersGetParams = {
@@ -11,7 +10,7 @@ type UsersGetParams = {
 };
 
 class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
-    protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: ICallPropsOpen): UsersGetParams {
+    protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: ICompanion): UsersGetParams {
         let userIds: string[] = paramToArrayOf(params.userIds as string);
 
         if (!userIds.length) {
@@ -31,12 +30,10 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
         };
     }
 
-    protected async perform({ userIds, fields }: UsersGetParams, { session, database }: ICallPropsOpen): Promise<IUser[]> {
+    protected async perform({ userIds, fields }: UsersGetParams, { session, database }: ICompanion): Promise<IUser[]> {
         if (userIds.length === 0) {
             return [];
         }
-
-        const _db = await db();
 
         const ids = userIds
             .filter(item => !isNaN(+item))
@@ -44,7 +41,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         const logins = userIds
             .filter(item => isNaN(+item))
-            .map(value => _db.escape(value))
+            .map(value => database.escape(String(value)))
             .join(',');
 
         const { joins, columns } = fields.build(session);

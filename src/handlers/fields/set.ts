@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
 import { toNumber } from '../../utils/to-number';
@@ -13,7 +13,7 @@ type IParams = {
 type IResult = boolean;
 
 export default class FieldsSet extends OpenMethodAPI<IParams, IResult> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const sightId = toNumber(params.sightId as string);
 
         if (!sightId) {
@@ -25,7 +25,7 @@ export default class FieldsSet extends OpenMethodAPI<IParams, IResult> {
         return { sightId, details };
     }
 
-    protected async perform({ sightId, details }: IParams, props: ICallPropsOpen): Promise<IResult> {
+    protected async perform({ sightId, details }: IParams, props: ICompanion): Promise<IResult> {
         const current = (await props.callMethod<ISightField[]>('fields.getOfSight', { sightId }))
             .reduce((acc, cur) => {
                 acc[cur.name] = cur.value;

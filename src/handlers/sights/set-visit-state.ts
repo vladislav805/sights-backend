@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
 import getSightById from '../../utils/sights/get-sight';
@@ -15,7 +15,7 @@ type IParams = {
 const STATE_MSG = 'Invalid state value, allowed values: 0, 1, 2';
 
 export default class SightsSetVisitState extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         const state = toNumber(params.mask, STATE_MSG);
 
         if (!isValidVisitState(state)) {
@@ -28,7 +28,7 @@ export default class SightsSetVisitState extends PrivateMethodAPI<IParams, boole
         };
     }
 
-    protected async perform({ sightId, state }: IParams, props: ICallPropsPrivate): Promise<boolean> {
+    protected async perform({ sightId, state }: IParams, props: ICompanionPrivate): Promise<boolean> {
         // проверка на то, что оно вообще существует
         await getSightById(props.database, sightId);
 

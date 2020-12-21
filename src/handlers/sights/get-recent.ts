@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
@@ -13,7 +13,7 @@ type IParams = {
 type IResponse = IApiList<ISight>;
 
 export default class SightsGetRecent extends OpenMethodAPI<IParams, IResponse> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
             count: clamp(toNumber(params.count, 20), 1, 50),
             fields: new SightFieldsManager(params.fields as string),
@@ -26,7 +26,7 @@ export default class SightsGetRecent extends OpenMethodAPI<IParams, IResponse> {
     }: IParams, {
         database,
         session,
-    }: ICallPropsOpen): Promise<IResponse> {
+    }: ICompanion): Promise<IResponse> {
         const { columns, joins } = fields.build(session);
 
         const items = await database.select<ISight>(

@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, OpenMethodAPI } from '../method';
+import { ICompanionPrivate, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { IPhoto, IPhotoRaw, PhotoType } from '../../types/photo';
 import raw2object from '../../utils/photos/raw-to-object';
@@ -10,14 +10,14 @@ type IParam = {
 };
 
 export default class PhotosGetUnsorted extends OpenMethodAPI<IParam, IPhoto[]> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParam {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParam {
         return {
             count: clamp(+params.count || 50, 1, 100),
             offset: +params.offset || 0,
         };
     }
 
-    protected async perform({ offset, count }: IParam, { database }: ICallPropsPrivate): Promise<IPhoto[]> {
+    protected async perform({ offset, count }: IParam, { database }: ICompanionPrivate): Promise<IPhoto[]> {
         const sql = `
 select *
 from \`photo\`

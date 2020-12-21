@@ -1,13 +1,13 @@
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { toBoolean } from '../../utils/to-boolean';
 import { IUser } from '../../types/user';
 import { getUsers } from '../../utils/users/get-users';
-import { ApiError, ErrorCode } from "../../error";
-import { SIGHTS_GET_FIELD_FIELDS } from "./keys";
+import { ApiError, ErrorCode } from '../../error';
+import { SIGHTS_GET_FIELD_FIELDS } from './keys';
 
 type IParams = {
     sightIds: number[];
@@ -22,7 +22,7 @@ type IResult = {
 };
 
 export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const sightIds = paramToArrayOf(params.sightIds as string, Number);
 
         if (!sightIds || !sightIds.length) {
@@ -38,10 +38,10 @@ export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
         };
     }
 
-    protected async perform(params: IParams, props: ICallPropsOpen): Promise<IResult> {
-        const { columns, joins } = params.fields.build(props.session);
+    protected async perform(params: IParams, companion: ICompanion): Promise<IResult> {
+        const { columns, joins } = params.fields.build(companion.session);
 
-        const result = await props.database.select<ISight>(
+        const result = await companion.database.select<ISight>(
             `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`sightId\` in (?) `,
             [params.sightIds],
         );
@@ -49,11 +49,11 @@ export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
         let users: IUser[] | undefined = undefined;
 
         if (params.extended) {
-            users = await getUsers(result.map(sight => sight.ownerId), params.fieldsStr, props.session);
+            users = await getUsers(result.map(sight => sight.ownerId), params.fieldsStr, companion);
         }
 
         if (result.length === 1 && params.fields.is(SIGHTS_GET_FIELD_FIELDS)) {
-            result[0].fields = await props.callMethod('sights.getFieldsOfSight', {
+            result[0].fields = await companion.callMethod('sights.getFieldsOfSight', {
                 sightId: params.sightIds,
             });
         }

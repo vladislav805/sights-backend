@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { IPhotoRaw } from '../../types/photo';
 import { ApiError, ErrorCode } from '../../error';
@@ -11,7 +11,7 @@ type IParams = {
 };
 
 export default class PhotosRemove extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         const photoId = +params.photoId;
 
         if (!photoId) {
@@ -22,7 +22,7 @@ export default class PhotosRemove extends PrivateMethodAPI<IParams, boolean> {
     }
 
 
-    protected async perform({ photoId }: IParams, { database, session }: ICallPropsPrivate): Promise<boolean> {
+    protected async perform({ photoId }: IParams, { database, session }: ICompanionPrivate): Promise<boolean> {
         const photos = await database.select<IPhotoRaw>(
             'select `path`, `photo200`, `photoMax` from `photo` where `photoId` = ? and `ownerId` = ?',
             [photoId, session.userId],

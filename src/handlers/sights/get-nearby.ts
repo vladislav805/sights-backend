@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ISight, ISightDistance } from '../../types/sight';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
@@ -18,7 +18,7 @@ type IResponse = IApiList<ISight> & {
 };
 
 export default class SightsGetNearby extends OpenMethodAPI<IParams, IResponse> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
             latitude: toNumber(params.latitude),
             longitude: toNumber(params.longitude),
@@ -37,7 +37,7 @@ export default class SightsGetNearby extends OpenMethodAPI<IParams, IResponse> {
     }: IParams, {
         database,
         session,
-    }: ICallPropsOpen): Promise<IResponse> {
+    }: ICompanion): Promise<IResponse> {
         const { columns, joins } = fields.build(session);
 
         const delta = .04;

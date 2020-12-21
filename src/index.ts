@@ -3,8 +3,7 @@ import * as connectQuery from 'connect-query';
 import * as bodyParser from 'body-parser';
 import config from './config';
 import log from './logger';
-import connect from './database';
-import { callMethod, initMethods } from './handlers';
+import { callMethod, createCompanion, initMethods } from './handlers';
 import { IApiParams } from './types/api';
 import { ApiError, ErrorCode } from './error';
 
@@ -34,9 +33,12 @@ const methodHandler = async(request, response) => {
 
     try {
         response.setHeader('access-control-allow-origin', '*');
-        response.send({
-            result: await callMethod(method, apiParams),
-        });
+
+        const companion = await createCompanion(apiParams);
+        const result = await callMethod(method, apiParams, companion);
+        companion.database?.destroy();
+
+        response.send({ result });
     } catch (e) {
         response.send({
             error: {
@@ -51,6 +53,5 @@ service.get('/api/:method', methodHandler);
 service.post('/api/:method', methodHandler);
 
 service.start(config.PORT_MAIN)
-    .then(connect)
     .then(initMethods)
     .then(() => process.stdout.write(`Main server started on port ${config.PORT_MAIN}\n`));

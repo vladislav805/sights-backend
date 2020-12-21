@@ -1,5 +1,5 @@
 import config from '../../config';
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IUser, Sex } from '../../types/user';
 import { ApiParam, IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
@@ -47,7 +47,7 @@ type IResult = {
 const isValidValue = (str: ApiParam, min: number = 1): str is string => typeof str === 'string' && str.length >= min;
 
 export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const { firstName, lastName, login, password, sex, email, cityId, vkCode, telegramData } = params;
 
         const isSocial = !!vkCode || !!telegramData;
@@ -90,7 +90,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
         };
     }
 
-    protected async perform(params: IParams, props: ICallPropsOpen): Promise<IResult | ISession> {
+    protected async perform(params: IParams, props: ICompanion): Promise<IResult | ISession> {
         const { isSocial, vkCode, telegramData } = params;
         let info!: IUserInfo;
 

@@ -1,6 +1,6 @@
 import * as md5 from 'md5';
 import raw2object from '../../utils/photos/raw-to-object';
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IPhoto, IPhotoRaw, IUploadPayload } from '../../types/photo';
 import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
@@ -15,12 +15,13 @@ type IParams = {
 };
 
 export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
-    protected handleParams({ payload, sig }: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams({ payload, sig }: IApiParams, props: ICompanionPrivate): IParams {
         // noinspection SuspiciousTypeOfGuard
         if (typeof payload !== 'string') {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter payload is missing');
         }
 
+        // noinspection SuspiciousTypeOfGuard
         if (typeof sig !== 'string') {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter sig is missing');
         }
@@ -32,7 +33,7 @@ export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
         return { payload: JSON.parse(base64decode(payload)) };
     }
 
-    protected async perform({ payload }: IParams, props: ICallPropsPrivate): Promise<IPhoto> {
+    protected async perform({ payload }: IParams, props: ICompanionPrivate): Promise<IPhoto> {
         const { sizes, ...rest } = payload;
 
         const json = JSON.stringify(sizes);

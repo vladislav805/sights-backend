@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
 import getSightById from '../../utils/sights/get-sight';
@@ -9,13 +9,13 @@ type IParams = {
 };
 
 export default class SightsRemove extends PrivateMethodAPI<IParams, boolean> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
             sightId: toNumber(params.sightId, 'Invalid sightId'),
         };
     }
 
-    protected async perform(params: IParams, props: ICallPropsPrivate): Promise<boolean> {
+    protected async perform(params: IParams, props: ICompanionPrivate): Promise<boolean> {
         const sight = await getSightById(props.database, params.sightId);
 
         if (sight.ownerId !== props.session.userId) {

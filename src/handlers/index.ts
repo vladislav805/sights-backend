@@ -1,9 +1,12 @@
 import { IApiParams } from '../types/api';
-import { ICallPropsOpen, IMethodAPI, PrivateMethodAPI } from './method';
+import { ICompanion, IMethodAPI, PrivateMethodAPI } from './method';
 import { ISession } from '../types/session';
+import { createConnectionFromPool } from '../database';
+import { ApiError, ErrorCode } from '../error';
+import { getSessionByAuthKey } from '../session';
 import log from '../logger';
 import UsersGet from './users/get';
-import SessionsGet, { getSessionByAuthKey } from './sessions/get';
+import SessionsGet from './sessions/get';
 import UtilsGetTime from './utils/time';
 import MapGetSights from './map/get-sights';
 import MapGetCities from './map/get-cities';
@@ -12,7 +15,6 @@ import CitiesGetById from './cities/get-by-id';
 import CommentsGet from './comments/get';
 import CommentsAdd from './comments/add';
 import CommentsRemove from './comments/remove';
-import { getSelectAndApplyFromPool } from '../database';
 import CategoriesGet from './categories/get';
 import CategoriesGetById from './categories/get-by-id';
 import TagsGet from './tags/get';
@@ -29,7 +31,6 @@ import PhotosDecline from './photos/decline';
 import UsersSearch from './users/search';
 import UsersGetFollowers from './users/get-followers';
 import UsersFollow from './users/follow';
-import { ApiError, ErrorCode } from '../error';
 import AccountCreate from './account/create';
 import AccountSetOnline from './account/set-online';
 import AccountAuthorize from './account/authorize';
@@ -54,9 +55,8 @@ import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
 import SightsGetRecent from './sights/get-recent';
 import Execute from './execute';
-import { initExecuteApiObject } from './execute/runner';
 
-export const methods: Record<string, IMethodAPI> = {};
+export const methods: Map<string, IMethodAPI> = new Map<string, IMethodAPI>();
 
 export const initMethods = () => {
     const listOfMethods = {
@@ -125,56 +125,53 @@ export const initMethods = () => {
         'execute': Execute,
     };
 
-    const names = Object.keys(listOfMethods);
-
-    for (const name of names) {
-        methods[name] = new listOfMethods[name]();
+    for (const name of Object.keys(listOfMethods)) {
+        methods.set(name, new listOfMethods[name]());
     }
-
-    initExecuteApiObject(Object.keys(methods));
 };
 
-
-export const callMethod = async<T = unknown>(method: string, params: IApiParams = {}): Promise<T> => {
-    // Если нет метода - кидаем ошибку
-    if (!(method in methods)) {
-        throw new ApiError(ErrorCode.UNKNOWN_METHOD, 'Unknown method called');
-    }
-
-    // Инстанс метода
-    const impl = methods[method] as IMethodAPI<unknown, T>;
-
+export const createCompanion = async(params: IApiParams): Promise<ICompanion> => {
     // Сессия
     let session: ISession | null = null;
 
+    const database = await createConnectionFromPool();
+
     // Если есть authKey - лезем в БД
     if (typeof params.authKey === 'string') {
-        session = await getSessionByAuthKey(params.authKey);
+        session = await getSessionByAuthKey(params.authKey, database);
 
         // Если после получения сессии из БД её нет - невалидный authKey
         if (!session) {
             throw new ApiError(ErrorCode.SESSION_INVALID, 'User authorization failed: session is invalid');
         }
-    } else if (impl instanceof PrivateMethodAPI) { // если нет ключа и метод приватный - ошибка
-        throw new ApiError(ErrorCode.AUTH_KEY_NOT_SPECIFIED, 'User authorization failed: authKey not specified');
     }
 
-    // Пропсы для выполнения метода
-    const props: ICallPropsOpen = {
+    const companion: ICompanion = {
         session,
-        callMethod,
-        database: await getSelectAndApplyFromPool(),
+        callMethod: <T>(method, params): Promise<T> => callMethod<T>(method, params, companion),
+        database,
     };
+
+    return companion;
+};
+
+export const callMethod = async<T = unknown>(method: string, params: IApiParams = {}, companion: ICompanion): Promise<T> => {
+    // Если нет метода - кидаем ошибку
+    if (!methods.has(method)) {
+        throw new ApiError(ErrorCode.UNKNOWN_METHOD, 'Unknown method called');
+    }
+
+    // Экземпляр метода
+    const impl = methods.get(method) as IMethodAPI<unknown, T>;
+
+    if (impl instanceof PrivateMethodAPI && !companion.session) { // если метод приватный и нет сессии - ошибка
+        throw new ApiError(ErrorCode.AUTH_KEY_NOT_SPECIFIED, 'User authorization failed: authKey not specified');
+    }
 
     log(`Call ${impl} for ${method}`);
 
     try {
-        const result = await impl.call(params, props);
-
-        // noinspection ES6MissingAwait
-        void props.database.destroy();
-
-        return result;
+        return impl.call(params, companion);
     } catch (e) {
         console.error('In invoker', e);
         throw e;

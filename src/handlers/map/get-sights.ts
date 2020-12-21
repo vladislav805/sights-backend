@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
@@ -25,7 +25,7 @@ type IFieldsGetParams = IFieldsGetParamsBase & {
 };
 
 export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiList<ISight>> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IFieldsGetParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IFieldsGetParams {
         const area = parseAndCheckArea(params.area as string);
 
         const filters = params.filters
@@ -45,7 +45,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         };
     }
 
-    protected async perform(params: IFieldsGetParams, { database, session }: ICallPropsOpen): Promise<IApiList<ISight>> {
+    protected async perform(params: IFieldsGetParams, { database, session }: ICompanion): Promise<IApiList<ISight>> {
         // координаты области, которую нужно вернуть
         const [[lat1, lng1], [lat2, lng2]] = params.area;
 

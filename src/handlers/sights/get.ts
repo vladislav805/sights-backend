@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { ApiParam, IApiList, IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { toNumber } from '../../utils/to-number';
@@ -19,7 +19,7 @@ type IParams = {
 const isValidSort = (str: ApiParam): str is Sort => SORT.includes(str as Sort);
 
 export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
             ownerId: toNumber(params.ownerId),
             sort: isValidSort(params.sort) ? params.sort : SORT[0],
@@ -29,7 +29,7 @@ export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> 
         };
     }
 
-    protected async perform({ ownerId, fields, sort, count: limit, offset }: IParams, props: ICallPropsOpen): Promise<IApiList<ISight>> {
+    protected async perform({ ownerId, fields, sort, count: limit, offset }: IParams, props: ICompanion): Promise<IApiList<ISight>> {
         const { columns, joins } = fields.build(props.session);
 
         const count = await props.database.count(

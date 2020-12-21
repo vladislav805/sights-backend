@@ -1,10 +1,10 @@
 import { flatten } from 'lodash';
 import differenceInsertDelete from './diff-insert-delete';
 import getSightById from './get-sight';
-import { ICallPropsPrivate } from '../../handlers/method';
+import { ICompanionPrivate } from '../../handlers/method';
 import { ApiError, ErrorCode } from '../../error';
 
-export default async function setTags({ database, session }: ICallPropsPrivate, sightId: number, newIds: number[]): Promise<boolean> {
+export default async function setTags({ database, session }: ICompanionPrivate, sightId: number, newIds: number[]): Promise<boolean> {
     const sight = await getSightById(database, sightId);
 
     if (sight.ownerId !== session.userId) {

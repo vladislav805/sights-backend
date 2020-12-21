@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { IUser } from '../../types/user';
 import UserFieldsManager from '../../utils/users/user-fields-manager';
@@ -13,7 +13,7 @@ type IParams = {
 };
 
 export default class UsersSearch extends OpenMethodAPI<IParams, IApiList<IUser>> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const cityId = +params.cityId || undefined;
         return {
             query: String(params.query || ''),
@@ -24,7 +24,7 @@ export default class UsersSearch extends OpenMethodAPI<IParams, IApiList<IUser>>
         };
     }
 
-    protected async perform({ query, fields, cityId, count, offset }: IParams, { session, database }: ICallPropsOpen): Promise<IApiList<IUser>> {
+    protected async perform({ query, fields, cityId, count, offset }: IParams, { session, database }: ICompanion): Promise<IApiList<IUser>> {
         let where: string[] = [];
 
         if (query.startsWith('@')) {

@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
@@ -19,7 +19,7 @@ type IResult = {
 };
 
 export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         const placeId = toNumber(params.placeId, -1);
         if (!placeId || placeId < 0) {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter placeId is invalid');
@@ -39,7 +39,7 @@ export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
         };
     }
 
-    protected async perform(params: IParams, props: ICallPropsPrivate): Promise<IResult> {
+    protected async perform(params: IParams, props: ICompanionPrivate): Promise<IResult> {
         const result = await props.database.apply(
             'insert into `sight` (`ownerId`, `placeId`, `dateCreated`, `title`, `description`, `cityId`, `categoryId`) values (?, ?, unix_timestamp(now()), ?, ?, ?, ?)',
             [props.session.userId, params.placeId, params.title, params.description, params.cityId, params.categoryId],

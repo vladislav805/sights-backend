@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { ISession } from '../../types/session';
 import { IApiParams } from '../../types/api';
 import { inRange } from '../../utils/in-range';
@@ -15,7 +15,7 @@ type IParams = {
 type IResult = ISession & { user: IUser };
 
 export default class AccountAuthorize extends OpenMethodAPI<IParams, IResult> {
-    protected handleParams(params: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const login = String(params.login ?? '').toLowerCase();
         const password = String(params.password ?? '');
 
@@ -30,8 +30,8 @@ export default class AccountAuthorize extends OpenMethodAPI<IParams, IResult> {
         return { login, password };
     }
 
-    protected async perform({ login, password }: IParams, { database, callMethod }: ICallPropsOpen): Promise<IResult> {
-        const result = await database.select<IUser>(
+    protected async perform({ login, password }: IParams, companion: ICompanion): Promise<IResult> {
+        const result = await companion.database.select<IUser>(
             'select `userId`, `status` from `user` where (`login` = ? or `email` = ?) and `password` = ?',
             [login, login, hashPassword(password)],
         );
@@ -51,8 +51,8 @@ export default class AccountAuthorize extends OpenMethodAPI<IParams, IResult> {
         }
 
         return Promise.all([
-            createSession(database, userId),
-            callMethod<IUser[]>('users.get', { userIds: userId, fields: 'ava' })
+            createSession(companion.database, userId),
+            companion.callMethod<IUser[]>('users.get', { userIds: userId, fields: 'ava' })
                 .then(users => users[0]),
         ]).then(([session, user]) => ({ ...session, user }));
     }

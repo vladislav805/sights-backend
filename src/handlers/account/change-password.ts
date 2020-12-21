@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
 import { hashPassword } from '../../utils/account/password';
@@ -14,7 +14,7 @@ type IResponse = {
 };
 
 export default class AccountChangePassword extends PrivateMethodAPI<IParams, IResponse> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         const { oldPassword, newPassword } = params;
 
         if (typeof oldPassword !== 'string' || oldPassword.length < 6 || typeof newPassword !== 'string' || newPassword.length < 6) {
@@ -27,7 +27,7 @@ export default class AccountChangePassword extends PrivateMethodAPI<IParams, IRe
         };
     }
 
-    protected async perform(params: IParams, props: ICallPropsPrivate): Promise<IResponse> {
+    protected async perform(params: IParams, props: ICompanionPrivate): Promise<IResponse> {
         const result = await props.database.apply(
             'update `user` set `password` = ? where `userId` = ? and `password` = ?',
             [

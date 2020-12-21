@@ -1,4 +1,4 @@
-import { ICallPropsOpen, OpenMethodAPI } from '../method';
+import { ICompanion, OpenMethodAPI } from '../method';
 import { time } from '../../utils/time';
 import { HOUR } from '../../date';
 
@@ -15,7 +15,7 @@ export default class SightsGetCounts extends OpenMethodAPI<never, IResult> {
     private cache?: IResult;
     private updated: number = 0;
 
-    protected async perform(params: never, props: ICallPropsOpen): Promise<IResult> {
+    protected async perform(params: never, props: ICompanion): Promise<IResult> {
         if (time() - this.updated < ttl) {
             return this.cache!;
         }

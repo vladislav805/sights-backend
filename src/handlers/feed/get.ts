@@ -1,9 +1,8 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiListExtended, IApiParams } from '../../types/api';
 import { IFeedItem } from '../../types/feed';
 import { toNumber } from '../../utils/to-number';
 import { ISight } from '../../types/sight';
-import { callMethod } from '../index';
 import { IUser } from '../../types/user';
 import { IPhoto, IPhotoRaw, PhotoType } from '../../types/photo';
 import { MONTH } from '../../date';
@@ -20,26 +19,26 @@ type IParams = {
 };
 
 export default class FeedGet extends PrivateMethodAPI<IParams, IApiListExtended<IFeedItem>> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
             count: clamp(toNumber(params.count) || 20, 1, 75),
             fields: params.fields as string,
         };
     }
 
-    protected async perform({ count, fields }: IParams, { database, session }: ICallPropsPrivate): Promise<IApiListExtended<IFeedItem>> {
+    protected async perform({ count, fields }: IParams, companion: ICompanionPrivate): Promise<IApiListExtended<IFeedItem>> {
         const dateLimit = time() - MONTH;
 
-        const sights = await database.select<ISight>(
+        const sights = await companion.database.select<ISight>(
             'select * from `sight` left join `subscribe` on `subscribe`.`targetId` = `sight`.`ownerId` left join `place` `p` on `sight`.`placeId` = `p`.`placeId` where `subscribe`.`userId` = ? and `sight`.`dateCreated` > ? order by `sight`.`dateCreated` desc limit ?',
-            [session.userId, dateLimit, count],
+            [companion.session.userId, dateLimit, count],
         );
 
         const SIGHT_COLS = packIdentitiesToSql('sight', 's', SIGHT_KEYS);
 
-        const photos = await database.select<IPhotoRaw>(
+        const photos = await companion.database.select<IPhotoRaw>(
             'select `photo`.*, ' + SIGHT_COLS + ' from `photo` left join `subscribe` on `subscribe`.`targetId` = `photo`.`ownerId` left join `sightPhoto` on `photo`.`photoId` = `sightPhoto`.`photoId` left join `sight` on `sightPhoto`.`sightId` = `sight`.`sightId` where `subscribe`.`userId` = ? and `photo`.`type` = ? and `photo`.`date` > ? order by `photo`.`date` desc limit ?',
-            [session.userId, PhotoType.SIGHT, dateLimit, count],
+            [companion.session.userId, PhotoType.SIGHT, dateLimit, count],
         );
 
         const items: IFeedItem[] = [
@@ -68,7 +67,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IApiListExtended<
 
         const userIds = items.map(item => item.ownerId);
 
-        const users = await callMethod<IUser[]>('users.get', { userIds, fields });
+        const users = await companion.callMethod<IUser[]>('users.get', { userIds, fields });
 
         return {
             items,

@@ -1,12 +1,11 @@
 import * as vm from 'vm';
 import { NodePath, transformSync } from '@babel/core';
 import * as t from '@babel/types';
-import { AwaitExpression, CallExpression, Identifier, MemberExpression, ObjectExpression } from '@babel/types';
+import { CallExpression, Identifier, MemberExpression, ObjectExpression } from '@babel/types';
 import { IApiParams } from '../../types/api';
-import { callMethod } from '..';
 import { ApiError, ErrorCode } from '../../error';
-
-let API;
+import { ICompanion } from '../method';
+import { col, concat } from './functions';
 
 const restrictedMethods = [
     'execute',
@@ -23,52 +22,10 @@ const restrictedMethods = [
     'comments.add',
 ];
 
-export const initExecuteApiObject = (methodNames: string[]) => {
-    API = methodNames.filter(name => !restrictedMethods.includes(name)).reduce((acc, method) => {
-        const [section, name] = method.split('.');
-
-        if (!(section in acc)) {
-            Object.defineProperty(acc, section, {
-                value: {},
-                enumerable: false,
-            });
-        }
-
-        Object.defineProperty(acc[section], name, {
-            value: (params: any) => callMethod(method, params),
-            writable: false,
-            enumerable: false,
-        });
-
-        return acc;
-    }, {});
-};
-
-const col = <T>(obj: T[], key: keyof T): T[keyof T][] => {
-    if (!Array.isArray(obj)) {
-        return [];
-    }
-
-    if (!key) {
-        return Array(obj.length).fill(null);
-    }
-
-    return obj.map(item => item[key]);
-};
-
-function concat() {
-    return Array.from(arguments).reduce((acc, item) => {
-        if (Array.isArray(item)) {
-            acc.splice(acc.length, 0, ...item);
-        } else {
-            acc.splice(acc.length, 0, item);
-        }
-        return acc;
-    }, []);
-}
+const RESERVED_INTERNAL_FUNCTION_NAME = 'callMethodInternal';
 
 // noinspection JSUnusedGlobalSymbols
-export const transformCode = (code: string, authKey?: string | undefined) => transformSync(code, {
+export const transformCode = (code: string) => transformSync(code, {
     highlightCode: false,
     parserOpts: {
         allowReturnOutsideFunction: true,
@@ -80,88 +37,107 @@ export const transformCode = (code: string, authKey?: string | undefined) => tra
     plugins: [() => ({
         visitor: {
             Identifier: (path: NodePath<Identifier>) => {
+                // Получаем конструкцию вызова функции из идентификатора
+                const caller = path.findParent(p => p.type === 'CallExpression') as NodePath<CallExpression>;
+
+                // Если нет - не оно
+                if (!caller) {
+                    return;
+                }
+
+                // Если название идентификатора совпадает с секретной функцией
+                // и идентификатор находится в вызове - удаляем это выражение
+                if (
+                    path.node.name === RESERVED_INTERNAL_FUNCTION_NAME &&
+                    caller.node.callee === path.node
+                ) {
+                    caller.remove();
+                    return;
+                }
+
+                // Если идентификатор начинается с API, то начинаем парсить,
+                // ожидая, что там будет вызов вида API.***.***
                 if (path.node.name === 'API') {
-                    const caller = path.findParent(p => p.type === 'CallExpression');
+                    const callerExpr = caller.node; // весь вызов
+                    const argsExpr = callerExpr.arguments; // аргументы функции
+                    const args = argsExpr[0] ?? t.objectExpression([]) as ObjectExpression;
+
+
+                    const callee = callerExpr.callee as MemberExpression;
+
+                    // первая часть названия
+                    const memberExpr = callee.object as MemberExpression;
+                    const identExpr = memberExpr.property as Identifier;
+                    const firstName = identExpr?.name;
+
+                    // вторая часть названия
+                    const identName= callee.property as Identifier;
+                    const secondName = identName?.name;
+
+                    const methodName = `${firstName}.${secondName}`;
 
                     if (caller) {
-                        caller.replaceWith(t.awaitExpression(caller.node as CallExpression));
+                        caller.replaceWith(
+                            t.awaitExpression(
+                                t.callExpression(
+                                    t.identifier(RESERVED_INTERNAL_FUNCTION_NAME),
+                                    [
+                                        t.stringLiteral(methodName),
+                                        args,
+                                    ],
+                                ),
+                            ),
+                        );
                         caller.skip();
                     }
                 }
             },
-            ObjectExpression: (path: NodePath<ObjectExpression>) => {
-                if (!authKey) {
-                    return;
-                }
-
-                // когда дело доходит до объекта, await перед вызовом уже вставляется
-                // и CallExpression оборачивается в AwaitExpression
-                const awaitExpr = path.findParent(p => p.type === 'AwaitExpression') as NodePath<AwaitExpression>;
-
-                if (!awaitExpr) {
-                    return;
-                }
-
-                const callExpr = awaitExpr.node.argument as CallExpression; // API.sights.getById({sightIds:i,fields:A.sf})
-                const callee = callExpr?.callee as MemberExpression; // API.sights.getById
-                const methodName = callee?.object as MemberExpression; // API.sights
-                const methodSect = methodName?.object as Identifier; // API
-
-                if (methodSect.name === 'API') {
-                    path.node.properties.push(
-                        t.objectProperty(
-                            t.identifier('authKey'),
-                            t.stringLiteral(authKey),
-                        ),
-                    );
-                }
-            },
-            FunctionDeclaration: (path: NodePath<t.FunctionDeclaration>) => {
+            FunctionDeclaration: () => {
                 throw new Error('Functions not supported');
             },
-            ArrowFunctionExpression: (path: NodePath<t.ArrowFunctionExpression>) => {
+            ArrowFunctionExpression: () => {
                 throw new Error('Functions not supported');
             },
-            Loop: (path: NodePath<t.Loop>) => {
+            Loop: () => {
                 throw new Error('loop not supported');
             },
-            ForStatement: (path: NodePath<t.ForStatement>) => {
+            ForStatement: () => {
                 throw new Error('for(;;) not supported');
             },
-            ForInStatement: (path: NodePath<t.ForInStatement>) => {
+            ForInStatement: () => {
                 throw new Error('for( in ) not supported');
             },
-            ForOfStatement: (path: NodePath<t.ForOfStatement>) => {
+            ForOfStatement: () => {
                 throw new Error('for( of ) not supported');
             },
-            WhileStatement: (path: NodePath<t.WhileStatement>) => {
+            WhileStatement: () => {
                 throw new Error('while not supported');
             },
-            DoWhileStatement: (path: NodePath<t.DoWhileStatement>) => {
+            DoWhileStatement: () => {
                 throw new Error('do-while not supported');
             },
-            ImportDeclaration: (path: NodePath<t.ImportDeclaration>) => {
+            ImportDeclaration: () => {
                 throw new Error('import not supported');
             },
-            ExportNamedDeclaration: (path: NodePath<t.ExportNamedDeclaration>) => {
+            ExportNamedDeclaration: () => {
                 throw new Error('export not supported');
             },
-            TryStatement: (path: NodePath<t.TryStatement>) => {
+            TryStatement: () => {
                 throw new Error('try-catch-finally not supported');
             },
-            ThrowStatement: (path: NodePath<t.ThrowStatement>) => {
+            ThrowStatement: () => {
                 throw new Error('throw not supported');
             },
-            YieldExpression: (path: NodePath<t.YieldExpression>) => {
+            YieldExpression: () => {
                 throw new Error('yield not supported');
             },
-            ModuleDeclaration: (path: NodePath<t.ModuleDeclaration>) => {
+            ModuleDeclaration: () => {
                 throw new Error('modules not supported');
             },
-            ExportDeclaration: (path: NodePath<t.ExportDeclaration>) => {
+            ExportDeclaration: () => {
                 throw new Error('export not supported');
             },
-            Decorator: (path: NodePath<t.Decorator>) => {
+            Decorator: () => {
                 throw new Error('decorators not supported');
             },
         },
@@ -169,16 +145,21 @@ export const transformCode = (code: string, authKey?: string | undefined) => tra
 })!.code!;
 
 
-export const runExecute = (code: string, params: IApiParams) => {
+export const runExecute = (code: string, params: IApiParams, companion: ICompanion) => {
     try {
-        code = transformCode(code, params.authKey);
+        code = transformCode(code);
     } catch (e) {
+        console.error(e);
         throw new ApiError(ErrorCode.EXECUTE_INVALID_CODE, 'Code has error: ' + e.message);
     }
 
     const context = vm.createContext({
         A: params,
-        API,
+        [RESERVED_INTERNAL_FUNCTION_NAME]: (method: string, params: IApiParams) => {
+            return !restrictedMethods.includes(method)
+                ? companion.callMethod(method, params)
+                : null;
+        },
         col,
         concat,
     });

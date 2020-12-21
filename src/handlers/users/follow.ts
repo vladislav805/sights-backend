@@ -1,4 +1,4 @@
-import { ICallPropsPrivate, PrivateMethodAPI } from '../method';
+import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toBoolean } from '../../utils/to-boolean';
 import { toNumber } from '../../utils/to-number';
@@ -15,7 +15,7 @@ type IResult = {
 };
 
 export default class UsersFollow extends PrivateMethodAPI<IParams, IResult> {
-    protected handleParams(params: IApiParams, props: ICallPropsPrivate): IParams {
+    protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         const userId = toNumber(params.userId);
         const follow = toBoolean(params.follow);
 
@@ -26,7 +26,7 @@ export default class UsersFollow extends PrivateMethodAPI<IParams, IResult> {
         return { userId, follow };
     }
 
-    protected async perform({ userId, follow }: IParams, { database, session }: ICallPropsPrivate): Promise<IResult> {
+    protected async perform({ userId, follow }: IParams, { database, session }: ICompanionPrivate): Promise<IResult> {
         const isFollowed = Boolean(await database.count('select isUserFollowed(?, ?) as `count`', [session.userId, userId]));
 
         if (isFollowed === follow) {
