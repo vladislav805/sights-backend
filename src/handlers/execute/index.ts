@@ -8,7 +8,7 @@ type IParams = {
 };
 
 export default class Execute extends OpenMethodAPI<IParams, unknown> {
-    protected handleParams({ code, ...params}: IApiParams, props: ICallPropsOpen): IParams {
+    protected handleParams({ code, ...params }: IApiParams, props: ICallPropsOpen): IParams {
         return { code: code as string, params };
     }
 

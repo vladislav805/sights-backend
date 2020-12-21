@@ -12,7 +12,7 @@ export interface IFieldsManager<Field extends string, ObjectType> {
 }
 
 export abstract class FieldsManager<Field extends string, ObjectType> implements IFieldsManager<Field, ObjectType> {
-    private fields: Field[];
+    private readonly fields: Field[];
 
     protected constructor(fields: string, allowed: string[]) {
         this.fields = paramToArrayOf<Field>(fields).filter(key => allowed.includes(key));

@@ -7,7 +7,16 @@ import { ICity } from '../../types/city';
 import { BuildResult, FieldsManager } from '../fields-manager';
 import { ISession } from '../../types/session';
 import { ISight, ISightRating } from '../../types/sight';
-import { Filter, SIGHT_KEYS, SIGHTS_GET_FIELD_CITY, SIGHTS_GET_FIELD_PHOTO, SIGHTS_GET_FIELD_RATING, SIGHTS_GET_FIELD_TAGS, SIGHTS_GET_FIELD_VISIT_STATE, SIGHTS_GET_FIELDS_ALLOWED } from '../../handlers/sights/keys';
+import {
+    Filter,
+    SIGHT_KEYS,
+    SIGHTS_GET_FIELD_CITY,
+    SIGHTS_GET_FIELD_PHOTO,
+    SIGHTS_GET_FIELD_RATING,
+    SIGHTS_GET_FIELD_TAGS,
+    SIGHTS_GET_FIELD_VISIT_STATE,
+    SIGHTS_GET_FIELDS_ALLOWED,
+} from '../../handlers/sights/keys';
 import { CATEGORY_KEYS } from '../../handlers/categories/keys';
 import { isBit } from '../is-bit';
 import { ICategory } from '../../types/category';
@@ -19,6 +28,7 @@ const SFM_RATING = 'rg';
 
 export default class SightFieldsManager extends FieldsManager<'photo' | 'city' | 'tags' | 'visitState' | 'rating' | 'fields', ISight> {
     private filter: number = 0;
+    private session: ISession | null;
 
     public constructor(fields: string) {
         super(fields, SIGHTS_GET_FIELDS_ALLOWED);
@@ -37,6 +47,8 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
         const columns: string[] = SIGHT_KEYS.map(key => `${wrapIdentify(tableName)}.${wrapIdentify(key)}`);
 
         columns.push(...packIdentitiesToSql('category', SFM_CATEGORY, CATEGORY_KEYS));
+
+        this.session = session;
 
         // Есть ли фильтр по фоткам или запрашивается ли фотка, тогда нужно join'ить таблицы с фотками
         const photoFilter = isBit(this.filter, Filter.WITH_PHOTO) || isBit(this.filter, Filter.WITHOUT_PHOTO);
@@ -110,6 +122,9 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
         if (this.is(SIGHTS_GET_FIELD_RATING)) {
             sight.rating = unpackObject<ISight, ISightRating>(sight, SFM_RATING, ['rated', 'value', 'count']);
         }
+
+        const session = this.session;
+        sight.canModify = !!session && (session.userId === sight.ownerId || session.user?.status === 'ADMIN');
 
         return sight;
     }

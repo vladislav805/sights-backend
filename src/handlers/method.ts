@@ -18,7 +18,6 @@ export type ICallPropsPrivate = IMethodCallProps<ISession>;
 
 export interface IMethodAPI<Params = unknown, Result = unknown, Session = unknown> {
     call(params: IApiParams, props: IMethodCallProps<Session>): Promise<Result>;
-    /** @deprecated */
 }
 
 abstract class Method<

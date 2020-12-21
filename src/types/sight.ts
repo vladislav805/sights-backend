@@ -24,6 +24,11 @@ export interface ISight extends IPlace {
     fields?: ISightField[];
 }
 
+export const enum SightMask {
+    VERIFIED = 2,
+    ARCHIVED = 4,
+}
+
 export interface ISightStat {
     visited: number;
     desired: number;

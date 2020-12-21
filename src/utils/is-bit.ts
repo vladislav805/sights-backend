@@ -1,1 +1,1 @@
-export const isBit = (n: number, x: number) => (n & x) === x;
+export const isBit = (n: number, x: number): boolean => (n & x) === x;
