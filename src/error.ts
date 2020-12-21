@@ -36,6 +36,8 @@ export const enum ErrorCode {
 
     PHOTO_SAVE_ERROR_SIG = 58,
     PHOTO_SAVE_ERROR_NOT_EXISTS = 59,
+
+    EXECUTE_INVALID_CODE = 120,
 }
 
 export class ApiError extends Error {

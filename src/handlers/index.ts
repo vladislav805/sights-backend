@@ -53,8 +53,10 @@ import FieldsGet from './fields/get';
 import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
 import SightsGetRecent from './sights/get-recent';
+import Execute from './execute';
+import { initExecuteApiObject } from './execute/runner';
 
-let methods: Record<string, IMethodAPI> = {};
+export const methods: Record<string, IMethodAPI> = {};
 
 export const initMethods = () => {
     const listOfMethods = {
@@ -119,6 +121,8 @@ export const initMethods = () => {
         'comments.remove': CommentsRemove,
 
         'utils.getTime': UtilsGetTime,
+
+        'execute': Execute,
     };
 
     const names = Object.keys(listOfMethods);
@@ -126,10 +130,12 @@ export const initMethods = () => {
     for (const name of names) {
         methods[name] = new listOfMethods[name]();
     }
+
+    initExecuteApiObject(Object.keys(methods));
 };
 
 
-export const callMethod = async<T = unknown>(method: string, params: IApiParams): Promise<T> => {
+export const callMethod = async<T = unknown>(method: string, params: IApiParams = {}): Promise<T> => {
     // Если нет метода - кидаем ошибку
     if (!(method in methods)) {
         throw new ApiError(ErrorCode.UNKNOWN_METHOD, 'Unknown method called');

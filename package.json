@@ -10,6 +10,8 @@
     },
     "dependencies": {
         "@apidog/vk-client": "0.1.0",
+        "@babel/core": "7.12.10",
+        "@babel/types": "7.12.11",
         "body-parser": "1.19.0",
         "connect-query": "1.0.0",
         "cookie-parser": "1.4.5",
