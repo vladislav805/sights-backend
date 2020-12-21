@@ -115,9 +115,6 @@ export const transformCode = (code: string) => babel.transformSync(code, {
             YieldExpression: (path: babel.NodePath<t.YieldExpression>) => {
                 throw new Error('yield not supported');
             },
-            PatternLike: (path: babel.NodePath<t.PatternLike>) => {
-                throw new Error('reg exp not supported');
-            },
             ModuleDeclaration: (path: babel.NodePath<t.ModuleDeclaration>) => {
                 throw new Error('modules not supported');
             },
