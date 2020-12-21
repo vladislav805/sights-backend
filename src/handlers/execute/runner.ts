@@ -7,8 +7,23 @@ import { ApiError, ErrorCode } from '../../error';
 
 let API;
 
+const restrictedMethods = [
+    'execute',
+    'account.create',
+    'account.activate',
+    'account.authorize',
+    'account.changePassword',
+    'account.setProfilePhoto',
+    'users.follow',
+    'sights.remove',
+    'photos.getUploadUri',
+    'photos.remove',
+    'photos.suggest',
+    'comments.add',
+];
+
 export const initExecuteApiObject = (methodNames: string[]) => {
-    API = methodNames.filter(name => name !== 'execute').reduce((acc, method) => {
+    API = methodNames.filter(name => !restrictedMethods.includes(name)).reduce((acc, method) => {
         const [section, name] = method.split('.');
 
         if (!(section in acc)) {
@@ -67,6 +82,9 @@ export const transformCode = (code: string) => babel.transformSync(code, {
             ArrowFunctionExpression: (path: babel.NodePath<t.ArrowFunctionExpression>) => {
                 throw new Error('Functions not supported');
             },
+            Loop: (path: babel.NodePath<t.Loop>) => {
+                throw new Error('loop not supported');
+            },
             ForStatement: (path: babel.NodePath<t.ForStatement>) => {
                 throw new Error('for(;;) not supported');
             },
@@ -96,6 +114,18 @@ export const transformCode = (code: string) => babel.transformSync(code, {
             },
             YieldExpression: (path: babel.NodePath<t.YieldExpression>) => {
                 throw new Error('yield not supported');
+            },
+            PatternLike: (path: babel.NodePath<t.PatternLike>) => {
+                throw new Error('reg exp not supported');
+            },
+            ModuleDeclaration: (path: babel.NodePath<t.ModuleDeclaration>) => {
+                throw new Error('modules not supported');
+            },
+            ExportDeclaration: (path: babel.NodePath<t.ExportDeclaration>) => {
+                throw new Error('export not supported');
+            },
+            Decorator: (path: babel.NodePath<t.Decorator>) => {
+                throw new Error('decorators not supported');
             },
         },
     })],
