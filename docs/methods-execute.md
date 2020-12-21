@@ -57,7 +57,7 @@ return API.sights.getById({sightIds: id, fields: A.fld});
 
 ### Вспомогательные функции
 #### `col<T>(items: T[], key: keyof T): T[keyof T][]`
-Функция `col` возвращает вектор из конкретного поля из массива объектов. Например:
+Возвращает вектор из конкретного поля из массива объектов. Например:
 ```js
 // получение трёх пользователей
 const users = API.users.get({ userIds: [1,2,34] });
@@ -67,4 +67,11 @@ const logins = col(users, 'login');
 
 // ['vladislav805', 'nadia_107', 'smilepenguin']
 return logins;
+```
+
+#### `col(...items: any | any[]): any[]`
+Возвращает массив из переданных в аргументы значений и массивов. Пример:
+```js
+concat(1, 2) // => [1, 2]
+concat([1, 2], [4, 5], 8) // => [1, 2, 4, 5, 8]
 ```

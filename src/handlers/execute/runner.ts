@@ -55,6 +55,17 @@ const col = <T>(obj: T[], key: keyof T): T[keyof T][] => {
     return obj.map(item => item[key]);
 };
 
+function concat() {
+    return Array.from(arguments).reduce((acc, item) => {
+        if (Array.isArray(item)) {
+            acc.splice(acc.length, 0, ...item);
+        } else {
+            acc.splice(acc.length, 0, item);
+        }
+        return acc;
+    }, []);
+}
+
 export const transformCode = (code: string) => babel.transformSync(code, {
     highlightCode: false,
     parserOpts: {
@@ -140,6 +151,7 @@ export const runExecute = (code: string, params: IApiParams) => {
         A: params,
         API,
         col,
+        concat,
     });
 
     vm.runInNewContext(`Object.defineProperty(A, '__result', { value: (async() => {${code}})(), enumerable: false });`, context, {
