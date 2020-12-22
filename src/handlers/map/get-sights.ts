@@ -32,7 +32,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         const filters = params.filters
             ? paramToArrayOf(params.filters as string)
                 .map(key => filtersMap[key])
-                .reduce((mask, item) => mask + item, 0)
+                .reduce((mask, item) => mask | item, 0)
             : 0;
 
         if (!checkBitmaskValid(filters, filterRules)) {
@@ -101,7 +101,6 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
 
         const { joins, columns } = params.fields.build(session);
 
-        // noinspection SqlResolve
         const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit ?`;
 
         const raw = await database.select<ISight>(sql, values);

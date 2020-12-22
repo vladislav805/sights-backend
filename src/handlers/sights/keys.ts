@@ -52,8 +52,8 @@ export const enum Filter {
 export const filtersMap: Record<string, number> = {
     'verified': Filter.VERIFIED,
     '!verified': Filter.NOT_VERIFIED,
-    'archived': Filter.NOT_ARCHIVED,
-    '!archived': Filter.ARCHIVED,
+    'archived': Filter.ARCHIVED,
+    '!archived': Filter.NOT_ARCHIVED,
     'photo': Filter.WITH_PHOTO,
     '!photo': Filter.WITHOUT_PHOTO,
     'visited': Filter.VISITED,
