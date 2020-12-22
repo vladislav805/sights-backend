@@ -2,13 +2,14 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiListExtended, IApiParams } from '../../types/api';
 import { IComment } from '../../types/comment';
 import { clamp } from '../../utils/clamp';
-import { IUser } from '../../types/user';
 import { toNumber } from '../../utils/to-number';
+import { getUsers } from '../../utils/users/get-users';
 
 type IParams = {
     sightId: number;
     count: number;
     offset: number;
+    fields: string;
 };
 
 export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended<IComment>> {
@@ -19,12 +20,13 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
             sightId,
             count: clamp(+params.count || 50, 1, 200),
             offset: +params.offset || 0,
+            fields: params.fields as string,
         };
     }
 
     protected async perform(params: IParams, companion: ICompanion): Promise<IApiListExtended<IComment>> {
-        const { database, session, callMethod } = companion;
-        const count = await database.select<{ count: number }>(
+        const { database, session } = companion;
+        const count = await database.count(
             'select count(*) as `count` from `comment` where `sightId` = ?',
             [params.sightId],
         );
@@ -32,13 +34,13 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
         const { offset, count: limit, sightId } = params;
 
         let items: IComment[] = await database.select(
-            `select * from \`comment\` where \`sightId\` = ? order by \`commentId\` limit ${offset},${limit}`,
-            [sightId],
+            `select * from \`comment\` where \`sightId\` = ? order by \`commentId\` limit ?, ?`,
+            [sightId, offset, limit],
         );
 
         if (session !== null) {
             items = items.map(comment => {
-                comment.canModify = session?.userId === comment.userId;
+                comment.canModify = session.userId === comment.userId;
                 return comment;
             });
         }
@@ -46,9 +48,9 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
         const userIds = items.map(comment => comment.userId);
 
         return {
-            count: count[0].count,
+            count,
             items,
-            users: await callMethod('users.get', { userIds }) as IUser[],
+            users: await getUsers(userIds, params.fields, companion),
         };
     }
 }
