@@ -37,7 +37,10 @@ export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
                 [commentId],
             );
 
-            return comment[0];
+            return {
+                ...comment[0],
+                canModify: true,
+            } as IComment;
         } catch (e) {
             switch (e.errno) {
                 case 1452: throw new ApiError(ErrorCode.SIGHT_NOT_FOUND, 'Sight not found');
