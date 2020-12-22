@@ -12,6 +12,7 @@ import MapGetSights from './map/get-sights';
 import MapGetCities from './map/get-cities';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
+import CitiesSearch from './cities/search';
 import CommentsGet from './comments/get';
 import CommentsAdd from './comments/add';
 import CommentsRemove from './comments/remove';
@@ -94,6 +95,7 @@ export const initMethods = () => {
 
         'cities.get': CitiesGet,
         'cities.getById': CitiesGetById,
+        'cities.search' : CitiesSearch,
 
         'sessions.get': SessionsGet,
 

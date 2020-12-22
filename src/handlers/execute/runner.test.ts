@@ -10,8 +10,6 @@ describe('API / execute runner', () => {
         const code = 'var a = API.utils.getTime(); return { a };';
         const result = transformCode(code);
 
-        console.log(result);
-
         expect(result).toEqual('var a=await callMethodInternal("utils.getTime",{});return{a};');
     });
 

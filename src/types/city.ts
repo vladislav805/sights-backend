@@ -1,10 +1,12 @@
-export interface ICity {
+export type ICity = {
     cityId: number;
     name: string;
-    parentId?: number;
-    name4child?: string;
-    description?: string;
-    radius?: number;
-    latitude?: number;
-    longitude?: number;
-}
+    parent?: ICity;
+};
+
+export type ICityExtended = ICity & {
+    description: string;
+    radius: number;
+    latitude: number;
+    longitude: number;
+};

@@ -47,7 +47,8 @@ type Response = IApiList<ISight>;
 
 ## map.getCities
 ### Параметры
-* `string? area` - область карты, для которой необходимо получить объекты; строка в формате `NE_lat,NE_lng;SW_lat,SW_lng`.
+* `string? area` - область карты, для которой необходимо получить объекты; строка в формате `NE_lat,NE_lng;SW_lat,SW_lng`;
+* `boolean? onlyImportant = false` - возвращать только крупные города (главные в области/субъекте).
 
 ### Формат ответа
 ```ts
