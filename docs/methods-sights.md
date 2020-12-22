@@ -7,6 +7,7 @@
 * [sights.remove](#sightsremove)
 * [sights.setTags](#sightssettags)
 * sights.setPhotos
+* [sights.getVisitStat](#sightsgetvisitstat)
 * [sights.setVisitState](#sightssetvisitstate)
 * [sights.setMask](#sightssetmask)
 * [sights.getNearby](#sightsgetnearby)
@@ -142,6 +143,28 @@ type Response = boolean;
 }
 ```
 
+## sights.getVisitStat
+### Параметры
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = {
+    visited: number;
+    desired: number;
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "visited": 1,
+        "desired": 2
+    }
+}
+```
+
 ## sights.setVisitState
 ### Параметры
 * `int sightId` - идентификатор достопримечательности;
@@ -149,13 +172,25 @@ type Response = boolean;
 
 ### Формат ответа
 ```ts
-type Response = boolean;
+type Response = { 
+    state: boolean;
+    stat: {
+        visited: number;
+        desired: number;
+    };
+};
 ```
 
 ### Пример ответа
 ```json5
 {
-    "result": true
+    "result": {
+        "state": true,
+        "stat": {
+            "visited": 4,
+            "desired": 6
+        }
+    }
 }
 ```
 

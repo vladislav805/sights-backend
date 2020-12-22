@@ -12,11 +12,21 @@ type IParams = {
     state: VisitState;
 };
 
+type IResultStat = {
+    visited: number;
+    desired: number;
+};
+
+type IResult = {
+    state: boolean;
+    stat: IResultStat;
+};
+
 const STATE_MSG = 'Invalid state value, allowed values: 0, 1, 2';
 
-export default class SightsSetVisitState extends PrivateMethodAPI<IParams, boolean> {
+export default class SightsSetVisitState extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const state = toNumber(params.mask, STATE_MSG);
+        const state = toNumber(params.state, STATE_MSG);
 
         if (!isValidVisitState(state)) {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, STATE_MSG);
@@ -28,26 +38,34 @@ export default class SightsSetVisitState extends PrivateMethodAPI<IParams, boole
         };
     }
 
-    protected async perform({ sightId, state }: IParams, props: ICompanionPrivate): Promise<boolean> {
+    protected async perform({ sightId, state }: IParams, companion: ICompanionPrivate): Promise<IResult> {
         // проверка на то, что оно вообще существует
-        await getSightById(props.database, sightId);
+        await getSightById(companion.database, sightId);
 
-        let result: IDatabaseApplyQuery;
+        let dbResult: IDatabaseApplyQuery;
+        let result: boolean;
 
         if (state !== VisitState.NOT_VISITED) {
-            result = await props.database.apply(
+            dbResult = await companion.database.apply(
                 'insert into `sightVisit` (`sightId`, `userId`, `state`) values (?, ?, ?) on duplicate key update `state` = ?',
-                [sightId, props.session.userId, state, state],
+                [sightId, companion.session.userId, state, state],
             );
 
-            return result.insertId > 0;
+            result = dbResult.insertId > 0;
         } else {
-            result = await props.database.apply(
+            dbResult = await companion.database.apply(
                 'delete from `sightVisit` where `sightId` = ? and `userId` = ?',
-                [sightId, props.session.userId],
+                [sightId, companion.session.userId],
             );
 
-            return result.affectedRows > 0;
+            result = dbResult.affectedRows > 0;
         }
+
+        const stat = await companion.callMethod<IResultStat>('sights.getVisitStat', { sightId });
+
+        return {
+            state: result,
+            stat,
+        };
     }
 }

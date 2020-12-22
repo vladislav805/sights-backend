@@ -56,6 +56,7 @@ import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
 import SightsGetRecent from './sights/get-recent';
 import Execute from './execute';
+import SightsGetVisitStat from './sights/get-visit-stat';
 
 export const methods: Map<string, IMethodAPI> = new Map<string, IMethodAPI>();
 
@@ -80,12 +81,14 @@ export const initMethods = () => {
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
         'sights.add': SightsAdd,
+        // sights.edit
         'sights.remove': SightsRemove,
         'sights.setTags': SightsSetTags,
         'sights.setVisitState': SightsSetVisitState,
         'sights.setMask': SightsSetMask,
         'sights.getRandomSightId': SightsGetRandomSightId,
         'sights.getNearby': SightsGetNearby,
+        'sights.getVisitStat': SightsGetVisitStat,
         'sights.getRecent': SightsGetRecent,
         'sights.getCounts': SightsGetCounts,
 
