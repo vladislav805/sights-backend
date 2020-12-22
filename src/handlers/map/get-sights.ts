@@ -8,6 +8,7 @@ import { checkBitmaskValid } from '../../utils/check-bitmask-valid';
 import { ApiError, ErrorCode } from '../../error';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { IFieldsGetParamsBase, parseAndCheckArea } from './area';
+import { toNumber } from '../../utils/to-number';
 
 /**
  * Правила для проверки корректности фильтров
@@ -41,6 +42,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         return {
             area,
             filters,
+            count: toNumber(params.count, 200),
             fields: new SightFieldsManager(params.fields as string),
         };
     }
@@ -55,7 +57,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         const filterWhere: string[] = [];
 
         // Для подстановок
-        const values: unknown[] = [lat1, lat2, lng1, lng2];
+        const values: unknown[] = [lat1, lat2, lng1, lng2, params.count];
 
         // Фильтры по подтверждённости и наоборот
         if (isBit(params.filters, Filter.VERIFIED)) {
@@ -81,7 +83,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         const { joins, columns } = params.fields.build(session);
 
         // noinspection SqlResolve
-        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit 500`;
+        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit ?`;
 
         const raw = await database.select<ISight>(sql, values);
 

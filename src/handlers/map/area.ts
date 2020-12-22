@@ -5,6 +5,7 @@ export type IPointTuple2D = [IPointTuple, IPointTuple];
 
 export type IFieldsGetParamsBase = {
     area: IPointTuple2D; // NE, SW
+    count: number;
 };
 
 const fixCoordinates = ([[a1, n1], [a2, n2]]: IPointTuple2D): IPointTuple2D => {
