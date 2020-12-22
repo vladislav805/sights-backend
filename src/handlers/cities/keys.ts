@@ -3,7 +3,6 @@ import { wrapIdentify } from '../../utils/sql-packer-id';
 
 export const CITY_ID = 'cityId';
 export const CITY_NAME = 'name';
-export const CITY_NAME4CHILD = 'name4child';
 export const CITY_PARENT_ID = 'parentId';
 export const CITY_DESCRIPTION = 'description';
 export const CITY_RADIUS = 'radius';
@@ -33,19 +32,23 @@ export type ICityRaw = ICity & {
     cp_name: string;
 };
 
-export const build = (extended: boolean, all: boolean): IBuildResult => {
+/**
+ * @param extended Возвращать полную информацию о городе
+ * @param needParent Возвращать ли parent (мини-объект области города, в которой находится маленький город)
+ */
+export const build = (extended: boolean, needParent: boolean): IBuildResult => {
     return {
         columns: [
             ...(extended ? extendedKeys : baseKeys).map(key => `${wrapIdentify('city')}.${wrapIdentify(key)}`),
-            all ? extendedParentKeys : '',
+            needParent ? extendedParentKeys : '',
         ].filter(Boolean).join(', '),
 
-        joins: all
+        joins: needParent
             ? 'left join `city` `c` on `c`.`cityId` = `city`.`parentId`'
             : '',
 
         handleItem: ({ cp_cityId, cp_name, ...city }: ICityRaw): ICity => {
-            return all && cp_cityId
+            return needParent && cp_cityId
                 ? {
                     ...city,
                     parent: {

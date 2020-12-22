@@ -27,7 +27,11 @@ export default class MapGetCities extends OpenMethodAPI<IFieldsGetCitiesParams, 
 
         const { columns, joins, handleItem } = build(true, !params.onlyImportant);
 
-        const sql = 'select ' + columns + ', count(`sight`.`sightId`) as `count` from `city` ' + joins + 'left join `sight` on `city`.`cityId` = `sight`.`cityId` where (`city`.`latitude` between ? and ?) and (`city`.`longitude` between ? and ?) group by `sight`.`cityId` limit ?';
+        const extraWhere = params.onlyImportant
+            ? 'and `parentId` is null'
+            : '';
+
+        const sql = 'select ' + columns + ', count(`sight`.`sightId`) as `count` from `city` ' + joins + 'left join `sight` on `city`.`cityId` = `sight`.`cityId` where (`city`.`latitude` between ? and ?) and (`city`.`longitude` between ? and ?) ' + extraWhere + ' group by `sight`.`cityId` limit ?';
 
         const items = await database.select<ICityRaw>(sql, [lat1, lat2, lng1, lng2, params.count]);
 
