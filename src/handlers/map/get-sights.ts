@@ -3,7 +3,7 @@ import { IApiList, IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { isBit } from '../../utils/is-bit';
-import { Filter, filtersMap } from '../sights/keys';
+import { Filter, filtersMap, SIGHTS_GET_FIELD_VISIT_STATE } from '../sights/keys';
 import { checkBitmaskValid } from '../../utils/check-bitmask-valid';
 import { ApiError, ErrorCode } from '../../error';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
@@ -32,7 +32,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         const filters = params.filters
             ? paramToArrayOf(params.filters as string)
                 .map(key => filtersMap[key])
-                .reduce((mask, item) => mask + item)
+                .reduce((mask, item) => mask + item, 0)
             : 0;
 
         if (!checkBitmaskValid(filters, filterRules)) {
@@ -73,11 +73,30 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
             filterWhere.push('(`sight`.`mask` & 4) = 0');
         }
 
-        // Если фильтр
+        // Фильтр по наличию фотографии
         if (isBit(params.filters, Filter.WITH_PHOTO)) {
             filterWhere.push('`p`.`photoId` is not null');
         } else if (isBit(params.filters, Filter.WITHOUT_PHOTO)) {
             filterWhere.push('`p`.`photoId` is null');
+        }
+
+        // Фильтр по посещённости
+        if (
+            session &&
+            params.fields.is(SIGHTS_GET_FIELD_VISIT_STATE) &&
+            (
+                isBit(params.filters, Filter.VISITED) ||
+                isBit(params.filters, Filter.NOT_VISITED) ||
+                isBit(params.filters, Filter.DESIRED)
+            )
+        ) {
+            if (isBit(params.filters, Filter.NOT_VISITED)) {
+                filterWhere.push('`sightVisit`.`state` is null');
+            } else {
+                const value = params.filters === Filter.VISITED ? 1 : 2;
+
+                filterWhere.push('`sightVisit`.`state` = ' + value);
+            }
         }
 
         const { joins, columns } = params.fields.build(session);

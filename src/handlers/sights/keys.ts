@@ -41,6 +41,9 @@ export const enum Filter {
     NOT_ARCHIVED = 1 << 12,
     WITH_PHOTO = 1 << 13,
     WITHOUT_PHOTO = 1 << 14,
+    VISITED = 1 << 15,
+    NOT_VISITED = 1 << 16,
+    DESIRED = 1 << 17,
 }
 
 /**
@@ -53,4 +56,7 @@ export const filtersMap: Record<string, number> = {
     '!archived': Filter.ARCHIVED,
     'photo': Filter.WITH_PHOTO,
     '!photo': Filter.WITHOUT_PHOTO,
+    'visited': Filter.VISITED,
+    '!visited': Filter.NOT_VISITED,
+    'desired': Filter.DESIRED,
 };
