@@ -3,7 +3,7 @@
 * [sights.get](#sightsget)
 * [sights.getById](#sightsgetbyid)
 * [sights.add](#sightsadd)
-* sights.edit
+* [sights.edit](#sightsedit)
 * [sights.remove](#sightsremove)
 * [sights.setTags](#sightssettags)
 * sights.setPhotos
@@ -107,6 +107,28 @@ type Response = {
     "result": {
         "sightId": 123
     }
+}
+```
+
+## sights.edit
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int placeId` - идентификатор места;
+* `string title` - название;
+* `string? description` - описание;
+* `int? cityId` - идентификатор города;
+* `int? categoryId` - идентификатор категории;
+* `int[]? tagIds` - идентификаторы тегов.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
 }
 ```
 

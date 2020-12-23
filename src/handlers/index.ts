@@ -50,6 +50,7 @@ import SightsGetRandomSightId from './sights/get-random-sight-id';
 import SightsGetCounts from './sights/get-counts';
 import SightsGetNearby from './sights/get-nearby';
 import SightsAdd from './sights/add';
+import SightsEdit from './sights/edit';
 import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
 import SightsSetVisitState from './sights/set-visit-state';
@@ -87,7 +88,7 @@ export const initMethods = () => {
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
         'sights.add': SightsAdd,
-        // sights.edit
+        'sights.edit': SightsEdit,
         'sights.remove': SightsRemove,
         'sights.setTags': SightsSetTags,
         'sights.setVisitState': SightsSetVisitState,
