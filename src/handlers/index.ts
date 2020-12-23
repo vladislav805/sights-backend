@@ -15,6 +15,7 @@ import UtilsGetTime from './utils/time';
 import MapGetSights from './map/get-sights';
 import MapGetCities from './map/get-cities';
 import MapGetPlaces from './map/get-places';
+import MapAddPlace from './map/add-place';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CitiesSearch from './cities/search';
@@ -81,6 +82,7 @@ export const initMethods = () => {
         'map.getSights': MapGetSights,
         'map.getCities': MapGetCities,
         'map.getPlaces': MapGetPlaces,
+        'map.addPlace': MapAddPlace,
 
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
