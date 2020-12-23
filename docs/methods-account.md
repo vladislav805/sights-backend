@@ -113,6 +113,7 @@ type Response = ISession & {
 * `string? firstName` - имя;
 * `string? lastName` - фамилия;
 * `string? login` - логин (можно изменить только если он ещё не установлен);
+* `string? bio` - о себе;
 * `int? sex` - пол (см. [здесь](methods-users.md#sex));
 * `int? cityId` - идентификатор города.
 
