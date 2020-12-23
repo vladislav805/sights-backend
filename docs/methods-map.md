@@ -2,6 +2,7 @@
 ## Список методов API секции map.*
 * [map.getSights](#mapgetsights)
 * [map.getCities](#mapgetcities)
+* [map.getPlaces](#mapgetplaces)
 
 ## map.getSights
 ### Параметры
@@ -79,6 +80,28 @@ type Response = IApiList<ICity>;
                 "title": "Скульптура"
             }
         }, /* ... */ ]
+    }
+}
+```
+
+## map.getPlaces
+### Параметры
+* `string? area` - область карты, для которой необходимо получить места; строка в формате `NE_lat,NE_lng;SW_lat,SW_lng`.
+
+### Формат ответа
+```ts
+type Response = IApiList<IPlace>;
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "items": [{
+            "placeId": 247,
+            "latitude": 60.084034251163146,
+            "longitude": 29.95810824536778
+        }]
     }
 }
 ```

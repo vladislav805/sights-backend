@@ -14,6 +14,7 @@ import SessionsGet from './sessions/get';
 import UtilsGetTime from './utils/time';
 import MapGetSights from './map/get-sights';
 import MapGetCities from './map/get-cities';
+import MapGetPlaces from './map/get-places';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CitiesSearch from './cities/search';
@@ -79,6 +80,7 @@ export const initMethods = () => {
 
         'map.getSights': MapGetSights,
         'map.getCities': MapGetCities,
+        'map.getPlaces': MapGetPlaces,
 
         'sights.get': SightsGet,
         'sights.getById': SightsGetById,
