@@ -9,6 +9,7 @@ import { ApiError, ErrorCode } from '../../error';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { IFieldsGetParamsBase, parseAndCheckArea } from './area';
 import { toNumber } from '../../utils/to-number';
+import { clamp } from '../../utils/clamp';
 
 /**
  * Правила для проверки корректности фильтров
@@ -42,7 +43,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         return {
             area,
             filters,
-            count: toNumber(params.count, 200),
+            count: clamp(toNumber(params.count, 200), 1, 500),
             fields: new SightFieldsManager(params.fields as string),
         };
     }

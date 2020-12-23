@@ -5,6 +5,7 @@ import { ICity } from '../../types/city';
 import { build, ICityRaw } from '../cities/keys';
 import { toBoolean } from '../../utils/to-boolean';
 import { toNumber } from '../../utils/to-number';
+import { clamp } from '../../utils/clamp';
 
 type IFieldsGetCitiesParams = IFieldsGetParamsBase & {
     onlyImportant: boolean;
@@ -16,7 +17,7 @@ export default class MapGetCities extends OpenMethodAPI<IFieldsGetCitiesParams, 
 
         return {
             area,
-            count: toNumber(params.count, 100),
+            count: clamp(toNumber(params.count, 100), 1, 200),
             onlyImportant: toBoolean(params.onlyImportant),
         };
     }
