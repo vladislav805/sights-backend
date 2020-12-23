@@ -6,6 +6,10 @@ import { ApiError, ErrorCode } from '../error';
 import { getSessionByAuthKey } from '../session';
 import log from '../logger';
 import UsersGet from './users/get';
+import UsersSearch from './users/search';
+import UsersGetFollowers from './users/get-followers';
+import UsersFollow from './users/follow';
+import UsersGetAchievements from './users/get-achievements';
 import SessionsGet from './sessions/get';
 import UtilsGetTime from './utils/time';
 import MapGetSights from './map/get-sights';
@@ -29,9 +33,7 @@ import PhotosGetUploadUri from './photos/getUploadUri';
 import PhotosSuggest from './photos/suggest';
 import PhotosApprove from './photos/approve';
 import PhotosDecline from './photos/decline';
-import UsersSearch from './users/search';
-import UsersGetFollowers from './users/get-followers';
-import UsersFollow from './users/follow';
+import PhotosSave from './photos/save';
 import AccountCreate from './account/create';
 import AccountSetOnline from './account/set-online';
 import AccountAuthorize from './account/authorize';
@@ -40,7 +42,6 @@ import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
 import FeedGet from './feed/get';
-import PhotosSave from './photos/save';
 import SightsGetById from './sights/get-by-id';
 import SightsGet from './sights/get';
 import SightsGetRandomSightId from './sights/get-random-sight-id';
@@ -51,12 +52,12 @@ import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
 import SightsSetVisitState from './sights/set-visit-state';
 import SightsRemove from './sights/remove';
+import SightsGetVisitStat from './sights/get-visit-stat';
+import SightsGetRecent from './sights/get-recent';
 import FieldsGet from './fields/get';
 import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
-import SightsGetRecent from './sights/get-recent';
 import Execute from './execute';
-import SightsGetVisitStat from './sights/get-visit-stat';
 
 export const methods: Map<string, IMethodAPI> = new Map<string, IMethodAPI>();
 
@@ -66,6 +67,7 @@ export const initMethods = () => {
         'users.search': UsersSearch,
         'users.getFollowers': UsersGetFollowers,
         'users.follow': UsersFollow,
+        'users.getAchievements': UsersGetAchievements,
 
         'account.create': AccountCreate,
         'account.authorize': AccountAuthorize,

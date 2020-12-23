@@ -4,6 +4,7 @@
 * [users.search](#userssearch)
 * [users.follow](#usersfollow)
 * [users.getFollowers](#usersgetfollowers)
+* [users.getAchievements](#usersgetfollowers)
 
 #### etc
 * Дополнительные поля - [fields](#user-fields)
@@ -122,6 +123,56 @@ type Response = IApiList<IUser>;
             "bio": "",
             "lastSeen": 1598278247
         }]
+    }
+}
+```
+
+
+## users.getAchievements
+Получить достижения пользователя.
+### Параметры
+* `int userId` - идентификатор пользователя, чьих подписчиков нужно получить.
+
+### Формат ответа
+```ts
+type Response = {
+    sights: {
+        created: number;
+        verified: number;
+        visited: number;
+        desired: number;
+    };
+    collections: {
+        created: number;
+    };
+    photos: {
+        uploaded: number;
+    };
+    comments: {
+        added: number;
+    };
+};
+```
+
+### Пример ответа
+```json5
+{
+    "result": {
+        "sights": {
+            "created": 2075,
+            "verified": 1400,
+            "visited": 1162,
+            "desired": 17
+        },
+        "photos": {
+            "uploaded": 1257
+        },
+        "collections": {
+            "created": 0
+        },
+        "comments": {
+            "added": 53
+        }
     }
 }
 ```
