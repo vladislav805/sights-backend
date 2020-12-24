@@ -1,4 +1,5 @@
 import config from '../../config';
+import fetch from 'node-fetch';
 import { stringify } from 'querystring';
 import { IApiParams } from '../../types/api';
 
