@@ -36,11 +36,11 @@ export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
     protected async perform({ payload }: IParams, props: ICompanionPrivate): Promise<IPhoto> {
         const { sizes, ...rest } = payload;
 
-        const json = JSON.stringify(sizes);
+        const jsonSizes = JSON.stringify(sizes);
 
         const status = await remoteCommand('save', {
-            s: json,
-            g: md5(config.secret.UPLOAD_SAVE + json),
+            s: jsonSizes,
+            g: md5(config.secret.UPLOAD_SAVE + jsonSizes),
         });
 
         if (status !== 'ok') {
