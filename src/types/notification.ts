@@ -1,4 +1,4 @@
-interface INotification {
+export interface INotification {
     eventId: number;
     date: number;
     type: NotificationType;

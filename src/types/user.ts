@@ -1,7 +1,7 @@
 import { ICity } from './city';
 import { IPhoto } from './photo';
 
-export interface IUser {
+export type IUser = {
     userId: number;
     login: string;
     firstName: string;
@@ -15,7 +15,7 @@ export interface IUser {
     city?: ICity | null;
     followers?: number;
     isFollowed?: boolean;
-}
+};
 
 export const enum Sex {
     NONE = 'NOT_SET',
@@ -23,11 +23,20 @@ export const enum Sex {
     MALE = 'MALE',
 }
 
-export interface IUserStat {
-    visitedSights: number;
-    authorOfSights: number;
-    authorOfAllSights: number;
-    authorOfCollections: number;
-    photosOfSights: number;
-    comments: number;
-}
+export type IUserAchievements = {
+    sights: {
+        created: number;
+        verified: number;
+        visited: number;
+        desired: number;
+    };
+    collections: {
+        created: number;
+    };
+    photos: {
+        uploaded: number;
+    };
+    comments: {
+        added: number;
+    };
+};

@@ -37,7 +37,7 @@ export default class PhotosApprove extends PrivateMethodAPI<IParams, boolean> {
 
         const result = await database.apply(
             'update `photo`, `sightPhoto` set `photo`.`type` = ? where `photo`.`photoId` = `sightPhoto`.`photoId` and `photo`.`photoId` = ? and `sightPhoto`.`sightId` = ? and `photo`.`type` = ?',
-            [PhotoType.SIGHT, sightId, photoId, PhotoType.SIGHT_SUGGEST],
+            [PhotoType.SIGHT, sightId, photoId, PhotoType.SUGGEST],
         );
 
         return result.affectedRows > 0;

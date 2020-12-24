@@ -7,6 +7,8 @@ export interface IPhoto {
     photoMax: string;
     latitude?: number;
     longitude?: number;
+    width?: number;
+    height?: number;
 }
 
 export interface IPhotoRaw extends IPhoto {
@@ -16,7 +18,7 @@ export interface IPhotoRaw extends IPhoto {
 export const enum PhotoType {
     SIGHT = 1,
     PROFILE = 2,
-    SIGHT_SUGGEST = 4,
+    SUGGEST = 4,
 }
 
 export type IUploadPhotoIdentity = {

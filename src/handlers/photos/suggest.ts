@@ -37,7 +37,7 @@ export default class PhotosSuggest extends PrivateMethodAPI<IParams, boolean> {
 
         const result = await database.apply(
             'insert into `sightPhoto` (`sightId`, `photoId`, `orderId`) select ? as `sightId`, `photoId`, (select count(*) from `sightPhoto` where `sightId` = ?) as `count` from `photo` where `photoId` = ? and `type` = ?',
-            [sightId, sightId, photoId, PhotoType.SIGHT_SUGGEST],
+            [sightId, sightId, photoId, PhotoType.SUGGEST],
         );
 
         return result.affectedRows > 0;

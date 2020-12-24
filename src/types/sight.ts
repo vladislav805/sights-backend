@@ -3,6 +3,7 @@ import { IPhoto } from './photo';
 import { IPlace } from './place';
 import { ICategory } from './category';
 import { ISightField } from './field';
+import { IApiList } from './api';
 
 export interface ISight extends IPlace {
     sightId: number;
@@ -29,16 +30,16 @@ export const enum SightMask {
     ARCHIVED = 4,
 }
 
-export interface ISightStat {
+export interface IVisitStateStats {
     visited: number;
     desired: number;
 }
 
-export interface ISightRating {
+export type ISightRating = {
     value: number;
     count: number;
     rated?: number;
-}
+};
 
 export const enum VisitState {
     NOT_VISITED = 0,
@@ -46,7 +47,9 @@ export const enum VisitState {
     DESIRED = 2,
 }
 
-export interface ISightDistance {
+export type ISightDistance = {
     sightId: number;
     distance: number;
-}
+};
+
+export type ListOfSightsWithDistances = IApiList<ISight> & { distances: ISightDistance[] };

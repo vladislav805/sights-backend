@@ -6,6 +6,7 @@ import log from './logger';
 import { callMethod, createCompanion, initMethods } from './handlers';
 import { IApiParams } from './types/api';
 import { ApiError, ErrorCode } from './error';
+import { IApiError } from './types/base';
 
 const service = restana();
 
@@ -44,7 +45,7 @@ const methodHandler = async(request, response) => {
             error: {
                 code: e instanceof ApiError ? e.code : ErrorCode.UNKNOWN,
                 message: e instanceof ApiError ? e.toString() : e.message,
-            },
+            } as IApiError,
         });
     }
 };

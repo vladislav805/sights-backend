@@ -9,4 +9,5 @@ export type ICityExtended = ICity & {
     radius: number;
     latitude: number;
     longitude: number;
+    count?: number;
 };
