@@ -38,10 +38,15 @@ export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
 
         const json = JSON.stringify(sizes);
 
-        await remoteCommand('save', {
-            s: encodeURIComponent(json),
-            sig: md5(config.secret.UPLOAD_SAVE + json),
+        const status = await remoteCommand('save', {
+            s: json,
+            g: md5(config.secret.UPLOAD_SAVE + json),
         });
+
+        if (status !== 'ok') {
+            console.log(status);
+            throw new ApiError(ErrorCode.PHOTO_SAVE_ERROR_SIG);
+        }
 
         rest.path = sizes.photoMax.path;
         rest.ownerId = props.session.userId;
