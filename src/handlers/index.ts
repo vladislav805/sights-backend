@@ -43,6 +43,7 @@ import AccountActivate from './account/activate';
 import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
+import AccountLogout from './account/logout';
 import FeedGet from './feed/get';
 import SightsGetById from './sights/get-by-id';
 import SightsGet from './sights/get';
@@ -79,6 +80,7 @@ export const initMethods = () => {
         'account.changePassword': AccountChangePassword,
         'account.setProfilePhoto': AccountSetProfilePhoto,
         'account.setOnline': AccountSetOnline,
+        'account.logout': AccountLogout,
 
         'map.getSights': MapGetSights,
         'map.getCities': MapGetCities,

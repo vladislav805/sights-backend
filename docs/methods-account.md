@@ -7,6 +7,7 @@
 * [account.changePassword](#accountchangepassword)
 * [account.setProfilePhoto](#accountsetprofilephoto)
 * [account.setOnline](#accountsetonline)
+* [account.logout](#accountlogout)
 
 ## Варианты входа в аккаунт на сайте
 ### Основная регистрация
@@ -167,6 +168,22 @@ type Response = boolean;
 ```
 
 ## account.setOnline
+### Параметры
+_Нет параметров_
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## account.logout
 ### Параметры
 _Нет параметров_
 

@@ -29,3 +29,5 @@ export const getSessionByAuthKey = async(authKey: string, database: IDatabaseBun
 
     return session;
 };
+
+export const removeSessionFromCache = (authKey: string): void => void cache.delete(authKey);
