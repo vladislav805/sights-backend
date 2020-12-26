@@ -15,7 +15,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         if (!userIds.length) {
             if (props.session) {
-                userIds.push(props.session.user!.login);
+                userIds.push(String(props.session.userId));
             }
         }
 
