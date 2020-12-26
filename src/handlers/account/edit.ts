@@ -6,6 +6,7 @@ import { inRange } from '../../utils/in-range';
 import { toNumber } from '../../utils/to-number';
 import { wrapIdentify } from '../../utils/sql-packer-id';
 import { time } from '../../utils/time';
+import { isValidLogin } from '../../utils/account/is-valid-login';
 
 type IParams = {
     firstName?: string;
@@ -22,7 +23,7 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
         const res: IParams = {};
 
         if (typeof firstName === 'string') {
-            if (firstName.length > 2) {
+            if (firstName.length >= 2) {
                 res.firstName = firstName;
             } else {
                 throw new ApiError(ErrorCode.NAME_SHORT, 'First name so shorten');
@@ -30,7 +31,7 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
         }
 
         if (typeof lastName === 'string') {
-            if (lastName.length > 2) {
+            if (lastName.length >= 2) {
                 res.lastName = lastName;
             } else {
                 throw new ApiError(ErrorCode.NAME_SHORT, 'Last name so shorten');
@@ -38,7 +39,7 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
         }
 
         if (typeof login === 'string') {
-            if (inRange(login.length, 4, 20)) {
+            if (inRange(login.length, 4, 20) && isValidLogin(login)) {
                 res.login = login;
             } else {
                 throw new ApiError(ErrorCode.LOGIN_LENGTH, 'Login length will be about 4-20 symbols');
@@ -80,9 +81,12 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
             props.session.userId,
         ];
 
-        const where = 'login' in params
-            ? 'and `login` is null'
-            : '';
+        let where = '';
+
+        if ('login' in params) {
+            where = 'and `login` = ?';
+            values.push(`id${props.session.userId}`);
+        }
 
         const sets = keys.map(key => `${wrapIdentify(key)} = ?`);
 
@@ -90,6 +94,10 @@ export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
             `update \`user\` set ${sets}, \`lastSeen\` = ? where \`userId\` = ? ${where}`,
             values,
         );
+
+        if (!res.affectedRows && 'login' in params) {
+            throw new ApiError(ErrorCode.LOGIN_ALREADY_CHANGED, 'Login already changed');
+        }
 
         return res.affectedRows > 0;
     }

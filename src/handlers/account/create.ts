@@ -17,6 +17,7 @@ import { createSession } from '../../utils/account/create-session';
 import { ISession } from '../../types/session';
 import { time } from '../../utils/time';
 import { getUsers } from '../../utils/users/get-users';
+import { isValidLogin } from '../../utils/account/is-valid-login';
 
 type IParams = {
     isSocial: boolean;
@@ -57,8 +58,8 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
                 throw new ApiError(ErrorCode.NAME_SHORT, 'Name so shorten');
             }
 
-            if (!isValidValue(login) || !inRange(login.length, 4, 20)) {
-                throw new ApiError(ErrorCode.LOGIN_LENGTH, 'Login length will be about 4-20 symbols');
+            if (!isValidLogin(login as string)) {
+                throw new ApiError(ErrorCode.LOGIN_LENGTH, 'Login length will be about 4-20 symbols and may contains only latin letters, numbers and _');
             }
 
             if (!isValidValue(password) || !inRange(password.length, 6, 30)) {
