@@ -14,9 +14,9 @@ import { sendMail, SendMessageResult } from '../../utils/send-mail';
 import { createHash } from 'crypto';
 import { hashPassword } from '../../utils/account/password';
 import { createSession } from '../../utils/account/create-session';
-import { IDatabaseBundle } from '../../database';
 import { ISession } from '../../types/session';
 import { time } from '../../utils/time';
+import { getUsers } from '../../utils/users/get-users';
 
 type IParams = {
     isSocial: boolean;
@@ -90,7 +90,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
         };
     }
 
-    protected async perform(params: IParams, props: ICompanion): Promise<IResult | ISession> {
+    protected async perform(params: IParams, companion: ICompanion): Promise<IResult | ISession> {
         const { isSocial, vkCode, telegramData } = params;
         let info!: IUserInfo;
 
@@ -132,7 +132,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
 
         try {
             // Пытаемся создать пользователя
-            const res = await props.database.apply(
+            const res = await companion.database.apply(
                 `insert into \`user\` (${columns.join(', ')}) values (${placeholders})`,
                 values,
             );
@@ -142,7 +142,17 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
 
             // Если авторизация через соцсеть, то сразу же возвращаем сессию
             if (isSocial) {
-                return this.createSocialSession(props.database, Boolean(telegramData), info.vkId ?? info.telegramId!);
+                // Такой логин пусть будет по умолчанию
+                await companion.database.apply(
+                    'update `user` set `login` = ? where `userId` = ?',
+                    [`id${userId}`, userId],
+                );
+
+                return this.createSocialSession(
+                    companion,
+                    Boolean(telegramData),
+                    info.vkId ?? info.telegramId!,
+                );
             }
 
             // Если обычная регистрация, то шлём письмо с активацией на указанное мыло
@@ -152,7 +162,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
                 .digest('hex')
                 .substring(0, 10);
 
-            await props.database.apply(
+            await companion.database.apply(
                 'insert into `activate` (`userId`, `hash`) values (?, ?)',
                 [userId, hash],
             );
@@ -165,16 +175,16 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
             };
         } catch (e) {
             // Если регистрация провалилась из-за дубликата
-            if (e.errno === 1062) {
+            console.error(e);
+            if (e.errno === 1062 || e.code === 'ER_DUP_ENTRY') {
                 // Какой ключ дублируется?
                 const match = e.sqlMessage.match(/for key '([^']+)'/);
                 const key = match[1];
-
                 let code: ErrorCode = ErrorCode.ETC_REGISTER_ERROR;
                 let message: string = 'unknown error';
                 switch (key) {
                     // Мыло? Оно регнуто
-                    case 'email': {
+                    case 'user.email': {
                         code = ErrorCode.EMAIL_ALREADY_REGISTERED;
                         message = 'This email already registered';
                         break;
@@ -188,11 +198,11 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
                     }
 
                     // Идентификатор ВК или Telegram? Аккаунт уже создан, нужно авторизоваться
-                    case 'vkId':
-                    case 'telegramId': {
+                    case 'user.vkId':
+                    case 'user.telegramId': {
                         const isTelegram = e.sqlMessage.includes('telegramId');
 
-                        return this.createSocialSession(props.database, isTelegram, info.vkId ?? info.telegramId!);
+                        return this.createSocialSession(companion, isTelegram, info.vkId ?? info.telegramId!);
                     }
 
                     default: {
@@ -248,14 +258,17 @@ https://${config.domain.MAIN}/island/activation?hash=${hash}
      * Вызывается только тогда, когда такой юзер точно существует
      * Поэтому проверки на то, что такой юзер не найдется нет
      */
-    private async createSocialSession(database: IDatabaseBundle, isTelegram: boolean, id: number): Promise<ISession> {
+    private async createSocialSession(companion: ICompanion, isTelegram: boolean, id: number): Promise<ISession> {
         const key = wrapIdentify(isTelegram ? 'telegramId' : 'vkId');
 
-        const user = await database.select<IUser>(
+        const [shortUser] = await companion.database.select<IUser>(
             `select \`userId\` from \`user\` where ${key} = ?`,
             [id],
         );
 
-        return createSession(database, user[0].userId);
+        const session = await createSession(companion.database, shortUser.userId);
+        const [user] = await getUsers([shortUser.userId], 'ava', companion);
+
+        return { ...session, user };
     }
 }
