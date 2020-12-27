@@ -8,8 +8,6 @@ import { toNumber } from '../../utils/to-number';
 import { wrapIdentify } from '../../utils/sql-packer-id';
 import { ITelegramAuthResult } from '../../utils/telegram/types';
 import { checkTelegramHash } from '../../utils/telegram/check-hash';
-import { getVkToken } from '../../utils/vk/get-token';
-import { getVkUser } from '../../utils/vk/get-user';
 import { sendMail, SendMessageResult } from '../../utils/send-mail';
 import { createHash } from 'crypto';
 import { hashPassword } from '../../utils/account/password';
@@ -18,6 +16,8 @@ import { ISession } from '../../types/session';
 import { time } from '../../utils/time';
 import { getUsers } from '../../utils/users/get-users';
 import { isValidLogin } from '../../utils/account/is-valid-login';
+import { IVkAuthResult } from '../../utils/vk/types';
+import { checkVkHash } from '../../utils/vk/check-hash';
 
 type IParams = {
     isSocial: boolean;
@@ -36,7 +36,7 @@ type IUserInfo = {
 };
 
 type IUserSocial = {
-    vkCode?: string;
+    vkData?: IVkAuthResult;
     telegramData?: ITelegramAuthResult;
 };
 
@@ -49,9 +49,9 @@ const isValidValue = (str: ApiParam, min: number = 1): str is string => typeof s
 
 export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const { firstName, lastName, login, password, sex, email, cityId, vkCode, telegramData } = params;
+        const { firstName, lastName, login, password, sex, email, cityId, vkData, telegramData } = params;
 
-        const isSocial = !!vkCode || !!telegramData;
+        const isSocial = !!vkData || !!telegramData;
 
         if (!isSocial) {
             if (!isValidValue(firstName, 2) || !isValidValue(lastName, 2)) {
@@ -84,7 +84,9 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
             email: email as string,
             cityId: !isSocial ? toNumber(cityId, true) : null,
             sex: sex as Sex,
-            vkCode: vkCode as string,
+            vkData: typeof vkData === 'string'
+                ? JSON.parse(vkData) as IVkAuthResult
+                : undefined,
             telegramData: typeof telegramData === 'string'
                 ? JSON.parse(telegramData) as ITelegramAuthResult
                 : undefined,
@@ -92,12 +94,12 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
     }
 
     protected async perform(params: IParams, companion: ICompanion): Promise<IResult | ISession> {
-        const { isSocial, vkCode, telegramData } = params;
+        const { isSocial, vkData, telegramData } = params;
         let info!: IUserInfo;
 
         if (isSocial) {
-            if (vkCode) {
-                info = await this.makeVk(vkCode);
+            if (vkData) {
+                info = await this.makeVk(vkData);
             }
 
             if (telegramData) {
@@ -219,16 +221,15 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
     }
 
     // noinspection JSMethodCanBeStatic
-    private async makeVk(code: string): Promise<IUserInfo> {
-        const session = await getVkToken(code);
-
-        const user = await getVkUser(session.access_token);
+    private async makeVk(data: IVkAuthResult): Promise<IUserInfo> {
+        if (!checkVkHash(data)) {
+            throw new ApiError(ErrorCode.VK_INVALID_HASH, 'Invalid vk hash');
+        }
 
         return {
-            vkId: user.id,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            sex: [Sex.NONE, Sex.FEMALE, Sex.MALE][user.sex ?? 0],
+            vkId: data.uid,
+            firstName: data.first_name,
+            lastName: data.last_name,
         };
     }
 

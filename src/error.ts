@@ -25,6 +25,7 @@ export const enum ErrorCode {
     LOGIN_ALREADY_CHANGED = 25,
 
     TELEGRAM_INVALID_HASH = 28,
+    VK_INVALID_HASH = 29,
 
     ALREADY_FOLLOWING = 31,
     NOT_FOLLOWING = 32,
