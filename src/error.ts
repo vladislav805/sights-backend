@@ -24,6 +24,7 @@ export const enum ErrorCode {
     ACCOUNT_BANNED = 24,
     LOGIN_ALREADY_CHANGED = 25,
 
+    UNKNOWN_SOCIAL = 26,
     TELEGRAM_INVALID_HASH = 28,
     VK_INVALID_HASH = 29,
 

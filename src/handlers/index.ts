@@ -44,6 +44,7 @@ import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
 import AccountGetSocialConnections from './account/get-social-connections';
+import AccountSetSocialConnection from './account/set-social-connection';
 import AccountLogout from './account/logout';
 import FeedGet from './feed/get';
 import SightsGetById from './sights/get-by-id';
@@ -82,6 +83,7 @@ export const initMethods = () => {
         'account.setProfilePhoto': AccountSetProfilePhoto,
         'account.setOnline': AccountSetOnline,
         'account.getSocialConnections': AccountGetSocialConnections,
+        'account.setSocialConnection': AccountSetSocialConnection,
         'account.logout': AccountLogout,
 
         'map.getSights': MapGetSights,
