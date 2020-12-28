@@ -92,7 +92,7 @@ type Response = ISight[];
 * `string? description` - описание;
 * `int? cityId` - идентификатор города;
 * `int? categoryId` - идентификатор категории;
-* `int[]? tagIds` - идентификаторы тегов.
+* `string[]? tags` - теги.
 
 ### Формат ответа
 ```ts
@@ -118,7 +118,7 @@ type Response = {
 * `string? description` - описание;
 * `int? cityId` - идентификатор города;
 * `int? categoryId` - идентификатор категории;
-* `int[]? tagIds` - идентификаторы тегов.
+* `string[]? tags` - теги.
 
 ### Формат ответа
 ```ts

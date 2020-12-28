@@ -13,7 +13,7 @@ type IParams = {
     description: string;
     cityId: number | null;
     categoryId: number | null;
-    tagIds: number[];
+    tags: string[];
 };
 
 type IResult = boolean;
@@ -43,24 +43,25 @@ export default class SightsEdit extends PrivateMethodAPI<IParams, IResult> {
             description: params.description as string ?? '',
             cityId: toNumber(params.cityId, true),
             categoryId: toNumber(params.categoryId, true),
-            tagIds: paramToArrayOf(params.tagIds as string, Number),
+            tags: paramToArrayOf(params.tags as string),
         };
     }
 
-    protected async perform(params: IParams, props: ICompanionPrivate): Promise<IResult> {
-        const sight = await getSightById(props.database, params.sightId);
+    protected async perform(params: IParams, companion: ICompanionPrivate): Promise<IResult> {
+        const sight = await getSightById(companion.database, params.sightId);
 
-        if (sight.ownerId !== props.session.userId) {
+        if (sight.ownerId !== companion.session.userId) {
             throw new ApiError(ErrorCode.ACCESS_DENIED, 'You cannot edit this sight');
         }
 
-        const result = await props.database.apply(
+        const result = await companion.database.apply(
             'update `sight` set `placeId` = ?, `dateUpdated` = unix_timestamp(now()), `title` = ?, `description` = ?, `cityId` = ?, `categoryId` = ? where `sightId` = ?',
             [params.placeId, params.title, params.description, params.cityId, params.categoryId, params.sightId],
         );
 
-        if (params.tagIds.length) {
-            await setTags(props, params.sightId, params.tagIds);
+        if (params.tags.length) {
+            const tagIds = await companion.callMethod<number[]>('tags.getIdByTags', { tags: params.tags });
+            await setTags(companion, sight.sightId, tagIds);
         }
 
         return result.affectedRows > 0;

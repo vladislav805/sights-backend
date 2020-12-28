@@ -11,7 +11,7 @@ type IParams = {
     description: string;
     cityId: number | null;
     categoryId: number | null;
-    tagIds: number[];
+    tags: string[];
 };
 
 type IResult = {
@@ -35,20 +35,21 @@ export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
             description: params.description as string ?? '',
             cityId: toNumber(params.cityId, true),
             categoryId: toNumber(params.categoryId, true),
-            tagIds: paramToArrayOf(params.tagIds as string, Number),
+            tags: paramToArrayOf(params.tags as string),
         };
     }
 
-    protected async perform(params: IParams, props: ICompanionPrivate): Promise<IResult> {
-        const result = await props.database.apply(
+    protected async perform(params: IParams, companion: ICompanionPrivate): Promise<IResult> {
+        const result = await companion.database.apply(
             'insert into `sight` (`ownerId`, `placeId`, `dateCreated`, `title`, `description`, `cityId`, `categoryId`) values (?, ?, unix_timestamp(now()), ?, ?, ?, ?)',
-            [props.session.userId, params.placeId, params.title, params.description, params.cityId, params.categoryId],
+            [companion.session.userId, params.placeId, params.title, params.description, params.cityId, params.categoryId],
         );
 
         const sightId = result.insertId;
 
-        if (params.tagIds.length) {
-            await setTags(props, sightId, params.tagIds);
+        if (params.tags.length) {
+            const tagIds = await companion.callMethod<number[]>('tags.getIdByTags', { tags: params.tags });
+            await setTags(companion, sightId, tagIds);
         }
 
         return { sightId };
