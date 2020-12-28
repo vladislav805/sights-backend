@@ -6,7 +6,7 @@
 * [sights.edit](#sightsedit)
 * [sights.remove](#sightsremove)
 * [sights.setTags](#sightssettags)
-* sights.setPhotos
+* [sights.setPhotos](#sightssetphotos)
 * [sights.getVisitStat](#sightsgetvisitstat)
 * [sights.setVisitState](#sightssetvisitstate)
 * [sights.setMask](#sightssetmask)
@@ -152,6 +152,23 @@ type Response = boolean;
 ### Параметры
 * `int sightId` - идентификатор достопримечательности;
 * `int[] tagIds` - идентификаторы тегов.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## sights.setPhotos
+### Параметры
+* `int sightId` - идентификатор достопримечательности;
+* `int[] photoIds` - идентификаторы фотографий.
 
 ### Формат ответа
 ```ts

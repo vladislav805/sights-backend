@@ -60,6 +60,7 @@ import SightsSetVisitState from './sights/set-visit-state';
 import SightsRemove from './sights/remove';
 import SightsGetVisitStat from './sights/get-visit-stat';
 import SightsGetRecent from './sights/get-recent';
+import SightsSetPhotos from './sights/set-photos';
 import FieldsGet from './fields/get';
 import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
@@ -97,6 +98,7 @@ export const initMethods = () => {
         'sights.edit': SightsEdit,
         'sights.remove': SightsRemove,
         'sights.setTags': SightsSetTags,
+        'sights.setPhotos': SightsSetPhotos,
         'sights.setVisitState': SightsSetVisitState,
         'sights.setMask': SightsSetMask,
         'sights.getRandomSightId': SightsGetRandomSightId,
