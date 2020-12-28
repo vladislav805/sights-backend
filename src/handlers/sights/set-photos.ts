@@ -12,8 +12,8 @@ type IParams = {
 
 export default class SightsSetPhotos extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        if (!('tagIds' in params)) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter tagIds not specified');
+        if (!('photoIds' in params)) {
+            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter photoIds not specified');
         }
 
         return {
