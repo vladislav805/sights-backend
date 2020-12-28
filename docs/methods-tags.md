@@ -3,6 +3,7 @@
 * [tags.get](#tagsget)
 * [tags.getById](#tagsgetbyid)
 * [tags.search](#tagssearch)
+* [tags.getIdByTags](#tagsgetidbytags)
 
 ## tags.get
 ### Параметры
@@ -74,5 +75,23 @@ type Response = ITag[];
     }, {
         // ...
     }]
+}
+```
+
+## tags.getIdByTags
+Возвращает идентификаторы тегов по их названиям. Если тега не существует — он будет создан.
+### Параметры
+* `string[] tags` - названия тегов (массив строк или строка с тегами, разделёнными запятой).
+
+### Формат ответа
+```ts
+type Response = number[];
+```
+
+### Пример ответа
+> `tags=Кот,Романтичное,Тест`
+```json5
+{
+    "result": [16, 44, 61]
 }
 ```

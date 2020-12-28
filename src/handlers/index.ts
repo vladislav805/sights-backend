@@ -1,6 +1,7 @@
-import { IApiParams } from '../types/api';
-import { ICompanion, IMethodAPI, PrivateMethodAPI } from './method';
-import { ISession } from '../types/session';
+import type { IApiParams } from '../types/api';
+import type { ICompanion, IMethodAPI } from './method';
+import { PrivateMethodAPI } from './method';
+import type { ISession } from '../types/session';
 import { createConnectionFromPool } from '../database';
 import { ApiError, ErrorCode } from '../error';
 import { getSessionByAuthKey } from '../session';
@@ -65,8 +66,9 @@ import FieldsGet from './fields/get';
 import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
 import Execute from './execute';
+import TagsGetIdByTags from './tags/get-id-by-tags';
 
-export const methods: Map<string, IMethodAPI> = new Map<string, IMethodAPI>();
+export const methods = new Map<string, IMethodAPI>();
 
 export const initMethods = () => {
     const listOfMethods = {
@@ -123,6 +125,7 @@ export const initMethods = () => {
         'tags.get': TagsGet,
         'tags.getById': TagsGetById,
         'tags.search': TagsSearch,
+        'tags.getIdByTags': TagsGetIdByTags,
 
         'feed.get': FeedGet,
 
