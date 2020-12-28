@@ -3,7 +3,6 @@ import { IApiListExtended, IApiParams } from '../../types/api';
 import { IFeedItem } from '../../types/feed';
 import { toNumber } from '../../utils/to-number';
 import { ISight } from '../../types/sight';
-import { IUser } from '../../types/user';
 import { IPhoto, IPhotoRaw, PhotoType } from '../../types/photo';
 import { MONTH } from '../../date';
 import { clamp } from '../../utils/clamp';
@@ -12,6 +11,7 @@ import raw2object from '../../utils/photos/raw-to-object';
 import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
 import { SIGHT_KEYS } from '../sights/keys';
 import { IPlace } from '../../types/place';
+import { getUsers } from '../../utils/users/get-users';
 
 type IParams = {
     count: number;
@@ -67,7 +67,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IApiListExtended<
 
         const userIds = items.map(item => item.ownerId);
 
-        const users = await companion.callMethod<IUser[]>('users.get', { userIds, fields });
+        const users = await getUsers(userIds, fields, companion);
 
         return {
             items,
