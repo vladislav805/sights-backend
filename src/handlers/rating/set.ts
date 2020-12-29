@@ -15,7 +15,7 @@ export default class RatingSet extends PrivateMethodAPI<IParams, ISightRating> {
         const sightId = toNumber(params.sightId);
         const rating = toNumber(params.rating);
 
-        if (rating < 0 || rating > 10) {
+        if (rating < 0 || rating > 5) {
             throw new ApiError(ErrorCode.RATING_INVALID_VALUE);
         }
 
