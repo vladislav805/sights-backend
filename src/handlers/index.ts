@@ -68,6 +68,7 @@ import SightsGetRandomSightId from './sights/get-random-sight-id';
 import FieldsGet from './fields/get';
 import FieldsSet from './fields/set';
 import FieldsGetAll from './fields/get-all';
+import RatingSet from './rating/set';
 import Execute from './execute';
 
 export const methods = new Map<string, IMethodAPI>();
@@ -146,6 +147,8 @@ export const initMethods = () => {
         'comments.add': CommentsAdd,
         'comments.remove': CommentsRemove,
         'comments.report': CommentsReport,
+
+        'rating.set': RatingSet,
 
         'utils.getTime': UtilsGetTime,
 

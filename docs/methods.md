@@ -12,6 +12,5 @@
 * [comments.*](methods-comments.md) - информация о комментариях;
 * [feed.*](methods-feed.md) - новости;
 * [notifications.*](methods-notifications.md) - уведомления;
-* [collections.*](methods-collections.md) - информация о коллекциях.
-
-# Объекты
+* [collections.*](methods-collections.md) - информация о коллекциях;
+* [rating.*](methods-rating.md) - информация об оценках.

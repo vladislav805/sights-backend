@@ -40,6 +40,8 @@ export const enum ErrorCode {
     PHOTO_SAVE_ERROR_SIG = 58,
     PHOTO_SAVE_ERROR_NOT_EXISTS = 59,
 
+    RATING_INVALID_VALUE = 70,
+
     EXECUTE_INVALID_CODE = 120,
 }
 
