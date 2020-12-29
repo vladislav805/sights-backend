@@ -58,7 +58,12 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         const filterWhere: string[] = [];
 
         // Для подстановок
-        const values: unknown[] = [lat1, lat2, lng1, lng2, params.count];
+        const values: number[] = [
+            // lat1 + (lat2 - lat1) / 2, lng1 + (lng2 - lng1) / 2,
+            lat1, lat2,
+            lng1, lng2,
+            params.count,
+        ];
 
         // Фильтры по подтверждённости и наоборот
         if (isBit(params.filters, Filter.VERIFIED)) {
@@ -102,7 +107,8 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
 
         const { joins, columns } = params.fields.build(session);
 
-        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit ?`;
+        // const sql = `select \`pl\`.*, ${columns}, (sqrt(pow(\`pl\`.\`latitude\` - ?, 2) + pow(\`pl\`.\`longitude\` - ?, 2))) as \`_d\` from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` order by \`_d\` asc limit ?`;
+        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` asc limit ?`;
 
         const raw = await database.select<ISight>(sql, values);
 
