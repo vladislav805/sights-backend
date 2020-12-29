@@ -15,6 +15,7 @@
 * sights.search
 * [sights.getRecent](#sightsgetrecent)
 * [sights.getCounts](#sightsgetcounts)
+* [sights.report](#sightsreport)
 
 #### etc
 * Дополнительные поля - [fields](#sight-fields)
@@ -351,6 +352,22 @@ type Response = {
         "active": 1499,
         "archived": 66
     }
+}
+```
+
+## sights.report
+### Параметры
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
 }
 ```
 

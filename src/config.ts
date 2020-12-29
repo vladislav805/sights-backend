@@ -66,6 +66,10 @@ const ThirdParty = {
     },
 };
 
+const UID = {
+    TELEGRAM_ADMIN_ID: 63923,
+};
+
 const config = {
     secret,
     domain,
@@ -74,6 +78,7 @@ const config = {
     PORT_MAIN,
     PORT_MEDIA,
     ThirdParty,
+    UID,
 };
 
 export default config;

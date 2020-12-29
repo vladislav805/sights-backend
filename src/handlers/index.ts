@@ -8,65 +8,67 @@ import { getSessionByAuthKey } from '../session';
 import log from '../logger';
 import UsersGet from './users/get';
 import UsersSearch from './users/search';
-import UsersGetFollowers from './users/get-followers';
 import UsersFollow from './users/follow';
+import UsersGetFollowers from './users/get-followers';
 import UsersGetAchievements from './users/get-achievements';
 import SessionsGet from './sessions/get';
 import UtilsGetTime from './utils/time';
+import MapAddPlace from './map/add-place';
 import MapGetSights from './map/get-sights';
 import MapGetCities from './map/get-cities';
 import MapGetPlaces from './map/get-places';
-import MapAddPlace from './map/add-place';
 import CitiesGet from './cities/get';
 import CitiesGetById from './cities/get-by-id';
 import CitiesSearch from './cities/search';
 import CommentsGet from './comments/get';
 import CommentsAdd from './comments/add';
 import CommentsRemove from './comments/remove';
+import CommentsReport from './comments/report';
 import CategoriesGet from './categories/get';
 import CategoriesGetById from './categories/get-by-id';
 import TagsGet from './tags/get';
-import TagsGetById from './tags/get-by-id';
 import TagsSearch from './tags/search';
+import TagsGetById from './tags/get-by-id';
+import TagsGetIdByTags from './tags/get-id-by-tags';
 import PhotosGet from './photos/get';
-import PhotosGetById from './photos/get-by-id';
-import PhotosGetUnsorted from './photos/get-unsorted';
+import PhotosSave from './photos/save';
 import PhotosRemove from './photos/remove';
-import PhotosGetUploadUri from './photos/getUploadUri';
+import PhotosGetById from './photos/get-by-id';
 import PhotosSuggest from './photos/suggest';
 import PhotosApprove from './photos/approve';
 import PhotosDecline from './photos/decline';
-import PhotosSave from './photos/save';
+import PhotosGetUnsorted from './photos/get-unsorted';
+import PhotosGetUploadUri from './photos/getUploadUri';
+import AccountEdit from './account/edit';
 import AccountCreate from './account/create';
+import AccountLogout from './account/logout';
+import AccountActivate from './account/activate';
 import AccountSetOnline from './account/set-online';
 import AccountAuthorize from './account/authorize';
-import AccountActivate from './account/activate';
-import AccountSetProfilePhoto from './account/set-profile-photo';
-import AccountEdit from './account/edit';
 import AccountChangePassword from './account/change-password';
-import AccountGetSocialConnections from './account/get-social-connections';
+import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountSetSocialConnection from './account/set-social-connection';
-import AccountLogout from './account/logout';
+import AccountGetSocialConnections from './account/get-social-connections';
 import FeedGet from './feed/get';
-import SightsGetById from './sights/get-by-id';
 import SightsGet from './sights/get';
-import SightsGetRandomSightId from './sights/get-random-sight-id';
-import SightsGetCounts from './sights/get-counts';
-import SightsGetNearby from './sights/get-nearby';
 import SightsAdd from './sights/add';
 import SightsEdit from './sights/edit';
+import SightsRemove from './sights/remove';
+import SightsReport from './sights/report';
+import SightsGetById from './sights/get-by-id';
 import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
-import SightsSetVisitState from './sights/set-visit-state';
-import SightsRemove from './sights/remove';
-import SightsGetVisitStat from './sights/get-visit-stat';
 import SightsGetRecent from './sights/get-recent';
 import SightsSetPhotos from './sights/set-photos';
+import SightsGetNearby from './sights/get-nearby';
+import SightsGetCounts from './sights/get-counts';
+import SightsGetVisitStat from './sights/get-visit-stat';
+import SightsSetVisitState from './sights/set-visit-state';
+import SightsGetRandomSightId from './sights/get-random-sight-id';
 import FieldsGet from './fields/get';
-import FieldsGetAll from './fields/get-all';
 import FieldsSet from './fields/set';
+import FieldsGetAll from './fields/get-all';
 import Execute from './execute';
-import TagsGetIdByTags from './tags/get-id-by-tags';
 
 export const methods = new Map<string, IMethodAPI>();
 
@@ -108,6 +110,7 @@ export const initMethods = () => {
         'sights.getVisitStat': SightsGetVisitStat,
         'sights.getRecent': SightsGetRecent,
         'sights.getCounts': SightsGetCounts,
+        'sights.report': SightsReport,
 
         'fields.get': FieldsGet,
         'fields.getAll': FieldsGetAll,
@@ -142,6 +145,7 @@ export const initMethods = () => {
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
         'comments.remove': CommentsRemove,
+        'comments.report': CommentsReport,
 
         'utils.getTime': UtilsGetTime,
 

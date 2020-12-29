@@ -9,6 +9,7 @@
         "shit:fixbuild": "rm -f node_modules/trouter/index.mjs node_modules/regexparam/dist/regexparam.mjs"
     },
     "dependencies": {
+        "@apidog/multibot-sdk-ts": "0.0.8-5",
         "@apidog/vk-client": "0.1.0",
         "@babel/core": "7.12.10",
         "@babel/types": "7.12.11",

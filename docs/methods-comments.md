@@ -3,7 +3,7 @@
 * [comments.get](#commentsget)
 * [comments.add](#commentsadd)
 * [comments.remove](#commentsremove)
-* comments.report
+* [comments.report](#commentsreport)
 
 ## comments.get
 ### Параметры
@@ -72,6 +72,22 @@ type Response = IComment;
 ## comments.remove
 ### Параметры
 * `commentId` - идентификатор комментария.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+{
+    "result": true
+}
+```
+
+## comments.report
+### Параметры
+* `int commentId` - идентификатор комментария.
 
 ### Формат ответа
 ```ts
