@@ -24,7 +24,7 @@ export default class RatingSet extends PrivateMethodAPI<IParams, ISightRating> {
 
     protected async perform({ sightId, rating }: IParams, companion: ICompanion<ISession>): Promise<ISightRating> {
         if (rating > 0) {
-            const has = RatingSet.hasCurrentUserRating(sightId, companion);
+            const has = await RatingSet.hasCurrentUserRating(sightId, companion);
 
             const sql = has
                 ? 'update `rating` set `rate` = ?, `date` = unix_timestamp(now()) where `sightId` = ? and `userId` = ?'
