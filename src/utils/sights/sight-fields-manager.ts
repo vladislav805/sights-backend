@@ -80,9 +80,8 @@ export default class SightFieldsManager extends FieldsManager<'photo' | 'city' |
         }
 
         if (this.is(SIGHTS_GET_FIELD_RATING)) {
-            joins.push('left join `rating` `ra` on `ra`.`sightId` = `sight`.`sightId`');
             columns.push('`sight`.`rating` as `' + SFM_RATING + '_value`');
-            columns.push('count(`ra`.`rate`) as `' + SFM_RATING + '_count`');
+            columns.push('(select count(*) from `rating` where `rating`.`sightId` = `sight`.`sightId`) as `' + SFM_RATING + '_count`');
             if (!!session) {
                 columns.push('`rs`.`rate` as `' + SFM_RATING + '_rated`');
                 joins.push('left join `rating` `rs` on `rs`.`sightId` = `sight`.`sightId` and `rs`.`userId` = ' + session.userId);
