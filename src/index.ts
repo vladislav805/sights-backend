@@ -32,12 +32,11 @@ const methodHandler = async(request, response) => {
 
     log(`Request to ${method} with ${apiParams}`);
 
+    const companion = await createCompanion(apiParams);
     try {
         response.setHeader('access-control-allow-origin', '*');
 
-        const companion = await createCompanion(apiParams);
         const result = await callMethod(method, apiParams, companion);
-        companion.database?.destroy();
 
         response.send({ result });
     } catch (e) {
@@ -48,6 +47,7 @@ const methodHandler = async(request, response) => {
             } as IApiError,
         });
     }
+    companion.database?.destroy?.();
 };
 
 service.get('/api/:method', methodHandler);
