@@ -6,11 +6,10 @@ const tg = new Telegram.Bot({
 });
 
 export const sendTelegramMessage = (text: string): void => {
-    console.log('send', text)
     tg.sendMessage({
         text,
         chat_id: config.UID.TELEGRAM_ADMIN_ID,
         parse_mode: Telegram.ParseMode.Markdown,
         disable_notification: true,
-    }).then(console.log);
+    });
 };

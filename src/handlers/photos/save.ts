@@ -44,7 +44,6 @@ export default class PhotosSave extends PrivateMethodAPI<IParams, IPhoto> {
         });
 
         if (status !== 'ok') {
-            console.log(status);
             throw new ApiError(ErrorCode.PHOTO_SAVE_ERROR_SIG);
         }
 
