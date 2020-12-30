@@ -4,6 +4,9 @@ import getSightById from './get-sight';
 import { ICompanionPrivate } from '../../handlers/method';
 import { ApiError, ErrorCode } from '../../error';
 
+/**
+ * TODO: порядок фотографий с помощью orderId не работает
+ */
 export default async function setPhotos({ database, session }: ICompanionPrivate, sightId: number, newIds: number[]): Promise<boolean> {
     const sight = await getSightById(database, sightId);
 
@@ -11,11 +14,11 @@ export default async function setPhotos({ database, session }: ICompanionPrivate
         throw new ApiError(ErrorCode.ACCESS_DENIED, 'Access denied');
     }
 
-    type IPhotoId = { photoId: number };
-    const actualIds = await database.select<IPhotoId>(
-        'select `photoId` from `sightPhoto` where `sightId` = ?',
+    type IPhotoId = { photoId: number; orderId: number; };
+    const [actualIds, orderIds] = await database.select<IPhotoId>(
+        'select `photoId`, `orderId` from `sightPhoto` where `sightId` = ?',
         [sightId],
-    ).then(res => res.map(item => item.photoId));
+    ).then(res => [res.map(item => item.photoId), res.map(item => item.orderId)]);
 
     const { toDelete, toInsert } = differenceInsertDelete(actualIds, newIds);
 
@@ -26,10 +29,13 @@ export default async function setPhotos({ database, session }: ICompanionPrivate
         );
     }
 
+    const maxOrderId = Math.max(...orderIds);
+    const orderId = (isFinite(maxOrderId) ? maxOrderId : 0) + 1;
+
     if (toInsert.length) {
         await database.apply(
-            `insert into \`sightPhoto\` (\`sightId\`, \`photoId\`) values ${toInsert.map(() => '(?, ?)').join(',')}`,
-            flatten(toInsert.map(id => [sightId, id])),
+            `insert into \`sightPhoto\` (\`sightId\`, \`photoId\`, \`orderId\`) values ${toInsert.map(() => '(?, ?, ?)').join(',')}`,
+            flatten(toInsert.map((id, i) => [sightId, id, orderId + i])),
         );
     }
 
