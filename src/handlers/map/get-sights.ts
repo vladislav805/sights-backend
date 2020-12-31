@@ -99,7 +99,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
             if (isBit(params.filters, Filter.NOT_VISITED)) {
                 filterWhere.push('`sightVisit`.`state` is null');
             } else {
-                const value = params.filters === Filter.VISITED ? 1 : 2;
+                const value = isBit(params.filters, Filter.VISITED) ? 1 : 2;
 
                 filterWhere.push('`sightVisit`.`state` = ' + value);
             }
