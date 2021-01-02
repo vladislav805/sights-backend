@@ -2,6 +2,7 @@
 ## Список методов API секции collections.*
 * [collections.get](#collectionsget)
 * [collections.search](#collectionssearch)
+* [collections.getById](#collectionsgetbyid)
 * [collections.add](#collectionsadd)
 * [collections.edit](#collectionsedit)
 * [collections.remove](#collectionremove)
@@ -35,6 +36,24 @@ type Response = IApiList<ICollection>;
 ### Формат ответа
 ```ts
 type Response = IApiList<ICollection>;
+```
+
+### Пример ответа
+```json5
+
+```
+
+
+## collections.getById
+Возвращает коллекцию и полное её содержание по её идентификатору. 
+
+### Параметры
+* `string collectionId` - поисковый запрос;
+* `boolean onlyInformation = false` - `true`, если нужно получить только базовую информацию (иначе будет возвращён список с достопримечательностями в поле items).
+
+### Формат ответа
+```ts
+type Response = ICollectionExtended;
 ```
 
 ### Пример ответа

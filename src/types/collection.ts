@@ -1,3 +1,5 @@
+import { ISight } from './sight';
+
 export type CollectionType = 'PUBLIC' | 'DRAFT' | 'NEURAL_RESULT';
 
 export interface ICollection {
@@ -11,4 +13,8 @@ export interface ICollection {
     // tags: number[];
     cityId?: number;
     size: number;
+}
+
+export interface ICollectionExtended extends ICollection {
+    items: ISight[];
 }
