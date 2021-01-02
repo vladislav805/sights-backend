@@ -71,6 +71,7 @@ import FieldsGet from './fields/get';
 import FieldsSet from './fields/set';
 import FieldsGetAll from './fields/get-all';
 import RatingSet from './rating/set';
+import CollectionsGet from './collections/get';
 import Execute from './execute';
 import InternalGetPage from './internal/get-page';
 
@@ -154,6 +155,8 @@ export const initMethods = () => {
         'comments.report': CommentsReport,
 
         'rating.set': RatingSet,
+
+        'collections.get': CollectionsGet,
 
         'utils.getTime': UtilsGetTime,
 
