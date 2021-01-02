@@ -5,8 +5,8 @@ import { toNumber } from '../../utils/to-number';
 import { clamp } from '../../utils/clamp';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 
-type Sort = 'asc' | 'desc';
-const SORT: Sort[] = ['desc', 'asc'];
+const SORT = ['desc', 'asc'] as const;
+type Sort = typeof SORT[number];
 
 type IParams = {
     ownerId: number;
