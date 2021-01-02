@@ -12,7 +12,7 @@
 * [sights.setMask](#sightssetmask)
 * [sights.getNearby](#sightsgetnearby)
 * [sights.getRandomSightId](#sightsgetrandomsightid)
-* sights.search
+* [sights.search](#sightssearch)
 * [sights.getRecent](#sightsgetrecent)
 * [sights.getCounts](#sightsgetcounts)
 * [sights.report](#sightsreport)
@@ -290,6 +290,35 @@ type Response = number;
 {
     "result": 777
 }
+```
+
+## sights.search
+### Параметры
+* `string query` - запрос или хэштег, если первый символ "#" (остальные слова игнорируются);
+* `int? cityId` - идентификатор города;
+* `int? categoryId` - идентификатор категории;
+* `string[]? fields` - [дополнительная информация о достопримечательности](#sight-fields);
+* `string[] filters` - фильтрация объектов, которые нужно получить, допустимые значения:
+    * `verified` - подтверждённые;
+    * `!verified` - неподтверждённые;
+    * `archived` - архивные;
+    * `!archived` - не архивные;
+    * `photo` - с фотографиями;
+    * `!photo` - без фотографий;
+    * `visited` - посещённое (доступно только с `fields=visitState`);
+    * `!visited` - не посещённое (доступно только с `fields=visitState`);
+    * `desired` - желаемое к посещению (доступно только с `fields=visitState`).
+* `int count = 50` - количество;
+* `int offset = 0` - сдвиг выборки.
+
+### Формат ответа
+```ts
+type Response = IApiList<ISight>;
+```
+
+### Пример ответа
+```json5
+
 ```
 
 ## sights.getRecent

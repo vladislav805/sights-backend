@@ -42,6 +42,8 @@ export const enum ErrorCode {
 
     RATING_INVALID_VALUE = 70,
 
+    TAG_NOT_FOUND = 80,
+
     EXECUTE_INVALID_CODE = 120,
 }
 

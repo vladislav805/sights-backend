@@ -55,6 +55,7 @@ import SightsAdd from './sights/add';
 import SightsEdit from './sights/edit';
 import SightsRemove from './sights/remove';
 import SightsReport from './sights/report';
+import SightsSearch from './sights/search';
 import SightsGetById from './sights/get-by-id';
 import SightsSetTags from './sights/set-tags';
 import SightsSetMask from './sights/set-mask';
@@ -112,6 +113,7 @@ export const initMethods = () => {
         'sights.getRecent': SightsGetRecent,
         'sights.getCounts': SightsGetCounts,
         'sights.report': SightsReport,
+        'sights.search': SightsSearch,
 
         'fields.get': FieldsGet,
         'fields.getAll': FieldsGetAll,

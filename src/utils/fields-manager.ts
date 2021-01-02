@@ -18,6 +18,11 @@ export abstract class FieldsManager<Field extends string, ObjectType> implements
         this.fields = paramToArrayOf<Field>(fields).filter(key => allowed.includes(key));
     }
 
+    public readonly add = (field: Field): this => {
+        this.fields.push(field);
+        return this;
+    }
+
     public readonly is = (field: Field): boolean => this.fields.includes(field)
 
     public abstract build(session: ISession | null): BuildResult;
