@@ -45,6 +45,8 @@ export const enum ErrorCode {
     TAG_NOT_FOUND = 80,
 
     EXECUTE_INVALID_CODE = 120,
+
+    INTERNAL_PAGE_NOT_FOUND = 130,
 }
 
 export class ApiError extends Error {
