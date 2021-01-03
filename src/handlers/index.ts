@@ -71,6 +71,7 @@ import FieldsSet from './fields/set';
 import FieldsGetAll from './fields/get-all';
 import RatingSet from './rating/set';
 import Execute from './execute';
+import InternalGetPage from './internal/get-page';
 
 export const methods = new Map<string, IMethodAPI>();
 
@@ -155,6 +156,8 @@ export const initMethods = () => {
         'utils.getTime': UtilsGetTime,
 
         'execute': Execute,
+
+        'internal.getPage': InternalGetPage,
     };
 
     for (const name of Object.keys(listOfMethods)) {
