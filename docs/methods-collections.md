@@ -224,5 +224,7 @@ type Response = boolean;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": true
+}
 ```
