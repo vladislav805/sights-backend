@@ -72,6 +72,8 @@ import FieldsSet from './fields/set';
 import FieldsGetAll from './fields/get-all';
 import RatingSet from './rating/set';
 import CollectionsGet from './collections/get';
+import CollectionsAdd from './collections/add';
+import CollectionsEdit from './collections/edit';
 import CollectionsSearch from './collections/search';
 import CollectionsRemove from './collections/remove';
 import CollectionsGetById from './collections/get-by-id';
@@ -162,6 +164,8 @@ export const initMethods = () => {
         'rating.set': RatingSet,
 
         'collections.get': CollectionsGet,
+        'collections.add': CollectionsAdd,
+        'collections.edit': CollectionsEdit,
         'collections.getById': CollectionsGetById,
         'collections.search': CollectionsSearch,
         'collections.remove': CollectionsRemove,

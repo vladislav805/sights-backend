@@ -46,11 +46,19 @@ export const enum ErrorCode {
     TAG_NOT_FOUND = 80,
 
     COLLECTION_NOT_FOUND = 90,
+    INVALID_COLLECTION_TYPE = 92,
 
     EXECUTE_INVALID_CODE = 120,
 
     INTERNAL_PAGE_NOT_FOUND = 130,
 }
+
+const defaultMessages = {
+    [ErrorCode.UNKNOWN]: 'Unknown error',
+    [ErrorCode.ACCESS_DENIED]: 'Access denied',
+    [ErrorCode.UNSPECIFIED_PARAM]: 'Missed parameter',
+    [ErrorCode.EXPECTED_NUMBER]: 'Expected number',
+} as Record<ErrorCode, string>;
 
 export class ApiError extends Error {
     public readonly code;
@@ -64,7 +72,7 @@ export class ApiError extends Error {
     }
 
     public toString() {
-        return `#${this.code} - ${this.message}`;
+        return `#${this.code} - ${this.message ?? defaultMessages[this.code]}`;
     }
 }
 

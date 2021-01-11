@@ -145,7 +145,19 @@ type Response = ICollection;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": {
+        "collectionId": 5,
+        "ownerId": 1,
+        "title": "test",
+        "content": "ttttt",
+        "type": "PRIVATE",
+        "dateCreated": 1610391652,
+        "dateUpdated": 0,
+        "cityId": 1,
+        "size": 0
+    }
+}
 ```
 
 
@@ -169,7 +181,19 @@ type Response = ICollection;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": {
+        "collectionId": 5,
+        "ownerId": 1,
+        "title": "test",
+        "content": "ffff",
+        "type": "PRIVATE",
+        "dateCreated": 1610391652,
+        "dateUpdated": 1610391736,
+        "cityId": null,
+        "size": 0
+    }
+}
 ```
 
 ## collections.isAffiliate

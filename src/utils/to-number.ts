@@ -29,7 +29,7 @@ function toNumber(val: ApiParam, defaultValue: boolean | number | string | null 
             ErrorCode.EXPECTED_NUMBER,
             typeof defaultValue === 'string'
                 ? defaultValue
-                : 'Expected number'
+                : 'Expected number, found ' + typeof defaultValue
         );
     }
 

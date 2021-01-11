@@ -1,6 +1,6 @@
 import { ISight } from './sight';
 
-export type CollectionType = 'PUBLIC' | 'DRAFT' | 'NEURAL_RESULT';
+export type CollectionType = 'PUBLIC' | 'PRIVATE' | 'DRAFT' | 'NEURAL_RESULT';
 
 export interface ICollection {
     collectionId: number;
