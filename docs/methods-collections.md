@@ -130,7 +130,8 @@ type Response = boolean;
 
 ### Параметры
 * `int collectionId` - идентификатор коллекции;
-* `int sightId` - идентификатор достопримечательности.
+* `int sightId` - идентификатор достопримечательности; 
+* `boolean affiliate` - `true` - добавить, `false` - удалить.
 
 ### Формат ответа
 ```ts

@@ -1,6 +1,7 @@
 export const enum ErrorCode {
     UNKNOWN = 970,
     UNKNOWN_METHOD = 1,
+    /** @todo переделать использование этого параметра в UnspecifiedParamError */
     UNSPECIFIED_PARAM = 2,
     ACCESS_DENIED = 4,
 

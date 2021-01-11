@@ -74,6 +74,7 @@ import RatingSet from './rating/set';
 import CollectionsGet from './collections/get';
 import CollectionsGetById from './collections/get-by-id';
 import CollectionsIsAffiliate from './collections/is-affiliate';
+import CollectionsSetAffiliation from './collections/set-affiliation';
 import Execute from './execute';
 import InternalGetPage from './internal/get-page';
 
@@ -161,6 +162,7 @@ export const initMethods = () => {
         'collections.get': CollectionsGet,
         'collections.getById': CollectionsGetById,
         'collections.isAffiliate': CollectionsIsAffiliate,
+        'collections.setAffiliation': CollectionsSetAffiliation,
 
         'utils.getTime': UtilsGetTime,
 
