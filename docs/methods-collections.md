@@ -5,6 +5,8 @@
 * [collections.getById](#collectionsgetbyid)
 * [collections.add](#collectionsadd)
 * [collections.edit](#collectionsedit)
+* [collections.isAffiliate](#collectionsisaffiliate)
+* [collections.setAffiliation](#collectionssetaffiliation)
 * [collections.remove](#collectionremove)
 
 ## collections.get
@@ -106,6 +108,39 @@ type Response = ICollection;
 
 ```
 
+## collections.isAffiliate
+Проверяет, находится ли достопримечательность в коллекции.
+
+### Параметры
+* `int collectionId` - идентификатор коллекции;
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+
+```
+
+## collections.setAffiliation
+Изменяет принадлежность достопримечательности в коллекции.
+
+### Параметры
+* `int collectionId` - идентификатор коллекции;
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = boolean;
+```
+
+### Пример ответа
+```json5
+
+```
 
 ## collection.remove
 Удаляет коллекцию.
