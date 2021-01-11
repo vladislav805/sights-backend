@@ -50,6 +50,7 @@ import AccountSetProfilePhoto from './account/set-profile-photo';
 import AccountSetSocialConnection from './account/set-social-connection';
 import AccountGetSocialConnections from './account/get-social-connections';
 import FeedGet from './feed/get';
+import FeedGetSourceList from './feed/get-source-list';
 import SightsGet from './sights/get';
 import SightsAdd from './sights/add';
 import SightsEdit from './sights/edit';
@@ -135,6 +136,7 @@ export const initMethods = () => {
         'tags.getIdByTags': TagsGetIdByTags,
 
         'feed.get': FeedGet,
+        'feed.getSourceList': FeedGetSourceList,
 
         'photos.get': PhotosGet,
         'photos.getById': PhotosGetById,
