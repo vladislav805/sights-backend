@@ -1,6 +1,7 @@
 # Документация / API / Новости
 ## Список методов API секции feed.*
-* feed.get
+* [feed.get](#feedget)
+* [feed.getSourceList](#feedgetsourcelist)
 
 ## feed.get
 ### Параметры
@@ -45,4 +46,22 @@ type Response = IApiListExtended<IFeedItem>;
         }]
     }
 }
+```
+
+## feed.getSourceList
+Возвращает список пользователей, на которых подписан текущий пользователь.
+
+### Параметры
+* `int count = 50` - количество пользователей, которое необходимо вернуть;
+* `int offset = 0` - сдвиг выборки;
+* `string[]? fields` - [дополнительная информация о пользователях](methods-users.md#user-fields).
+
+### Формат ответа
+```ts
+type Response = IApiList<IUser>;
+```
+
+### Пример ответа
+```json5
+
 ```
