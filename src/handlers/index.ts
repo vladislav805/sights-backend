@@ -73,6 +73,7 @@ import FieldsGetAll from './fields/get-all';
 import RatingSet from './rating/set';
 import CollectionsGet from './collections/get';
 import CollectionsGetById from './collections/get-by-id';
+import CollectionsIsAffiliate from './collections/is-affiliate';
 import Execute from './execute';
 import InternalGetPage from './internal/get-page';
 
@@ -159,6 +160,7 @@ export const initMethods = () => {
 
         'collections.get': CollectionsGet,
         'collections.getById': CollectionsGetById,
+        'collections.isAffiliate': CollectionsIsAffiliate,
 
         'utils.getTime': UtilsGetTime,
 
