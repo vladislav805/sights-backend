@@ -24,7 +24,22 @@ type Response = IApiList<ICollection>;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": {
+        "count": 1,
+        "items": [{
+            "collectionId": 1,
+            "ownerId": 1,
+            "title": "test",
+            "content": "",
+            "type": "PUBLIC",
+            "dateCreated": 1560845050,
+            "dateUpdated": 0,
+            "cityId": null,
+            "size": 0
+        }]
+    }
+}
 ```
 
 
@@ -33,7 +48,9 @@ type Response = IApiList<ICollection>;
 
 ### Параметры
 * `string query` - поисковый запрос;
-* `int? cityId` - идентификатор города.
+* `int? cityId` - идентификатор города;
+* `int count = 50` - количество, необходимое получить;
+* `int offset = 0` - сдвиг выборки.
 
 ### Формат ответа
 ```ts
@@ -42,7 +59,22 @@ type Response = IApiList<ICollection>;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": {
+        "count": 1,
+        "items": [{
+            "collectionId": 1,
+            "ownerId": 1,
+            "title": "test",
+            "content": "",
+            "type": "PUBLIC",
+            "dateCreated": 1560845050,
+            "dateUpdated": 0,
+            "cityId": null,
+            "size": 0
+        }]
+    }
+}
 ```
 
 
@@ -60,7 +92,37 @@ type Response = ICollectionExtended;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": {
+        "collectionId": 1,
+        "ownerId": 1,
+        "title": "test",
+        "content": "",
+        "type": "PUBLIC",
+        "dateCreated": 1560845050,
+        "dateUpdated": 0,
+        "cityId": null,
+        "size": 0,
+        "items": [{
+            "placeId": 534,
+            "latitude": 59.962834073099586,
+            "longitude": 30.303797744704056,
+            "sightId": 534,
+            "ownerId": 1,
+            "title": "«Двор Нельсона»",
+            "description": "...",
+            "mask": 2,
+            "categoryId": 40,
+            "dateCreated": 1519416073,
+            "dateUpdated": 1609967599,
+            "category": {
+                "categoryId": 40,
+                "title": "Декоративное украшение"
+            },
+            "canModify": false
+        }]
+    }
+}
 ```
 
 
@@ -71,7 +133,8 @@ type Response = ICollectionExtended;
 * `string title` - название коллекции;
 * `string type` - тип коллекции:
     * `PUBLIC` - публичная;
-    * `DRAFT` - черновик (доступен только автору).
+    * `PRIVATE` - личная;
+    * `DRAFT` - черновик (не выводится в публичном списке, но доступен по специальной ссылке).
 * `string content` - описание/текст коллекции в формате Markdown;
 * `int? cityId` - идентификатор города, если коллекция привязана к городу.
 
@@ -94,7 +157,8 @@ type Response = ICollection;
 * `string title` - название коллекции;
 * `string type` - тип коллекции:
     * `PUBLIC` - публичная;
-    * `DRAFT` - черновик (доступен только автору).
+    * `PRIVATE` - личная;
+    * `DRAFT` - черновик (не выводится в публичном списке, но доступен по специальной ссылке).
 * `string content` - описание/текст коллекции в формате Markdown;
 * `int? cityId` - идентификатор города, если коллекция привязана к городу.
 
@@ -122,7 +186,9 @@ type Response = boolean;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": true
+}
 ```
 
 ## collections.setAffiliation
@@ -140,7 +206,9 @@ type Response = boolean;
 
 ### Пример ответа
 ```json5
-
+{
+    "result": true
+}
 ```
 
 ## collection.remove

@@ -72,6 +72,7 @@ import FieldsSet from './fields/set';
 import FieldsGetAll from './fields/get-all';
 import RatingSet from './rating/set';
 import CollectionsGet from './collections/get';
+import CollectionsSearch from './collections/search';
 import CollectionsGetById from './collections/get-by-id';
 import CollectionsIsAffiliate from './collections/is-affiliate';
 import CollectionsSetAffiliation from './collections/set-affiliation';
@@ -161,6 +162,7 @@ export const initMethods = () => {
 
         'collections.get': CollectionsGet,
         'collections.getById': CollectionsGetById,
+        'collections.search': CollectionsSearch,
         'collections.isAffiliate': CollectionsIsAffiliate,
         'collections.setAffiliation': CollectionsSetAffiliation,
 
