@@ -25,6 +25,7 @@ export default class CollectionsSearch extends OpenMethodAPI<IParams, IResult> {
     protected async perform(params: IParams, { database }: ICompanion): Promise<IResult> {
         const where = [
             '`title` like ?',
+            '`type` = \'PUBLIC\'',
         ];
         const values: (string | number)[] = [
             `%${params.query}%`,

@@ -6,6 +6,7 @@ import { toBoolean } from '../../utils/to-boolean';
 import { ApiError, ErrorCode } from '../../error';
 import { ISight } from '../../types/sight';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
+import { hasAccessToCollection } from '../../utils/collections/has-access-to-collection';
 
 type IParams = {
     collectionId: number;
@@ -35,6 +36,10 @@ export default class CollectionsGetById extends OpenMethodAPI<IParams, IResult> 
         }
 
         const [collection] = collections;
+
+        if (!hasAccessToCollection(collection, companion.session)) {
+            throw new ApiError(ErrorCode.ACCESS_DENIED);
+        }
 
         if (!params.onlyInformation) {
             const { columns, joins } = params.fields.build(companion.session);
