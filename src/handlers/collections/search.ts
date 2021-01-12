@@ -2,6 +2,7 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ICollection } from '../../types/collection';
 import { toNumber } from '../../utils/to-number';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     query: string;
@@ -15,7 +16,7 @@ type IResult = IApiList<ICollection>;
 export default class CollectionsSearch extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: params.query as string,
+            query: toTheString(params.query),
             cityId: toNumber(params.cityId, 0),
             count: toNumber(params.count, 50),
             offset: toNumber(params.offset, 0),

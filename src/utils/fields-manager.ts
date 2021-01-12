@@ -1,5 +1,6 @@
 import { paramToArrayOf } from './param-to-array-of';
 import { ISession } from '../types/session';
+import { toTheString } from './to-string';
 
 export type BuildResult = {
     joins: string;
@@ -15,7 +16,7 @@ export abstract class FieldsManager<Field extends string, ObjectType> implements
     private readonly fields: Field[];
 
     protected constructor(fields: string, allowed: string[]) {
-        this.fields = paramToArrayOf<Field>(fields).filter(key => allowed.includes(key));
+        this.fields = paramToArrayOf<Field>(toTheString(fields)).filter(key => allowed.includes(key));
     }
 
     public readonly add = (field: Field): this => {
