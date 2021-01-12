@@ -71,6 +71,14 @@ import FieldsGet from './fields/get';
 import FieldsSet from './fields/set';
 import FieldsGetAll from './fields/get-all';
 import RatingSet from './rating/set';
+import CollectionsGet from './collections/get';
+import CollectionsAdd from './collections/add';
+import CollectionsEdit from './collections/edit';
+import CollectionsSearch from './collections/search';
+import CollectionsRemove from './collections/remove';
+import CollectionsGetById from './collections/get-by-id';
+import CollectionsIsAffiliate from './collections/is-affiliate';
+import CollectionsSetAffiliation from './collections/set-affiliation';
 import Execute from './execute';
 import InternalGetPage from './internal/get-page';
 
@@ -154,6 +162,15 @@ export const initMethods = () => {
         'comments.report': CommentsReport,
 
         'rating.set': RatingSet,
+
+        'collections.get': CollectionsGet,
+        'collections.add': CollectionsAdd,
+        'collections.edit': CollectionsEdit,
+        'collections.getById': CollectionsGetById,
+        'collections.search': CollectionsSearch,
+        'collections.remove': CollectionsRemove,
+        'collections.isAffiliate': CollectionsIsAffiliate,
+        'collections.setAffiliation': CollectionsSetAffiliation,
 
         'utils.getTime': UtilsGetTime,
 

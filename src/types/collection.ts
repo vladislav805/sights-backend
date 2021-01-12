@@ -1,10 +1,20 @@
+import { ISight } from './sight';
+
+export type CollectionType = 'PUBLIC' | 'PRIVATE' | 'DRAFT' | 'NEURAL_RESULT';
+
 export interface ICollection {
     collectionId: number;
     ownerId: number;
+    type: CollectionType;
     title: string;
-    description: string;
+    content: string;
     dateCreated: number;
     dateUpdated: number;
-    tags: number[];
+    // tags: number[];
+    cityId?: number;
     size: number;
+}
+
+export interface ICollectionExtended extends ICollection {
+    items: ISight[];
 }
