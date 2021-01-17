@@ -45,7 +45,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
             area,
             filters,
             count: clamp(toNumber(params.count, 200), 1, 500),
-            fields: new SightFieldsManager(toTheString(params.fields)),
+            fields: new SightFieldsManager(toTheString(params.fields, true)),
         };
     }
 

@@ -27,7 +27,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         return {
             userIds,
-            fields: new UserFieldsManager(toTheString(params.fields)),
+            fields: new UserFieldsManager(toTheString(params.fields, true)),
         };
     }
 

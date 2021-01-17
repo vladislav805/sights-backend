@@ -24,7 +24,7 @@ export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> 
         return {
             ownerId: toNumber(params.ownerId, 'ownerId'),
             sort: isValidSort(params.sort) ? params.sort : SORT[0],
-            fields: new SightFieldsManager(toTheString(params.fields)),
+            fields: new SightFieldsManager(toTheString(params.fields, true)),
             count: clamp(toNumber(params.count, 50), 1, 100),
             offset: toNumber(params.offset, 0),
         };

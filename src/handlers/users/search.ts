@@ -19,7 +19,7 @@ export default class UsersSearch extends OpenMethodAPI<IParams, IApiList<IUser>>
         const cityId = toNumber(params.cityId, true) ?? undefined;
         return {
             query: toTheString(params.query, null, 'query'),
-            fields: new UserFieldsManager(toTheString(params.fields, '')),
+            fields: new UserFieldsManager(toTheString(params.fields, true)),
             cityId,
             count: clamp(toNumber(params.count, 50), 1, 100),
             offset: toNumber(params.offset, 0),

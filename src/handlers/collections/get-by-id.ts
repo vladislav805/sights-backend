@@ -7,6 +7,7 @@ import { ApiError, ErrorCode } from '../../error';
 import { ISight } from '../../types/sight';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { hasAccessToCollection } from '../../utils/collections/has-access-to-collection';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     collectionId: number;
@@ -21,7 +22,7 @@ export default class CollectionsGetById extends OpenMethodAPI<IParams, IResult> 
         return {
             collectionId: toNumber(params.collectionId, 'collectionId should be integer'),
             onlyInformation: toBoolean(params.onlyInformation),
-            fields: new SightFieldsManager(params.fields as string),
+            fields: new SightFieldsManager(toTheString(params.fields, true)),
         };
     }
 

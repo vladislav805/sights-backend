@@ -17,7 +17,7 @@ export default class SightsGetRecent extends OpenMethodAPI<IParams, IResponse> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
             count: clamp(toNumber(params.count, 20), 1, 50),
-            fields: new SightFieldsManager(toTheString(params.fields)),
+            fields: new SightFieldsManager(toTheString(params.fields, true)),
         };
     }
 

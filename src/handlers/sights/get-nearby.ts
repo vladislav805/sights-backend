@@ -21,11 +21,11 @@ type IResponse = IApiList<ISight> & {
 export default class SightsGetNearby extends OpenMethodAPI<IParams, IResponse> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            latitude: toNumber(params.latitude),
-            longitude: toNumber(params.longitude),
+            latitude: toNumber(params.latitude, 'latitude'),
+            longitude: toNumber(params.longitude, 'longitude'),
             distance: clamp(toNumber(params.distance, 1000), 50, 4000),
             count: clamp(toNumber(params.count, 20), 1, 50),
-            fields: new SightFieldsManager(toTheString(params.fields)),
+            fields: new SightFieldsManager(toTheString(params.fields, true)),
         };
     }
 

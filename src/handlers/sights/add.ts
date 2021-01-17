@@ -32,9 +32,9 @@ export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
         }
 
         return {
-            placeId: toNumber(params.placeId),
-            title: toTheString(params.title),
-            description: toTheString(params.description),
+            placeId: toNumber(params.placeId, 'placeId'),
+            title: toTheString(params.title, 'title'),
+            description: toTheString(params.description, true),
             cityId: toNumber(params.cityId, true),
             categoryId: toNumber(params.categoryId, true),
             tags: paramToArrayOf(params.tags),

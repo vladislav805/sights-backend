@@ -62,7 +62,7 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
 
         return {
             query: toTheString(params.query),
-            fields: new SightFieldsManager(toTheString(params.fields)),
+            fields: new SightFieldsManager(toTheString(params.fields, true)),
             filters,
             cityId: toNumber(params.cityId, 0),
             categoryId: toNumber(params.categoryId, 0),

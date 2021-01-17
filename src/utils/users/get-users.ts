@@ -9,7 +9,7 @@ export const getUsers = async(ids: number[], fields: string, companion: ICompani
         return [];
     }
 
-    const manager = new UserFieldsManager(fields);
+    const manager = new UserFieldsManager(fields ?? '');
     const { columns, joins } = manager.build(companion.session);
 
     // noinspection SqlResolve

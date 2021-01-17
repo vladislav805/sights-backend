@@ -31,7 +31,7 @@ export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
         }
 
         const extended = toBoolean(params.extended);
-        const fields = toTheString(params.fields);
+        const fields = toTheString(params.fields, true);
         return {
             sightIds,
             fields: new SightFieldsManager(fields),

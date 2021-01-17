@@ -19,7 +19,7 @@ export default class UsersGetFollowers extends OpenMethodAPI<IParams, IApiList<I
 
         return {
             userId,
-            fields: new UserFieldsManager(toTheString(params.fields)),
+            fields: new UserFieldsManager(toTheString(params.fields, true)),
             count: clamp(toNumber(params.count, 50), 1, 100),
             offset: toNumber(params.offset, 0),
         };
