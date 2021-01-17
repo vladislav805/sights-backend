@@ -12,7 +12,7 @@ type IParams = {
 export default class SightsReport extends OpenMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
-            sightId: toNumber(params.sightId, 'Invalid sightId'),
+            sightId: toNumber(params.sightId, 'sightId'),
         };
     }
 

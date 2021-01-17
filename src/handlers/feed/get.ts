@@ -12,6 +12,7 @@ import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
 import { SIGHT_KEYS } from '../sights/keys';
 import { IPlace } from '../../types/place';
 import { getUsers } from '../../utils/users/get-users';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     count: number;
@@ -21,8 +22,8 @@ type IParams = {
 export default class FeedGet extends PrivateMethodAPI<IParams, IApiListExtended<IFeedItem>> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
-            count: clamp(toNumber(params.count) || 20, 1, 75),
-            fields: params.fields as string,
+            count: clamp(toNumber(params.count, 20), 1, 75),
+            fields: toTheString(params.fields, ''),
         };
     }
 

@@ -1,7 +1,6 @@
 import { ICompanionPrivate, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
-import { ApiError, ErrorCode } from '../../error';
 import { sendTelegramMessage } from '../../utils/telegram/send-message';
 import config from '../../config';
 import { IComment } from '../../types/comment';
@@ -12,11 +11,7 @@ type IParams = {
 
 export default class CommentsReport extends OpenMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const commentId = toNumber(params.commentId, true);
-
-        if (!commentId) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM);
-        }
+        const commentId = toNumber(params.commentId, 'commentId');
 
         return { commentId };
     }

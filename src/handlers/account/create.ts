@@ -18,6 +18,7 @@ import { getUsers } from '../../utils/users/get-users';
 import { isValidLogin } from '../../utils/account/is-valid-login';
 import { IVkAuthResult } from '../../utils/vk/types';
 import { checkVkHash } from '../../utils/vk/check-hash';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     isSocial: boolean;
@@ -75,13 +76,16 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
             }
         }
 
+        // если регаемся по внешнему, то все поля не нужны и можно
+        const defValue = isSocial ? '' : null;
+
         return {
             isSocial,
-            firstName: firstName as string,
-            lastName: lastName as string,
-            login: login as string,
-            password: password as string,
-            email: email as string,
+            firstName: toTheString(firstName, defValue, 'firstName'),
+            lastName: toTheString(lastName, defValue, 'lastName'),
+            login: toTheString(login, defValue, 'login'),
+            password: toTheString(password, defValue, 'password'),
+            email: toTheString(email, defValue, 'email'),
             cityId: !isSocial ? toNumber(cityId, true) : null,
             sex: sex as Sex,
             vkData: typeof vkData === 'string'

@@ -10,7 +10,7 @@ type IParam = {
 
 export default class PhotosGetById extends OpenMethodAPI<IParam, IPhoto[]> {
     protected handleParams(params: IApiParams, props: ICompanion): IParam {
-        const photoIds = paramToArrayOf(params.photoIds as string, Number).filter(val => !isNaN(val));
+        const photoIds = paramToArrayOf(params.photoIds, Number).filter(val => !isNaN(val));
 
         if (!photoIds.length) {
             throw new Error('Not specified photoIds');

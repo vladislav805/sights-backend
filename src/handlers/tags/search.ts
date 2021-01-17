@@ -1,6 +1,7 @@
 import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ITag } from '../../types/tag';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     query: string;
@@ -14,11 +15,15 @@ export default class TagsSearch extends OpenMethodAPI<IParams, ITag[]> {
 
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: String(params.query).toLowerCase(),
+            query: toTheString(params.query).toLowerCase(),
         };
     }
 
     protected async perform({ query }: IParams, props: ICompanion): Promise<ITag[]> {
+        if (this.cache.has(query)) {
+            return this.cache.get(query)!;
+        }
+
         const sql = 'select * from `tag`';
 
         const items = (await props.database.select<ITag>(sql))

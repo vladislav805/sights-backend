@@ -1,7 +1,6 @@
 import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
-import { UnspecifiedParamError } from '../../error';
 
 type IParams = {
     commentId: number;
@@ -9,11 +8,7 @@ type IParams = {
 
 export default class CommentsRemove extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const commentId = toNumber(params.commentId, true);
-
-        if (!commentId) {
-            throw new UnspecifiedParamError('commentId');
-        }
+        const commentId = toNumber(params.commentId, 'commentId');
 
         return { commentId };
     }

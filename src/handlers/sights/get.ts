@@ -4,6 +4,7 @@ import { ISight } from '../../types/sight';
 import { toNumber } from '../../utils/to-number';
 import { clamp } from '../../utils/clamp';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
+import { toTheString } from '../../utils/to-string';
 
 const SORT = ['desc', 'asc'] as const;
 type Sort = typeof SORT[number];
@@ -21,9 +22,9 @@ const isValidSort = (str: ApiParam): str is Sort => SORT.includes(str as Sort);
 export default class SightsGet extends OpenMethodAPI<IParams, IApiList<ISight>> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            ownerId: toNumber(params.ownerId),
+            ownerId: toNumber(params.ownerId, 'ownerId'),
             sort: isValidSort(params.sort) ? params.sort : SORT[0],
-            fields: new SightFieldsManager(params.fields as string),
+            fields: new SightFieldsManager(toTheString(params.fields)),
             count: clamp(toNumber(params.count, 50), 1, 100),
             offset: toNumber(params.offset, 0),
         };

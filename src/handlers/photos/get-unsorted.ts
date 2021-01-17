@@ -3,6 +3,7 @@ import { IApiParams } from '../../types/api';
 import { IPhoto, IPhotoRaw, PhotoType } from '../../types/photo';
 import raw2object from '../../utils/photos/raw-to-object';
 import { clamp } from '../../utils/clamp';
+import { toNumber } from '../../utils/to-number';
 
 type IParam = {
     count: number;
@@ -12,8 +13,8 @@ type IParam = {
 export default class PhotosGetUnsorted extends OpenMethodAPI<IParam, IPhoto[]> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParam {
         return {
-            count: clamp(+params.count || 50, 1, 100),
-            offset: +params.offset || 0,
+            count: clamp(toNumber(params.count, 50), 1, 100),
+            offset: toNumber(params.offset, 0),
         };
     }
 

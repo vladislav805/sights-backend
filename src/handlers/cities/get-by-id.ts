@@ -3,6 +3,7 @@ import { IApiParams } from '../../types/api';
 import { ICity } from '../../types/city';
 import { build, ICityRaw } from './keys';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
+import { toBoolean } from '../../utils/to-boolean';
 
 type IParams = {
     cityIds: number[]; // required
@@ -12,8 +13,8 @@ type IParams = {
 export default class CitiesGetById extends OpenMethodAPI<IParams, ICity[]> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            cityIds: paramToArrayOf(params.cityIds as string, Number),
-            extended: 'extended' in params && Boolean(params.extended),
+            cityIds: paramToArrayOf(params.cityIds, Number),
+            extended: toBoolean(params.extended),
         };
     }
 

@@ -9,7 +9,7 @@ type IParams = {
 
 export default class CategoriesGetById extends OpenMethodAPI<IParams, ICategory[]> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const categoryIds = paramToArrayOf(params.categoryIds as string, Number);
+        const categoryIds = paramToArrayOf(params.categoryIds, Number);
         return { categoryIds };
     }
 

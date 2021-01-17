@@ -9,7 +9,7 @@ type IParams = {
 
 export default class TagsGetById extends OpenMethodAPI<IParams, ITag[]> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const tagIds = paramToArrayOf(params.tagIds as string, Number).filter(Boolean);
+        const tagIds = paramToArrayOf(params.tagIds, Number).filter(Boolean);
         return { tagIds };
     }
 
@@ -17,6 +17,7 @@ export default class TagsGetById extends OpenMethodAPI<IParams, ITag[]> {
         if (!params.tagIds.length) {
             return [];
         }
+
         return params.tagIds.length
             ? props.database.select<ITag>(
                 `select * from \`tag\` where \`tagId\` in (${params.tagIds.join(',')})`,

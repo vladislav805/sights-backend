@@ -10,7 +10,7 @@ function toTheString(value: ApiParam, defaultValue?: string | null | boolean, fi
 
     if (!str.length || value === undefined || value === null) {
         if (typeof defaultValue === 'boolean' && defaultValue) {
-            return str;
+            return value ? str : '';
         }
 
         if (typeof defaultValue === 'string') {

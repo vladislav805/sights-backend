@@ -10,6 +10,7 @@ import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { IFieldsGetParamsBase, parseAndCheckArea } from './area';
 import { toNumber } from '../../utils/to-number';
 import { clamp } from '../../utils/clamp';
+import { toTheString } from '../../utils/to-string';
 
 /**
  * Правила для проверки корректности фильтров
@@ -28,10 +29,10 @@ type IFieldsGetParams = IFieldsGetParamsBase & {
 
 export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiList<ISight>> {
     protected handleParams(params: IApiParams, props: ICompanion): IFieldsGetParams {
-        const area = parseAndCheckArea(params.area as string);
+        const area = parseAndCheckArea(params.area);
 
         const filters = params.filters
-            ? paramToArrayOf(params.filters as string)
+            ? paramToArrayOf(params.filters)
                 .map(key => filtersMap[key])
                 .reduce((mask, item) => mask | item, 0)
             : 0;
@@ -44,7 +45,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
             area,
             filters,
             count: clamp(toNumber(params.count, 200), 1, 500),
-            fields: new SightFieldsManager(params.fields as string),
+            fields: new SightFieldsManager(toTheString(params.fields)),
         };
     }
 

@@ -4,6 +4,7 @@ import { IComment } from '../../types/comment';
 import { clamp } from '../../utils/clamp';
 import { toNumber } from '../../utils/to-number';
 import { getUsers } from '../../utils/users/get-users';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     sightId: number;
@@ -14,13 +15,13 @@ type IParams = {
 
 export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended<IComment>> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const sightId = toNumber(params.sightId);
+        const sightId = toNumber(params.sightId, 'sightId');
 
         return {
             sightId,
-            count: clamp(+params.count || 50, 1, 200),
-            offset: +params.offset || 0,
-            fields: params.fields as string,
+            count: clamp(toNumber(params.count, 50), 1, 200),
+            offset: toNumber(params.offset, 0),
+            fields: toTheString(params.fields, ''),
         };
     }
 

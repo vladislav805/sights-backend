@@ -2,6 +2,9 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ICity } from '../../types/city';
 import { build, ICityRaw } from './keys';
+import { toBoolean } from '../../utils/to-boolean';
+import { toNumber } from '../../utils/to-number';
+import { clamp } from '../../utils/clamp';
 
 type IParams = {
     count: number; // = 50
@@ -13,10 +16,10 @@ type IParams = {
 export default class CitiesGet extends OpenMethodAPI<IParams, IApiList<ICity>> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            count: +params.count || 50,
-            offset: params.offset ? +params.offset : 0,
-            all: 'all' in params && Boolean(params.all),
-            extended: 'extended' in params && Boolean(params.extended),
+            count: clamp(toNumber(params.count, 50), 1, 1000),
+            offset: toNumber(params.offset, 0),
+            all: toBoolean(params.all),
+            extended: toBoolean(params.extended),
         };
     }
 

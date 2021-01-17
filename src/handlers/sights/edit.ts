@@ -5,6 +5,7 @@ import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { ApiError, ErrorCode } from '../../error';
 import setTags from '../../utils/sights/set-tags';
 import getSightById from '../../utils/sights/get-sight';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     sightId: number;
@@ -20,9 +21,9 @@ type IResult = boolean;
 
 export default class SightsEdit extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const sightId = toNumber(params.sightId, -1);
-        const placeId = toNumber(params.placeId, -1);
-        const title = (String(params.title) ?? '').trim();
+        const sightId = toNumber(params.sightId, 'sightId');
+        const placeId = toNumber(params.placeId, 'placeId');
+        const title = toTheString(params.title);
 
         if (!sightId || sightId < 0) {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter placeId is invalid');
@@ -40,10 +41,10 @@ export default class SightsEdit extends PrivateMethodAPI<IParams, IResult> {
             sightId,
             placeId,
             title,
-            description: params.description as string ?? '',
+            description: toTheString(params.description),
             cityId: toNumber(params.cityId, true),
             categoryId: toNumber(params.categoryId, true),
-            tags: paramToArrayOf(params.tags as string),
+            tags: paramToArrayOf(params.tags),
         };
     }
 

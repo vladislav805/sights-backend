@@ -22,8 +22,8 @@ const checkConstraint = (value: number, min: number, max: number): number => {
 export default class MapAddPlace extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            latitude: checkConstraint(toNumber(params.latitude), -180, 180),
-            longitude: checkConstraint(toNumber(params.longitude), -90, 90),
+            latitude: checkConstraint(toNumber(params.latitude, 'latitude'), -180, 180),
+            longitude: checkConstraint(toNumber(params.longitude, 'longitude'), -90, 90),
         };
     }
 

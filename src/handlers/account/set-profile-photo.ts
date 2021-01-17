@@ -9,7 +9,7 @@ type IParams = {
 
 export default class AccountSetProfilePhoto extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const photoId = toNumber(params.photoId as string);
+        const photoId = toNumber(params.photoId);
 
         if (photoId < 0 && photoId !== -1) {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Negative values not allowed (exclude -1)');

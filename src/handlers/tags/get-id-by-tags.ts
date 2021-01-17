@@ -15,7 +15,7 @@ export default class TagsGetIdByTags extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const tags = typeof params.tags === 'string'
             ? params.tags.toLowerCase().split(',')
-            : (params.tags as Array<any>).map(val => String(val).toLowerCase());
+            : (params.tags as any[]).map(val => String(val).toLowerCase());
 
         return { tags };
     }

@@ -2,6 +2,7 @@ import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ISight } from '../../types/sight';
 import { PhotoType } from '../../types/photo';
+import { toNumber } from '../../utils/to-number';
 
 type IParams = {
     photoId: number;
@@ -10,16 +11,8 @@ type IParams = {
 
 export default class PhotosApprove extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const photoId = +params.photoId;
-        const sightId = +params.sightId;
-
-        if (!photoId) {
-            throw new Error('Not specified photoId');
-        }
-
-        if (!sightId) {
-            throw new Error('Not specified sightId');
-        }
+        const photoId = toNumber(params.photoId, 'photoId');
+        const sightId = toNumber(params.sightId, 'sightId');
 
         return { photoId, sightId };
     }

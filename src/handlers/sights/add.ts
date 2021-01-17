@@ -4,6 +4,7 @@ import { toNumber } from '../../utils/to-number';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { ApiError, ErrorCode } from '../../error';
 import setTags from '../../utils/sights/set-tags';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     placeId: number;
@@ -20,8 +21,9 @@ type IResult = {
 
 export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const placeId = toNumber(params.placeId, -1);
-        if (!placeId || placeId < 0) {
+        const placeId = toNumber(params.placeId, 'placeId');
+
+        if (placeId < 0) {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter placeId is invalid');
         }
 
@@ -31,11 +33,11 @@ export default class SightsAdd extends PrivateMethodAPI<IParams, IResult> {
 
         return {
             placeId: toNumber(params.placeId),
-            title: params.title.trim(),
-            description: params.description as string ?? '',
+            title: toTheString(params.title),
+            description: toTheString(params.description),
             cityId: toNumber(params.cityId, true),
             categoryId: toNumber(params.categoryId, true),
-            tags: paramToArrayOf(params.tags as string),
+            tags: paramToArrayOf(params.tags),
         };
     }
 

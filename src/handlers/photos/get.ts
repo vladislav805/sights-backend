@@ -2,6 +2,7 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { IPhoto, IPhotoRaw } from '../../types/photo';
 import raw2object from '../../utils/photos/raw-to-object';
+import { toNumber } from '../../utils/to-number';
 
 type IParam = {
     sightId: number;
@@ -9,9 +10,9 @@ type IParam = {
 
 export default class PhotosGet extends OpenMethodAPI<IParam, IApiList<IPhoto>> {
     protected handleParams(params: IApiParams, props: ICompanion): IParam {
-        const sightId = +params.sightId;
+        const sightId = toNumber(params.sightId, 'sightId');
 
-        if (!sightId || sightId <= 0) {
+        if (sightId <= 0) {
             throw new Error('Invalid sightId');
         }
 

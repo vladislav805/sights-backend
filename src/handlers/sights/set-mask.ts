@@ -12,8 +12,8 @@ type IParams = {
 export default class SightsSetMask extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
-            sightId: toNumber(params.sightId, 'Invalid sightId'),
-            mask: toNumber(params.mask, 'Invalid mask'),
+            sightId: toNumber(params.sightId, 'sightId'),
+            mask: toNumber(params.mask, 'mask'),
         };
     }
 

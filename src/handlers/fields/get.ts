@@ -1,6 +1,5 @@
 import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
-import { ApiError, ErrorCode } from '../../error';
 import { toNumber } from '../../utils/to-number';
 import { ISightField } from '../../types/field';
 
@@ -12,11 +11,7 @@ type IResult = ISightField[];
 
 export default class FieldsGet extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const sightId = toNumber(params.sightId as string);
-
-        if (!sightId) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Sight id not specified');
-        }
+        const sightId = toNumber(params.sightId, 'sightId');
 
         return { sightId };
     }

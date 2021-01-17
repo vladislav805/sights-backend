@@ -19,7 +19,7 @@ type IParams = {
 
 export default class AccountEdit extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        let { firstName, lastName, login, bio, sex, cityId } = params;
+        const { firstName, lastName, login, bio, sex, cityId } = params;
         const res: IParams = {};
 
         if (typeof firstName === 'string') {

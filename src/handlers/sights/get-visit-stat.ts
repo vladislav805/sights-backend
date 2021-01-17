@@ -15,7 +15,7 @@ type IResult = {
 export default class SightsGetVisitStat extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
-            sightId: toNumber(params.sightId, 'Invalid sightId'),
+            sightId: toNumber(params.sightId, 'sightId'),
         };
     }
 

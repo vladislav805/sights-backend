@@ -3,6 +3,8 @@ import { IApiList, IApiParams } from '../../types/api';
 import { IUser } from '../../types/user';
 import UserFieldsManager from '../../utils/users/user-fields-manager';
 import { clamp } from '../../utils/clamp';
+import { toNumber } from '../../utils/to-number';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     query: string;
@@ -14,13 +16,13 @@ type IParams = {
 
 export default class UsersSearch extends OpenMethodAPI<IParams, IApiList<IUser>> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const cityId = +params.cityId || undefined;
+        const cityId = toNumber(params.cityId, true) ?? undefined;
         return {
-            query: String(params.query || ''),
-            fields: new UserFieldsManager(typeof params.fields === 'string' ? params.fields : ''),
+            query: toTheString(params.query, null, 'query'),
+            fields: new UserFieldsManager(toTheString(params.fields, '')),
             cityId,
-            count: clamp(+params.count || 50, 1, 100),
-            offset: +params.offset || 0,
+            count: clamp(toNumber(params.count, 50), 1, 100),
+            offset: toNumber(params.offset, 0),
         };
     }
 

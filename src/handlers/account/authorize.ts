@@ -6,6 +6,7 @@ import { ApiError, ErrorCode } from '../../error';
 import { IUser } from '../../types/user';
 import { createSession } from '../../utils/account/create-session';
 import { hashPassword } from '../../utils/account/password';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     login: string;
@@ -16,8 +17,8 @@ type IResult = ISession & { user: IUser };
 
 export default class AccountAuthorize extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const login = String(params.login ?? '').toLowerCase();
-        const password = String(params.password ?? '');
+        const login = toTheString(params.login, null, 'login').toLowerCase();
+        const password = toTheString(params.password, null, 'password');
 
         if (!inRange(login.length, 4, 20)) {
             throw new ApiError(ErrorCode.LOGIN_LENGTH, 'Invalid login length');

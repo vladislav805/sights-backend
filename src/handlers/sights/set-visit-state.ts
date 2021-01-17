@@ -22,18 +22,16 @@ type IResult = {
     stat: IResultStat;
 };
 
-const STATE_MSG = 'Invalid state value, allowed values: 0, 1, 2';
-
 export default class SightsSetVisitState extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const state = toNumber(params.state, STATE_MSG);
+        const state = toNumber(params.state, 'state');
 
         if (!isValidVisitState(state)) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, STATE_MSG);
+            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Invalid state value, allowed values: 0, 1, 2');
         }
 
         return {
-            sightId: toNumber(params.sightId, 'Invalid sightId'),
+            sightId: toNumber(params.sightId, 'sightId'),
             state,
         };
     }

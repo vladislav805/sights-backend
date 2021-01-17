@@ -12,8 +12,8 @@ type IParams = {
 
 export default class RatingSet extends PrivateMethodAPI<IParams, ISightRating> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const sightId = toNumber(params.sightId);
-        const rating = toNumber(params.rating);
+        const sightId = toNumber(params.sightId, 'sightId');
+        const rating = toNumber(params.rating, 'rating');
 
         if (rating < 0 || rating > 5) {
             throw new ApiError(ErrorCode.RATING_INVALID_VALUE);

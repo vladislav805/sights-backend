@@ -1,6 +1,7 @@
 import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     hash: string;
@@ -8,9 +9,9 @@ type IParams = {
 
 export default class AccountActivate extends OpenMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const hash = params.hash;
+        const hash = toTheString(params.hash, null, 'hash');
 
-        if (typeof hash === 'string' && hash.length === 10) {
+        if (hash.length === 10) {
             return { hash };
         }
 

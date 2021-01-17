@@ -4,6 +4,7 @@ import { ISight } from '../../types/sight';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { toNumber } from '../../utils/to-number';
 import { clamp } from '../../utils/clamp';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     count: number;
@@ -16,7 +17,7 @@ export default class SightsGetRecent extends OpenMethodAPI<IParams, IResponse> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
             count: clamp(toNumber(params.count, 20), 1, 50),
-            fields: new SightFieldsManager(params.fields as string),
+            fields: new SightFieldsManager(toTheString(params.fields)),
         };
     }
 

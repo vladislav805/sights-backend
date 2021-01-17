@@ -13,7 +13,7 @@ type IFieldsGetCitiesParams = IFieldsGetParamsBase & {
 
 export default class MapGetCities extends OpenMethodAPI<IFieldsGetCitiesParams, IApiList<ICity>> {
     protected handleParams(params: IApiParams, props: ICompanion): IFieldsGetCitiesParams {
-        const area = parseAndCheckArea(params.area as string);
+        const area = parseAndCheckArea(params.area);
 
         return {
             area,

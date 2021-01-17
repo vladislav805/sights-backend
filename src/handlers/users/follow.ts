@@ -16,7 +16,7 @@ type IResult = {
 
 export default class UsersFollow extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const userId = toNumber(params.userId);
+        const userId = toNumber(params.userId, 'userId');
         const follow = toBoolean(params.follow);
 
         if (userId === props.session.userId) {

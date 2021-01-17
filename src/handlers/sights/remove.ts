@@ -11,7 +11,7 @@ type IParams = {
 export default class SightsRemove extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
-            sightId: toNumber(params.sightId, 'Invalid sightId'),
+            sightId: toNumber(params.sightId, 'sightId'),
         };
     }
 

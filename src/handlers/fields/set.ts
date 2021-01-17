@@ -1,9 +1,9 @@
 import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
-import { ApiError, ErrorCode } from '../../error';
 import { toNumber } from '../../utils/to-number';
 import { ISightField } from '../../types/field';
 import findDifferenceFields from '../../utils/fields/find-diffs';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     sightId: number;
@@ -14,19 +14,14 @@ type IResult = boolean;
 
 export default class FieldsSet extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const sightId = toNumber(params.sightId as string);
-
-        if (!sightId) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Sight id not specified');
-        }
-
-        const details = JSON.parse(params.details as string);
+        const sightId = toNumber(params.sightId, 'sightId');
+        const details = JSON.parse(toTheString(params.details, null, 'details'));
 
         return { sightId, details };
     }
 
     protected async perform({ sightId, details }: IParams, props: ICompanion): Promise<IResult> {
-        const current = (await props.callMethod<ISightField[]>('fields.getOfSight', { sightId }))
+        const current = (await props.callMethod<ISightField[]>('fields.get', { sightId }))
             .reduce((acc, cur) => {
                 acc[cur.name] = cur.value;
                 return acc;

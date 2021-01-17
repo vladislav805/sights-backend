@@ -3,6 +3,7 @@ import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
 import { PhotoType } from '../../types/photo';
 import { VisitState } from '../../types/sight';
+import { CacheStore } from '../../utils/api-cache';
 
 type IParams = {
     userId: number;
@@ -26,18 +27,24 @@ type IResult = {
     };
 };
 
-const cache = new Map<number, IResult>();
-
 export default class UsersGetAchievements extends OpenMethodAPI<IParams, IResult> {
+    private cache: CacheStore<IResult, number>;
+
+    protected onInit() {
+        this.cache = new CacheStore<IResult, number>(1800);
+    }
+
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            userId: toNumber(params.userId),
+            userId: toNumber(params.userId, 'userId'),
         };
     }
 
     protected async perform({ userId }: IParams, { session, database }: ICompanion): Promise<IResult> {
-        if (cache.has(userId)) {
-            return Promise.resolve(cache.get(userId)!);
+        const cached = this.cache.get(userId);
+
+        if (cached) {
+            return Promise.resolve(cached);
         }
 
         const sql = 'select \
@@ -78,7 +85,7 @@ export default class UsersGetAchievements extends OpenMethodAPI<IParams, IResult
             },
         };
 
-        cache.set(userId, response);
+        this.cache.set(userId, response);
 
         return response;
     }

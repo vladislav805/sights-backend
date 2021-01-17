@@ -1,7 +1,9 @@
 import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IComment } from '../../types/comment';
 import { IApiParams } from '../../types/api';
-import { ApiError, ErrorCode, UnspecifiedParamError } from '../../error';
+import { ApiError, ErrorCode } from '../../error';
+import { toNumber } from '../../utils/to-number';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     sightId: number;
@@ -10,17 +12,8 @@ type IParams = {
 
 export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const sightId = +params.sightId;
-
-        if (!sightId) {
-            throw new UnspecifiedParamError('sightId');
-        }
-
-        const text = (params.text as string)?.trim();
-
-        if (!text) {
-            throw new UnspecifiedParamError('text');
-        }
+        const sightId = toNumber(params.sightId, 'sightId');
+        const text = toTheString(params.text, null, 'text');
 
         return { sightId, text };
     }

@@ -9,6 +9,7 @@ import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { ApiError, ErrorCode } from '../../error';
 import { checkBitmaskValid } from '../../utils/check-bitmask-valid';
 import { FilterTuple, getSightsFilterQueryParts } from '../../utils/sights/create-filters';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     query: string;
@@ -44,7 +45,7 @@ const filterRules: number[][] = [
 export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight>> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         const filters = params.filters
-            ? paramToArrayOf(params.filters as string)
+            ? paramToArrayOf(params.filters)
                 .map(key => filtersMap[key])
                 .reduce((mask, item) => mask | item, 0)
             : 0;
@@ -53,15 +54,15 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
             throw new ApiError(ErrorCode.SIGHT_BITMASK_CONFLICT, 'Bitmask conflict');
         }
 
-        const rawSort = params.sort as string;
+        const rawSort = toTheString(params.sort, 'dateCreated_desc');
 
         const sort: Sort = isValidSort(rawSort)
             ? rawSort
             : 'dateCreated_desc';
 
         return {
-            query: params.query as string,
-            fields: new SightFieldsManager(params.fields as string),
+            query: toTheString(params.query),
+            fields: new SightFieldsManager(toTheString(params.fields)),
             filters,
             cityId: toNumber(params.cityId, 0),
             categoryId: toNumber(params.categoryId, 0),

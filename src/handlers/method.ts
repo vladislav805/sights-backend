@@ -24,6 +24,8 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      */
     public constructor(props: IMethodProps) {
         this.props = props;
+
+        this.onInit();
     }
 
     /**
@@ -58,6 +60,14 @@ abstract class Method<Params = {}, Result = unknown> implements IMethodAPI<Param
      * @param companion Готовые параметры запроса, такие как сессия и кэши
      */
     protected abstract perform(params: Params, companion: ICompanion): Promise<Result>;
+
+    /**
+     * Определяет что делать при создании метода (при запуске сервера)
+     * Например, создание кэша
+     */
+    protected onInit(): void {
+
+    }
 
     public toString(): string {
         return `[Method: ${this.constructor.name}]`;

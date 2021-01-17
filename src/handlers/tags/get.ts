@@ -2,37 +2,39 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ITag } from '../../types/tag';
 import { clamp } from '../../utils/clamp';
+import { CacheStore } from '../../utils/api-cache';
+import { toNumber } from '../../utils/to-number';
 
 type IParams = {
     count: number;
     offset: number;
 };
 
-const TTL = 5000;
-
 export default class TagsGet extends OpenMethodAPI<IParams, IApiList<ITag>> {
-    private ttl: number = 0;
-    private _cache: ITag[];
+    private cache: CacheStore<ITag[], number>;
+
+    protected onInit() {
+        this.cache = new CacheStore<ITag[], number>(3600);
+    }
 
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            count: clamp(+params.count || 20, 1, 50),
-            offset: +params.offset || 0,
+            count: clamp(toNumber(params.count, 20), 1, 50),
+            offset: toNumber(params.offset, 0),
         };
     }
 
     protected async perform({ count, offset }: IParams, { database }: ICompanion): Promise<IApiList<ITag>> {
-        const now = Date.now();
+        let cached = this.cache.get(0);
 
-        // нет кэша или он просрочен
-        if (!this._cache || now - this.ttl > TTL) {
-            this.ttl = now;
-            this._cache = await database.select<ITag>('select * from `tag`');
+        if (!cached) {
+            cached = await database.select<ITag>('select * from `tag`')
+            this.cache.set(0, cached);
         }
 
         return {
-            count: this._cache.length,
-            items: this._cache.slice(offset, offset + count),
+            count: cached.length,
+            items: cached.slice(offset, offset + count),
         };
     }
 }

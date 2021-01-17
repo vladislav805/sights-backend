@@ -17,8 +17,8 @@ export default class SightsSetPhotos extends PrivateMethodAPI<IParams, boolean> 
         }
 
         return {
-            sightId: toNumber(params.sightId),
-            photoIds: paramToArrayOf(params.photoIds as string, Number),
+            sightId: toNumber(params.sightId, 'sightId'),
+            photoIds: paramToArrayOf(params.photoIds, Number),
         };
     }
 

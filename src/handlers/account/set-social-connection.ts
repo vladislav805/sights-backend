@@ -5,6 +5,7 @@ import { ApiError, ErrorCode } from '../../error';
 import { ITelegramAuthResult } from '../../utils/telegram/types';
 import { IVkAuthResult } from '../../utils/vk/types';
 import { setSocial, SocialType } from '../../utils/account/set-social';
+import { toTheString } from '../../utils/to-string';
 
 type IParamsTelegram = {
     social: 'telegram';
@@ -22,8 +23,8 @@ type IResult = boolean;
 
 export default class AccountSetSocialConnections extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, companion: ICompanion): IParams {
-        const social = params.social as string;
-        const data = params.data as string;
+        const social = toTheString(params.social, null, 'social');
+        const data = toTheString(params.data, null, 'data');
 
         if (social !== 'telegram' && social !== 'vk') {
             throw new ApiError(ErrorCode.UNKNOWN_SOCIAL);

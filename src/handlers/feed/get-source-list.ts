@@ -5,6 +5,7 @@ import { clamp } from '../../utils/clamp';
 import { getUsers } from '../../utils/users/get-users';
 import { col } from '../execute/functions';
 import { IUser } from '../../types/user';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     count: number;
@@ -19,7 +20,7 @@ export default class FeedGetSourceList extends PrivateMethodAPI<IParams, IResult
         return {
             count: clamp(toNumber(params.count, 50), 1, 100),
             offset: toNumber(params.offset, 0),
-            fields: params.fields as string,
+            fields: toTheString(params.fields, ''),
         };
     }
 

@@ -5,6 +5,7 @@ import { PhotoType } from '../../types/photo';
 import { IApiParams } from '../../types/api';
 import { isValidPhotoType } from '../../utils/photos/is-valid-type';
 import { getUploadSignature } from '../../utils/photos/upload-sig';
+import { toNumber } from '../../utils/to-number';
 
 type IParams = {
     type: PhotoType;
@@ -17,7 +18,7 @@ type IUploadPhotoDest = {
 
 export default class PhotosGetUploadUri extends PrivateMethodAPI<IParams, IUploadPhotoDest> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const type = +params.type;
+        const type = toNumber(params.type, 'type');
 
         if (!isValidPhotoType(type)) {
             throw new Error('Invalid type');

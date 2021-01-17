@@ -3,6 +3,7 @@ import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
 import { hashPassword } from '../../utils/account/password';
 import { createSession } from '../../utils/account/create-session';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     oldPassword: string;
@@ -15,9 +16,10 @@ type IResponse = {
 
 export default class AccountChangePassword extends PrivateMethodAPI<IParams, IResponse> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const { oldPassword, newPassword } = params;
+        const oldPassword = toTheString(params.oldPassword, null, 'oldPassword');
+        const newPassword = toTheString(params.newPassword, null, 'newPassword');
 
-        if (typeof oldPassword !== 'string' || oldPassword.length < 6 || typeof newPassword !== 'string' || newPassword.length < 6) {
+        if (oldPassword.length < 6 || newPassword.length < 6) {
             throw new ApiError(ErrorCode.PASSWORD_LENGTH, 'Short password');
         }
 

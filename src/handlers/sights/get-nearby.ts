@@ -4,6 +4,7 @@ import { ISight, ISightDistance } from '../../types/sight';
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { toNumber } from '../../utils/to-number';
 import { clamp } from '../../utils/clamp';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     latitude: number;
@@ -24,7 +25,7 @@ export default class SightsGetNearby extends OpenMethodAPI<IParams, IResponse> {
             longitude: toNumber(params.longitude),
             distance: clamp(toNumber(params.distance, 1000), 50, 4000),
             count: clamp(toNumber(params.count, 20), 1, 50),
-            fields: new SightFieldsManager(params.fields as string),
+            fields: new SightFieldsManager(toTheString(params.fields)),
         };
     }
 

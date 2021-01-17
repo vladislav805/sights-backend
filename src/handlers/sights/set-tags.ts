@@ -17,8 +17,8 @@ export default class SightsSetTags extends PrivateMethodAPI<IParams, boolean> {
         }
 
         return {
-            sightId: toNumber(params.sightId),
-            tagIds: paramToArrayOf(params.tagIds as string, Number),
+            sightId: toNumber(params.sightId, 'sightId'),
+            tagIds: paramToArrayOf(params.tagIds, Number),
         };
     }
 

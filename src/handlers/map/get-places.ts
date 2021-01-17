@@ -11,7 +11,7 @@ type IResult = IApiList<IPlace>;
 
 export default class MapGetPlaces extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const area = parseAndCheckArea(params.area as string);
+        const area = parseAndCheckArea(params.area);
 
         return {
             area,

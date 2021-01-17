@@ -6,8 +6,9 @@ import { paramToArrayOf } from '../../utils/param-to-array-of';
 import { toBoolean } from '../../utils/to-boolean';
 import { IUser } from '../../types/user';
 import { getUsers } from '../../utils/users/get-users';
-import { ApiError, ErrorCode } from '../../error';
+import { UnspecifiedParamError } from '../../error';
 import { SIGHTS_GET_FIELD_FIELDS } from './keys';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     sightIds: number[];
@@ -23,18 +24,19 @@ type IResult = {
 
 export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
-        const sightIds = paramToArrayOf(params.sightIds as string, Number);
+        const sightIds = paramToArrayOf(params.sightIds, Number);
 
         if (!sightIds || !sightIds.length) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Sight id not specified');
+            throw new UnspecifiedParamError('sightIds');
         }
 
         const extended = toBoolean(params.extended);
+        const fields = toTheString(params.fields);
         return {
             sightIds,
-            fields: new SightFieldsManager(params.fields as string),
+            fields: new SightFieldsManager(fields),
             extended,
-            fieldsStr: extended ? params.fields as string : '',
+            fieldsStr: extended ? fields : '',
         };
     }
 

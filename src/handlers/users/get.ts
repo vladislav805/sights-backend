@@ -3,6 +3,7 @@ import { IUser } from '../../types/user';
 import { ApiParam } from '../../types/api';
 import { paramToArrayOf } from '../../utils/param-to-array-of';
 import UserFieldsManager from '../../utils/users/user-fields-manager';
+import { toTheString } from '../../utils/to-string';
 
 type UsersGetParams = {
     userIds: (number | string)[];
@@ -11,7 +12,7 @@ type UsersGetParams = {
 
 class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
     protected handleParams(params: Record<keyof UsersGetParams, ApiParam>, props: ICompanion): UsersGetParams {
-        let userIds: string[] = paramToArrayOf(params.userIds as string);
+        let userIds = paramToArrayOf(params.userIds);
 
         if (!userIds.length) {
             if (props.session) {
@@ -26,7 +27,7 @@ class UsersGet extends OpenMethodAPI<UsersGetParams, IUser[]> {
 
         return {
             userIds,
-            fields: new UserFieldsManager(typeof params.fields === 'string' ? params.fields : ''),
+            fields: new UserFieldsManager(toTheString(params.fields)),
         };
     }
 

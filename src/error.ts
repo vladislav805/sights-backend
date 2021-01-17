@@ -68,7 +68,7 @@ export class ApiError extends Error {
 
         this.code = code;
 
-        console.trace('Occurred here');
+        // console.trace('Occurred here');
     }
 
     public toString() {

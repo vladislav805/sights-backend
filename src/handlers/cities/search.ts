@@ -2,6 +2,10 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { ICity } from '../../types/city';
 import { build, ICityRaw } from './keys';
+import { toTheString } from '../../utils/to-string';
+import { toNumber } from '../../utils/to-number';
+import { toBoolean } from '../../utils/to-boolean';
+import { CacheStore } from '../../utils/api-cache';
 
 type IParams = {
     query: string;
@@ -11,20 +15,26 @@ type IParams = {
 
 type IResult = ICity[];
 
-const cache = new Map<string, ICity[]>();
-
 export default class CitiesSearch extends OpenMethodAPI<IParams, IResult> {
+    private cache: CacheStore<ICity[]>;
+
+    protected onInit() {
+        this.cache = new CacheStore<ICity[], string>(3600);
+    }
+
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: String(params.query).toLowerCase(),
-            count: +params.count || 10,
-            extended: 'extended' in params && Boolean(params.extended),
+            query: toTheString(params.query).toLowerCase(),
+            count: toNumber(params.count, 10),
+            extended: toBoolean(params.extended),
         };
     }
 
     protected async perform({ count, query, extended }: IParams, { database }: ICompanion): Promise<IResult> {
-        if (cache.has(query)) {
-            return cache.get(query)!;
+        const fromCache = this.cache.get(query);
+
+        if (fromCache) {
+            return fromCache;
         }
 
         const { columns, joins, handleItem } = build(extended, true);
@@ -35,7 +45,7 @@ export default class CitiesSearch extends OpenMethodAPI<IParams, IResult> {
         );
 
         const items = result.map(handleItem);
-        cache.set(query, items);
+        this.cache.set(query, items);
 
         return items;
     }

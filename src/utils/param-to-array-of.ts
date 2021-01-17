@@ -1,17 +1,18 @@
-type InputType = string | number;
+import { ApiParam } from '../types/api';
+
 type OutHandler<T> = (item: unknown) => T;
 
 const map = <T>(handler: OutHandler<T> | undefined, items: unknown[]): T[] => handler ? items.map(handler) : items as T[];
 
-export function paramToArrayOf(input: InputType): string[];
-export function paramToArrayOf<T = string>(input: InputType, handler?: OutHandler<T>): T[];
-export function paramToArrayOf<T = string>(input: InputType, handler?: OutHandler<T>): T[] {
+export function paramToArrayOf(input: ApiParam): string[];
+export function paramToArrayOf<T = string>(input: ApiParam, handler?: OutHandler<T>): T[];
+export function paramToArrayOf<T = string>(input: ApiParam, handler?: OutHandler<T>): T[] {
     if (input === null || input === undefined) {
         return [];
     }
 
     if (Array.isArray(input)) {
-        return input;
+        return input as unknown as T[];
     }
 
     if (typeof input === 'number') {

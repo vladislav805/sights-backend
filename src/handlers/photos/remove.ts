@@ -5,6 +5,7 @@ import { ApiError, ErrorCode } from '../../error';
 import { remoteCommand } from '../../utils/photos/remote-command';
 import * as md5 from 'md5';
 import config from '../../config';
+import { toNumber } from '../../utils/to-number';
 
 type IParams = {
     photoId: number;
@@ -12,11 +13,7 @@ type IParams = {
 
 export default class PhotosRemove extends PrivateMethodAPI<IParams, boolean> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const photoId = +params.photoId;
-
-        if (!photoId) {
-            throw new Error('Not specified photoId');
-        }
+        const photoId = toNumber(params.photoId, 'photoId');
 
         return { photoId };
     }
