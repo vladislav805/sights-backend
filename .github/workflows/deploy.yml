@@ -34,5 +34,5 @@ jobs:
             export PATH=$PATH:/usr/bin/:/home/vlad805/.nvm/versions/node/v12.19.0/bin/
             cd /home/vlad805/projects/@sights/backend/
             npm ci
-            pm2 restart sights-backend
+            pm2 restart sights-backend -s
             exit
