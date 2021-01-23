@@ -41,7 +41,7 @@ export default class SightsEdit extends PrivateMethodAPI<IParams, IResult> {
             sightId,
             placeId,
             title,
-            description: toTheString(params.description),
+            description: toTheString(params.description, true),
             cityId: toNumber(params.cityId, true),
             categoryId: toNumber(params.categoryId, true),
             tags: paramToArrayOf(params.tags),
