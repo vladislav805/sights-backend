@@ -24,7 +24,7 @@ export default class CitiesSearch extends OpenMethodAPI<IParams, IResult> {
 
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: toTheString(params.query).toLowerCase(),
+            query: toTheString(params.query, null, 'query').toLowerCase(),
             count: toNumber(params.count, 10),
             extended: toBoolean(params.extended),
         };

@@ -16,7 +16,7 @@ type IResult = IApiList<ICollection>;
 export default class CollectionsSearch extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: toTheString(params.query),
+            query: toTheString(params.query, null, 'query'),
             cityId: toNumber(params.cityId, 0),
             count: toNumber(params.count, 50),
             offset: toNumber(params.offset, 0),

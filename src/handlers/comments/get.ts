@@ -21,7 +21,7 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
             sightId,
             count: clamp(toNumber(params.count, 50), 1, 200),
             offset: toNumber(params.offset, 0),
-            fields: toTheString(params.fields, ''),
+            fields: toTheString(params.fields, true),
         };
     }
 

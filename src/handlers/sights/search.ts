@@ -61,7 +61,7 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
             : 'dateCreated_desc';
 
         return {
-            query: toTheString(params.query),
+            query: toTheString(params.query, null, 'query'),
             fields: new SightFieldsManager(toTheString(params.fields, true)),
             filters,
             cityId: toNumber(params.cityId, 0),

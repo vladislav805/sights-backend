@@ -15,7 +15,7 @@ export default class TagsSearch extends OpenMethodAPI<IParams, ITag[]> {
 
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: toTheString(params.query).toLowerCase(),
+            query: toTheString(params.query, null, 'query').toLowerCase(),
         };
     }
 

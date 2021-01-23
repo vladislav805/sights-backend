@@ -23,7 +23,7 @@ export default class SightsEdit extends PrivateMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         const sightId = toNumber(params.sightId, 'sightId');
         const placeId = toNumber(params.placeId, 'placeId');
-        const title = toTheString(params.title);
+        const title = toTheString(params.title, null, 'title');
 
         if (!sightId || sightId < 0) {
             throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Parameter placeId is invalid');

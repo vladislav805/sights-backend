@@ -20,7 +20,7 @@ export default class FeedGetSourceList extends PrivateMethodAPI<IParams, IResult
         return {
             count: clamp(toNumber(params.count, 50), 1, 100),
             offset: toNumber(params.offset, 0),
-            fields: toTheString(params.fields, ''),
+            fields: toTheString(params.fields, true),
         };
     }
 

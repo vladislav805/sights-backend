@@ -23,7 +23,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IApiListExtended<
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
             count: clamp(toNumber(params.count, 20), 1, 75),
-            fields: toTheString(params.fields, ''),
+            fields: toTheString(params.fields, true),
         };
     }
 
