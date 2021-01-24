@@ -25,7 +25,7 @@ export default class CollectionsGet extends OpenMethodAPI<IParams, IResult> {
             '`ownerId` = ?',
         ];
 
-        if (session) {
+        if (session && params.ownerId === session.userId) {
             where.push(' and `type` in (\'PUBLIC\', \'PRIVATE\', \'DRAFT\')');
         } else {
             where.push(' and `type` = \'PUBLIC\'');
@@ -39,7 +39,7 @@ export default class CollectionsGet extends OpenMethodAPI<IParams, IResult> {
         );
 
         const items = await database.select<ICollection>(
-            'select * from `collection` where ' + whereStr + ' limit ?, ?',
+            'select * from `collection` where ' + whereStr + ' order by `collectionId` desc limit ?, ?',
             [params.ownerId, params.offset, params.count],
         );
 
