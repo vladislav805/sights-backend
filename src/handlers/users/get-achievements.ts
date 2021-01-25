@@ -48,12 +48,12 @@ export default class UsersGetAchievements extends OpenMethodAPI<IParams, IResult
         }
 
         const sql = 'select \
-            (select count(*) from `sightVisit` WHERE `userId` = @u AND `state` = ?) AS `sights_visited`,\
-            (select count(*) from `sightVisit` WHERE `userId` = @u AND `state` = ?) AS `sights_desired`,\
+            (select count(*) from `sightVisit` where `userId` = @u and `state` = ?) as `sights_visited`,\
+            (select count(*) from `sightVisit` where `userId` = @u and `state` = ?) as `sights_desired`,\
             (select count(*) from `sight` where `ownerId` = @u and (`mask` & 2) = 2) as `sights_verified`,\
             (select count(*) from `sight` where `ownerId` = @u) as `sights_created`,\
             (select count(*) from `comment` where `userId` = @u) as `comments_added`,\
-            (0) AS `collections_created`,\
+            (select count(*) from `collection` where `ownerId` = @u) as `collections_created`,\
             (select count(*) from `photo` where `ownerId` = @u and `type` = ?) as `photos_uploaded`'.replace(/@u/ig, String(userId));
 
         type IQueryResult = {
