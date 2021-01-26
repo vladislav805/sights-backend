@@ -32,7 +32,7 @@ export default class RatingSet extends PrivateMethodAPI<IParams, ISightRating> {
 
     protected async perform({ sightId, collectionId, rating }: IParams, companion: ICompanionPrivate): Promise<ISightRating> {
         const key = wrapIdentify(Boolean(sightId) ? 'sightId' : 'collectionId');
-        const id = sightId ?? collectionId;
+        const id = sightId || collectionId;
 
         if (rating > 0) {
             const has = await RatingSet.hasCurrentUserRating(key, id, companion);
