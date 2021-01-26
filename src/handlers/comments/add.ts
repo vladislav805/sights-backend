@@ -14,8 +14,8 @@ type IParams = {
 
 export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
-        const sightId = toNumber(params.sightId);
-        const collectionId = toNumber(params.collectionId);
+        const sightId = toNumber(params.sightId, 0);
+        const collectionId = toNumber(params.collectionId, 0);
 
         if (!sightId && !collectionId) {
             throw new ApiError(ErrorCode.UNKNOWN_SOURCE_COMMENT, 'Not specified sightId or collectionId');
