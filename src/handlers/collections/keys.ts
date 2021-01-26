@@ -21,3 +21,13 @@ export const COLLECTION_KEYS: (keyof ICollection)[] = [
     COLLECTION_CITY_ID,
     COLLECTION_SIZE,
 ];
+
+export const COLLECTION_FIELD_TAGS = 'collection_tags';
+export const COLLECTION_FIELD_CITY = 'collection_city';
+export const COLLECTION_FIELD_RATING = 'collection_rating';
+
+export const COLLECTION_FIELDS_ALLOWED = [
+    COLLECTION_FIELD_TAGS,
+    COLLECTION_FIELD_CITY,
+    COLLECTION_FIELD_RATING,
+];
