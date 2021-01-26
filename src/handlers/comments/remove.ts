@@ -14,6 +14,7 @@ export default class CommentsRemove extends PrivateMethodAPI<IParams, boolean> {
     }
 
     protected async perform(params: IParams, { database, session }: ICompanionPrivate): Promise<boolean> {
+        // TODO: проверка на удаление комментария от имени автора достопримечательности или коллекции, а не коммента
         const sql = 'delete from `comment` where `commentId` = ? and `userId` = ?';
 
         const result = await database.apply(sql, [params.commentId, session?.userId]);

@@ -77,6 +77,7 @@ import CollectionsEdit from './collections/edit';
 import CollectionsSearch from './collections/search';
 import CollectionsRemove from './collections/remove';
 import CollectionsGetById from './collections/get-by-id';
+import CollectionsGetBySight from './collections/get-by-sight';
 import CollectionsIsAffiliate from './collections/is-affiliate';
 import CollectionsSetAffiliation from './collections/set-affiliation';
 import Execute from './execute';
@@ -169,6 +170,7 @@ export const initMethods = () => {
         'collections.getById': CollectionsGetById,
         'collections.search': CollectionsSearch,
         'collections.remove': CollectionsRemove,
+        'collections.getBySight': CollectionsGetBySight,
         'collections.isAffiliate': CollectionsIsAffiliate,
         'collections.setAffiliation': CollectionsSetAffiliation,
 

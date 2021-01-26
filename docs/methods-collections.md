@@ -3,6 +3,7 @@
 * [collections.get](#collectionsget)
 * [collections.search](#collectionssearch)
 * [collections.getById](#collectionsgetbyid)
+* [collections.getBySight](#collectionsgetbysight)
 * [collections.add](#collectionsadd)
 * [collections.edit](#collectionsedit)
 * [collections.isAffiliate](#collectionsisaffiliate)
@@ -82,7 +83,7 @@ type Response = IApiList<ICollection>;
 Возвращает коллекцию и полное её содержание по её идентификатору. 
 
 ### Параметры
-* `string collectionId` - поисковый запрос;
+* `int collectionId` - идентификатор коллекции;
 * `boolean onlyInformation = false` - `true`, если нужно получить только базовую информацию (иначе будет возвращён список с достопримечательностями в поле items).
 
 ### Формат ответа
@@ -122,6 +123,34 @@ type Response = ICollectionExtended;
             "canModify": false
         }]
     }
+}
+```
+
+## collections.getBySight
+Возвращает список коллекций, в которых находится достопримечательность с заданным идентификатором.
+
+### Параметры
+* `int sightId` - идентификатор достопримечательности.
+
+### Формат ответа
+```ts
+type Response = ICollection[];
+```
+
+### Пример ответа
+```json5
+{
+    "result": [{
+        "collectionId": 1,
+        "ownerId": 1,
+        "title": "test",
+        "content": "",
+        "type": "PUBLIC",
+        "dateCreated": 1560845050,
+        "dateUpdated": 0,
+        "cityId": null,
+        "size": 1
+    }]
 }
 ```
 
