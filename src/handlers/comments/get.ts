@@ -6,7 +6,6 @@ import { toNumber } from '../../utils/to-number';
 import { getUsers } from '../../utils/users/get-users';
 import { toTheString } from '../../utils/to-string';
 import { ApiError, ErrorCode } from '../../error';
-import { wrapIdentify } from '../../utils/sql-packer-id';
 
 type IParams = {
     sightId?: number;
@@ -37,7 +36,7 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
     protected async perform(params: IParams, companion: ICompanion): Promise<IApiListExtended<IComment>> {
         const { database, session } = companion;
 
-        const key = wrapIdentify(params.sightId ? 'sightId' : 'collectionId');
+        const key = params.sightId ? 'sightId' : 'collectionId';
         const id = params.sightId ? params.sightId : params.collectionId;
 
         const count = await database.count(

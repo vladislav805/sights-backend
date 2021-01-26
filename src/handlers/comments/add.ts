@@ -4,7 +4,6 @@ import { IApiParams } from '../../types/api';
 import { ApiError, ErrorCode } from '../../error';
 import { toNumber } from '../../utils/to-number';
 import { toTheString } from '../../utils/to-string';
-import { wrapIdentify } from '../../utils/sql-packer-id';
 
 type IParams = {
     sightId?: number;
@@ -28,7 +27,7 @@ export default class CommentsAdd extends PrivateMethodAPI<IParams, IComment> {
 
     protected async perform(params: IParams, { session, database }: ICompanionPrivate): Promise<IComment> {
         try {
-            const key = wrapIdentify(params.sightId ? 'sightId' : 'collectionId');
+            const key = params.sightId ? 'sightId' : 'collectionId';
             const id = params.sightId ? params.sightId : params.collectionId;
 
             const sql = `insert into \`comment\` (\`${key}\`, \`userId\`, \`date\`, \`text\`)  values (?, ?, unix_timestamp(now()), ?)`;
