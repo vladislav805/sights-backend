@@ -12,14 +12,14 @@ export default class PhotosGetById extends OpenMethodAPI<IParam, IPhoto[]> {
     protected handleParams(params: IApiParams, props: ICompanion): IParam {
         const photoIds = paramToArrayOf(params.photoIds, Number).filter(val => !isNaN(val));
 
-        if (!photoIds.length) {
-            throw new Error('Not specified photoIds');
-        }
-
         return { photoIds };
     }
 
     protected async perform({ photoIds }: IParam, { database }: ICompanion): Promise<IPhoto[]> {
+        if (!photoIds.length) {
+            return [];
+        }
+
         const sql = 'select * from `photo` where `photo`.`photoId` in (?)';
         const items = await database.select<IPhotoRaw>(sql, [photoIds]);
 
