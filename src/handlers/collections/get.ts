@@ -2,11 +2,14 @@ import { ICompanion, OpenMethodAPI } from '../method';
 import { IApiList, IApiParams } from '../../types/api';
 import { ICollection } from '../../types/collection';
 import { toNumber } from '../../utils/to-number';
+import CollectionFieldsManager from '../../utils/collections/collection-fields-manager';
+import { toTheString } from '../../utils/to-string';
 
 type IParams = {
     ownerId: number;
     count: number; // = 50
     offset: number; // = 0
+    fields: CollectionFieldsManager;
 };
 
 type IResult = IApiList<ICollection>;
@@ -17,6 +20,7 @@ export default class CollectionsGet extends OpenMethodAPI<IParams, IResult> {
             ownerId: toNumber(params.ownerId, companion.session?.userId),
             count: toNumber(params.count, 50),
             offset: toNumber(params.offset, 0),
+            fields: new CollectionFieldsManager(toTheString(params.fields, true)),
         };
     }
 
@@ -38,14 +42,16 @@ export default class CollectionsGet extends OpenMethodAPI<IParams, IResult> {
             [params.ownerId],
         );
 
+        const { joins, columns } = params.fields.build(session);
+
         const items = await database.select<ICollection>(
-            'select * from `collection` where ' + whereStr + ' order by `collectionId` desc limit ?, ?',
+            `select ${columns} from \`collection\` ${joins} where ${whereStr} order by \`collectionId\` desc limit ?, ?`,
             [params.ownerId, params.offset, params.count],
         );
 
         return {
             count,
-            items,
+            items: items.map(params.fields.handleResult),
         };
     }
 }
