@@ -82,6 +82,7 @@ import CollectionsIsAffiliate from './collections/is-affiliate';
 import CollectionsSetAffiliation from './collections/set-affiliation';
 import Execute from './execute';
 import InternalGetPage from './internal/get-page';
+import InternalParseMarkdown from './internal/parse-markdown';
 
 export const methods = new Map<string, IMethodAPI>();
 
@@ -179,6 +180,7 @@ export const initMethods = () => {
         'execute': Execute,
 
         'internal.getPage': InternalGetPage,
+        'internal.parseMarkdownForObjects': InternalParseMarkdown,
     };
 
     for (const name of Object.keys(listOfMethods)) {
