@@ -7,7 +7,7 @@ export type IMarkdownParsedObjects = {
 
 const sightRe = /\[sight:(\d+)]([^[]+)\[\/sight]/img;
 const collectionRe = /\[collection:(\d+)]([^[]+)\[\/collection]/img;
-const photoRe = /\[photo:(\d+)_(\d+)(:([a-z]+=[^]]+)+)?]([^[]*)\[\/photo]/img;
+const photoRe = /\[photo:(\d+)_(\d+)(:([a-z]+=[^\]]+)+)?]([^[]*)\[\/photo]/img;
 const userRe = /@([A-Za-z0-9_]+)/img;
 
 const resetRegExp = (re: RegExp) => {
