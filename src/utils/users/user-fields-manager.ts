@@ -59,7 +59,7 @@ export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'f
         // fields=rank
         if (this.is(USERS_GET_FIELD_RANK)) {
             joins.push('left join `rank` on `user`.`point` between `rank`.`min` and `rank`.`max`');
-            columns.push('`user`.`point` as `r_points`, `rank`.`id` as `r_rankId`, `rank`.`title` as `r_title`');
+            columns.push('`user`.`point` as `r_points`, `rank`.`rankId` as `r_rankId`, `rank`.`title` as `r_title`');
         }
 
         return {

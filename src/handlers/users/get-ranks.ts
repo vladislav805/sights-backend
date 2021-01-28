@@ -18,7 +18,7 @@ export default class UsersGetRanks extends OpenMethodAPI<IParams, IResult> {
 
     protected async perform({ rankIds }: IParams, { session, database }: ICompanion): Promise<IResult> {
         const sql = rankIds?.length
-            ? `select * from \`rank\` where \`id\` in (?)`
+            ? `select * from \`rank\` where \`rankId\` in (?)`
             : 'select * from `rank`';
 
         const values = rankIds?.length ? [rankIds] : [];
