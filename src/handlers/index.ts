@@ -9,6 +9,7 @@ import log from '../logger';
 import UsersGet from './users/get';
 import UsersSearch from './users/search';
 import UsersFollow from './users/follow';
+import UsersGetRanks from './users/get-ranks';
 import UsersGetFollowers from './users/get-followers';
 import UsersGetAchievements from './users/get-achievements';
 import SessionsGet from './sessions/get';
@@ -94,6 +95,7 @@ export const initMethods = () => {
         'users.getFollowers': UsersGetFollowers,
         'users.follow': UsersFollow,
         'users.getAchievements': UsersGetAchievements,
+        'users.getRanks': UsersGetRanks,
 
         'account.create': AccountCreate,
         'account.authorize': AccountAuthorize,
