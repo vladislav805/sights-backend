@@ -6,6 +6,7 @@ import {
     USERS_GET_FIELD_IS_FOLLOWING,
     USERS_GET_FIELD_IS_ONLINE,
     USERS_GET_FIELD_PHOTO,
+    USERS_GET_FIELD_RANK,
     USERS_GET_FIELDS_ALLOWED,
 } from '../../handlers/users/keys';
 import { packIdentitiesToSql, unpackObject, wrapIdentify } from '../sql-packer-id';
@@ -18,11 +19,13 @@ import { BuildResult, FieldsManager } from '../fields-manager';
 import { ISession } from '../../types/session';
 import { time } from '../time';
 import { MINUTE } from '../../date';
+import { IUserRank } from '../../types/rank';
 
 const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
+const UFM_RANK = 'r';
 
-export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'followers' | 'isFollowed' | 'isOnline', IUser> {
+export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'followers' | 'isFollowed' | 'isOnline' | 'rank', IUser> {
     public constructor(fields: string) {
         super(fields, USERS_GET_FIELDS_ALLOWED);
     }
@@ -53,6 +56,12 @@ export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'f
             columns.push(`isUserFollowed(${session.userId}, \`${tableName}\`.\`userId\`) as \`isFollowed\``);
         }
 
+        // fields=rank
+        if (this.is(USERS_GET_FIELD_RANK)) {
+            joins.push('left join `rank` on `user`.`point` between `rank`.`min` and `rank`.`max`');
+            columns.push('`user`.`point` as `r_points`, `rank`.`id` as `r_rankId`, `rank`.`title` as `r_title`');
+        }
+
         return {
             joins: joins.join(' '),
             columns: columns.join(', '),
@@ -80,6 +89,10 @@ export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'f
 
         if (this.is(USERS_GET_FIELD_IS_ONLINE)) {
             user.isOnline = time() - user.lastSeen < 7 * MINUTE;
+        }
+
+        if (this.is(USERS_GET_FIELD_RANK)) {
+            user.rank = unpackObject<IUser, IUserRank>(user, UFM_RANK, ['rankId', 'title', 'points']);
         }
 
         return user;
