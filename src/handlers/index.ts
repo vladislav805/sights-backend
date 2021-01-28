@@ -12,7 +12,6 @@ import UsersFollow from './users/follow';
 import UsersGetFollowers from './users/get-followers';
 import UsersGetAchievements from './users/get-achievements';
 import SessionsGet from './sessions/get';
-import UtilsGetTime from './utils/time';
 import MapAddPlace from './map/add-place';
 import MapGetSights from './map/get-sights';
 import MapGetCities from './map/get-cities';
@@ -83,6 +82,8 @@ import CollectionsSetAffiliation from './collections/set-affiliation';
 import Execute from './execute';
 import InternalGetPage from './internal/get-page';
 import InternalParseMarkdown from './internal/parse-markdown';
+import UtilsGetTime from './utils/time';
+import UtilsRebuildPoints from './utils/rebuild-points';
 
 export const methods = new Map<string, IMethodAPI>();
 
@@ -176,6 +177,7 @@ export const initMethods = () => {
         'collections.setAffiliation': CollectionsSetAffiliation,
 
         'utils.getTime': UtilsGetTime,
+        'utils.rebuildPoints': UtilsRebuildPoints,
 
         'execute': Execute,
 
