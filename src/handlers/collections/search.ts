@@ -56,7 +56,7 @@ export default class CollectionsSearch extends OpenMethodAPI<IParams, IResult> {
 
         return {
             count,
-            items,
+            items: items.map(params.fields.handleResult),
         };
     }
 }
