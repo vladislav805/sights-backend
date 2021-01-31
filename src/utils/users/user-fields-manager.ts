@@ -12,7 +12,7 @@ import {
 import { packIdentitiesToSql, unpackObject, wrapIdentify } from '../sql-packer-id';
 import { PHOTO_KEYS } from '../../handlers/photos/keys';
 import { CITY_KEYS } from '../../handlers/cities/keys';
-import { IPhotoRaw } from '../../types/photo';
+import { IPhotoRaw, PhotoType } from '../../types/photo';
 import raw2object from '../photos/raw-to-object';
 import { ICity } from '../../types/city';
 import { BuildResult, FieldsManager } from '../fields-manager';
@@ -24,6 +24,18 @@ import { IUserRank } from '../../types/rank';
 const UFM_PHOTO = 'pt';
 const UFM_CITY = 'ct';
 const UFM_RANK = 'r';
+
+const defaultProfilePhoto: IPhotoRaw = {
+    photoId: 0,
+    path: '',
+    width: 300,
+    height: 300,
+    photo200: 'none.png',
+    photoMax: 'none.png',
+    type: PhotoType.PROFILE,
+    ownerId: 0,
+    date: 0,
+};
 
 export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'followers' | 'isFollowed' | 'isOnline' | 'rank', IUser> {
     public constructor(fields: string) {
@@ -72,9 +84,7 @@ export default class UserFieldsManager extends FieldsManager<'ava' | 'city' | 'f
         if (this.is(USERS_GET_FIELD_PHOTO)) {
             const photo = unpackObject<IUser, IPhotoRaw>(user, UFM_PHOTO, PHOTO_KEYS);
 
-            user.photo = photo.photoId
-                ? raw2object(photo)
-                : null;
+            user.photo = raw2object(photo.photoId ? photo : defaultProfilePhoto);
         }
 
         if (this.is(USERS_GET_FIELD_CITY)) {
