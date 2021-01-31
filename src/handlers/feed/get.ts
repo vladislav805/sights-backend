@@ -4,7 +4,7 @@ import { toNumber } from '../../utils/to-number';
 import { ISight } from '../../types/sight';
 import { IPhoto, IPhotoRaw } from '../../types/photo';
 import { clamp } from '../../utils/clamp';
-import { SIGHT_KEYS } from '../sights/keys';
+import { PLACE_KEYS, SIGHT_KEYS } from '../sights/keys';
 import { getUsers } from '../../utils/users/get-users';
 import { toTheString } from '../../utils/to-string';
 import { ICollection } from '../../types/collection';
@@ -105,7 +105,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
 
             switch (type) {
                 case 'sight': {
-                    const sight = unpackObject<FeedItemRaw, ISight>(item, 's', SIGHT_KEYS);
+                    const sight = unpackObject<FeedItemRaw, ISight>(item, 's', [...PLACE_KEYS, ...SIGHT_KEYS]);
                     sights.push(sight);
 
                     args.sightId = sight.sightId;
@@ -121,7 +121,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
                 }
 
                 case 'photo': {
-                    const sight = unpackObject<FeedItemRaw, ISight>(item, 'sp', SIGHT_KEYS);
+                    const sight = unpackObject<FeedItemRaw, ISight>(item, 'sp', [...PLACE_KEYS, ...SIGHT_KEYS]);
                     sights.push(sight);
 
                     let photo = unpackObject<FeedItemRaw, IPhotoRaw>(item, 'p', PHOTO_KEYS);
@@ -138,7 +138,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
                     args.commentId = comment.commentId;
 
                     if (comment.sightId) {
-                        sights.push(unpackObject<FeedItemRaw, ISight>(item, 'cms', SIGHT_KEYS));
+                        sights.push(unpackObject<FeedItemRaw, ISight>(item, 'cms', [...PLACE_KEYS, ...SIGHT_KEYS]));
                         args.sightId = comment.sightId;
                     } else {
                         collections.push(unpackObject<FeedItemRaw, ICollection>(item, 'cmc', COLLECTION_KEYS));
