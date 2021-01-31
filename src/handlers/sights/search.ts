@@ -122,13 +122,13 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
 
         // Категория
         if (params.categoryId) {
-            where.push('`sight`.`categoryId` = ');
+            where.push('`sight`.`categoryId` = ?');
             values.push(params.categoryId);
         }
 
         // Город
         if (params.cityId) {
-            where.push('`sight`.`cityId` = ');
+            where.push('`sight`.`cityId` = ?');
             values.push(params.cityId);
         }
 
@@ -136,6 +136,7 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
     }
 
     private async count(companion: ICompanion, params: IParams, [where, values]: FilterTuple): Promise<number> {
+        console.log('count');
         if (params.tagId) {
             return companion.database.count(
                 'select count(*) as `count` from `sight` left join `sightTag` on `sight`.`sightId` = `sightTag`.`sightId` where `sightTag`.`tagId` = ? and ' + where.join(' and '),
@@ -160,7 +161,7 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
         const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where ${where.join(' and ')} group by \`sight\`.\`sightId\` order by ${orderBy} limit ?,?`;
 
         const raw = await companion.database.select<ISight>(sql, values);
-
+console.log(sql, values);
         return raw.map(params.fields.handleResult);
     }
 
