@@ -1,78 +1,171 @@
 import { ICompanionPrivate, PrivateMethodAPI } from '../method';
 import { IApiListExtended, IApiParams } from '../../types/api';
-import { IFeedItem } from '../../types/feed';
 import { toNumber } from '../../utils/to-number';
 import { ISight } from '../../types/sight';
-import { IPhoto, IPhotoRaw, PhotoType } from '../../types/photo';
-import { MONTH } from '../../date';
+import { IPhoto, IPhotoRaw } from '../../types/photo';
 import { clamp } from '../../utils/clamp';
-import { time } from '../../utils/time';
-import raw2object from '../../utils/photos/raw-to-object';
-import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
 import { SIGHT_KEYS } from '../sights/keys';
-import { IPlace } from '../../types/place';
 import { getUsers } from '../../utils/users/get-users';
 import { toTheString } from '../../utils/to-string';
+import { ICollection } from '../../types/collection';
+import { IComment } from '../../types/comment';
+import { COLLECTION_KEYS } from '../collections/keys';
+import { defaultRawPhoto, PHOTO_KEYS } from '../photos/keys';
+import { COMMENT_KEYS } from '../comments/keys';
+import { packIdentitiesToSql, unpackObject } from '../../utils/sql-packer-id';
+import raw2object from '../../utils/photos/raw-to-object';
+import { CacheStore } from '../../utils/api-cache';
+import { ISession } from '../../types/session';
+import { FeedItemRaw, FeedItemRawType, IFeedItem } from '../../types/feed';
 
 type IParams = {
     count: number;
+    offset: number;
     fields: string;
 };
 
-export default class FeedGet extends PrivateMethodAPI<IParams, IApiListExtended<IFeedItem>> {
+type IResult = IApiListExtended<IFeedItem> & {
+    sights: ISight[];
+    collections: ICollection[];
+    photos: IPhoto[];
+    comments: IComment[];
+};
+
+const feedTypeRawAs: Record<FeedItemRawType, 'sight' | 'collection' | 'photo' | 'comment'> = {
+    [FeedItemRawType.SIGHT]: 'sight',
+    [FeedItemRawType.COLLECTION]: 'collection',
+    [FeedItemRawType.PHOTO]: 'photo',
+    [FeedItemRawType.COMMENT]: 'comment',
+}
+
+const cacheKey = ({ count, offset }: IParams, session: ISession) => `${session.userId}_${count}_${offset}`;
+
+export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
+    private cache: CacheStore<IResult>;
+
+    protected onInit() {
+        this.cache = new CacheStore<IResult>(30);
+    }
+
     protected handleParams(params: IApiParams, props: ICompanionPrivate): IParams {
         return {
             count: clamp(toNumber(params.count, 20), 1, 75),
+            offset: clamp(toNumber(params.offset, 0), 0, 250),
             fields: toTheString(params.fields, true),
         };
     }
 
-    protected async perform({ count, fields }: IParams, companion: ICompanionPrivate): Promise<IApiListExtended<IFeedItem>> {
-        const dateLimit = time() - MONTH;
+    protected async perform(params: IParams, companion: ICompanionPrivate): Promise<IResult> {
+        const CK = cacheKey(params, companion.session)
+        const cached = this.cache.get(CK);
 
-        const sights = await companion.database.select<ISight>(
-            'select * from `sight` left join `subscribe` on `subscribe`.`targetId` = `sight`.`ownerId` left join `place` `p` on `sight`.`placeId` = `p`.`placeId` where `subscribe`.`userId` = ? and `sight`.`dateCreated` > ? order by `sight`.`dateCreated` desc limit ?',
-            [companion.session.userId, dateLimit, count],
+        if (cached) {
+            return cached;
+        }
+
+        const feed = await companion.database.select<FeedItemRaw>(
+            'select *, case 1\
+                    when not isnull(`feed`.`sightId`) then 1 \
+                    when not isnull(`feed`.`collectionId`) then 2 \
+                    when not isnull(`feed`.`photoId`) then 3 \
+                    when not isnull(`feed`.`commentId`) then 4 \
+                end as `feedType` \
+            from `feed` \
+            left join `subscribe` on `subscribe`.`targetId` = `feed`.`actorId` \
+            left join `sight` on `sight`.`sightId` = `feed`.`sightId` \
+            left join `collection` on `collection`.`collectionId` = `feed`.`collectionId` \
+            left join `photo` on `photo`.`photoId` = `feed`.`photoId` \
+            left join `sightPhoto` on `sightPhoto`.`photoId` = `photo`.`photoId` \
+            left join `sight` `sp` on `sp`.`sightId` = `sightPhoto`.`sightId` \
+            left join `comment` on `comment`.`commentId` = `feed`.`commentId` \
+            left join `sight` `cs` on `cs`.`sightId` = `comment`.`sightId` \
+            left join `collection` `cc` on `cc`.`collectionId` = `comment`.`collectionId` \
+            where `subscribe`.`userId` = ? order by `feed`.`itemId` desc limit ?'
+                .replace('*,', [
+                    '`feed`.*',
+                    ...packIdentitiesToSql('sight', 's', SIGHT_KEYS),
+                    ...packIdentitiesToSql('collection', 'c', COLLECTION_KEYS),
+                    ...packIdentitiesToSql('photo', 'p', PHOTO_KEYS),
+                    ...packIdentitiesToSql('comment', 'cm', COMMENT_KEYS),
+                    ...packIdentitiesToSql('sp', 'sp', SIGHT_KEYS),
+                    ...packIdentitiesToSql('cs', 'cms', SIGHT_KEYS),
+                    ...packIdentitiesToSql('cc', 'cmc', COLLECTION_KEYS),
+                ].join(', ') + ','),
+            [companion.session.userId, params.count],
         );
 
-        const SIGHT_COLS = packIdentitiesToSql('sight', 's', SIGHT_KEYS);
+        const sights: ISight[] = [];
+        const photos: IPhoto[] = [];
+        const collections: ICollection[] = [];
+        const comments: IComment[] = [];
 
-        const photos = await companion.database.select<IPhotoRaw>(
-            'select `photo`.*, ' + SIGHT_COLS + ' from `photo` left join `subscribe` on `subscribe`.`targetId` = `photo`.`ownerId` left join `sightPhoto` on `photo`.`photoId` = `sightPhoto`.`photoId` left join `sight` on `sightPhoto`.`sightId` = `sight`.`sightId` where `subscribe`.`userId` = ? and `photo`.`type` = ? and `photo`.`date` > ? order by `photo`.`date` desc limit ?',
-            [companion.session.userId, PhotoType.SIGHT, dateLimit, count],
-        );
+        const items = feed.map(item => {
+            const type = feedTypeRawAs[item.feedType];
+            const args: Record<string, number> = {};
 
-        const items: IFeedItem[] = [
-            ...sights.map(sight => ({
-                type: 'sight',
-                ownerId: sight.ownerId,
-                date: sight.dateCreated,
-                sight,
-            }) as IFeedItem),
-            ...photos.map(raw => {
-                const photo = raw2object(raw);
-                return ({
-                    type: 'photo',
-                    ownerId: photo.ownerId,
-                    date: photo.date,
-                    photo,
-                    // todo fix it
-                    sight: {
-                        ...unpackObject<IPhoto & IPlace, ISight>(photo as unknown as any, 's', SIGHT_KEYS),
-                    },
-                }) as IFeedItem;
-            }),
-        ]
-            .sort((a: IFeedItem, b: IFeedItem) => b.date - a.date)
-            .slice(0, count);
+            switch (type) {
+                case 'sight': {
+                    const sight = unpackObject<FeedItemRaw, ISight>(item, 's', SIGHT_KEYS);
+                    sights.push(sight);
 
-        const userIds = items.map(item => item.ownerId);
+                    args.sightId = sight.sightId;
+                    break;
+                }
 
-        const users = await getUsers(userIds, fields, companion);
+                case 'collection': {
+                    const collection = unpackObject<FeedItemRaw, ICollection>(item, 'c', COLLECTION_KEYS);
+                    collections.push(collection);
 
-        return {
-            items,
-            users,
-        };
+                    args.collectionId = collection.collectionId;
+                    break;
+                }
+
+                case 'photo': {
+                    const sight = unpackObject<FeedItemRaw, ISight>(item, 'sp', SIGHT_KEYS);
+                    sights.push(sight);
+
+                    let photo = unpackObject<FeedItemRaw, IPhotoRaw>(item, 'p', PHOTO_KEYS);
+                    photo = raw2object(photo?.photoId ? photo : defaultRawPhoto);
+                    photos.push(photo);
+
+                    args.photoId = photo.photoId;
+                    args.sightId = sight.sightId;
+                    break;
+                }
+
+                case 'comment': {
+                    const comment = unpackObject<FeedItemRaw, IComment>(item, 'cm', COMMENT_KEYS);
+                    args.commentId = comment.commentId;
+
+                    if (comment.sightId) {
+                        sights.push(unpackObject<FeedItemRaw, ISight>(item, 'cms', SIGHT_KEYS));
+                        args.sightId = comment.sightId;
+                    } else {
+                        collections.push(unpackObject<FeedItemRaw, ICollection>(item, 'cmc', COLLECTION_KEYS));
+                        args.collectionId = comment.collectionId;
+                    }
+
+                    comments.push(comment);
+                    break;
+                }
+            }
+
+            return {
+                type,
+                date: item.date,
+                actorId: item.actorId,
+                ...args,
+            } as IFeedItem;
+        });
+
+        const userIds = items.reduce((ids, item) => {
+            return ids.add(item.actorId);
+        }, new Set<number>());
+        const users = await getUsers([...userIds], params.fields, companion);
+
+        const result = { items, users, sights, collections, photos, comments };
+
+        this.cache.set(CK, result);
+        return result
     }
 }
