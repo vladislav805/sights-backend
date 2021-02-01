@@ -18,7 +18,7 @@ type IResult = IApiList<ICollection>;
 export default class CollectionsSearch extends OpenMethodAPI<IParams, IResult> {
     protected handleParams(params: IApiParams, props: ICompanion): IParams {
         return {
-            query: toTheString(params.query, null, 'query'),
+            query: toTheString(params.query, true),
             cityId: toNumber(params.cityId, 0),
             count: toNumber(params.count, 50),
             offset: toNumber(params.offset, 0),
@@ -28,12 +28,16 @@ export default class CollectionsSearch extends OpenMethodAPI<IParams, IResult> {
 
     protected async perform(params: IParams, { database, session }: ICompanion): Promise<IResult> {
         const where = [
-            '`collection`.`title` like ?',
             '`collection`.`type` = \'PUBLIC\'',
         ];
         const values: (string | number)[] = [
-            `%${params.query}%`,
+
         ];
+
+        if (params.query) {
+            where.push('`collection`.`title` like ?');
+            values.push(`%${params.query}%`,);
+        }
 
         if (params.cityId) {
             where.push('`collection`.`cityId` = ?');

@@ -61,7 +61,7 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
             : 'dateCreated_desc';
 
         return {
-            query: toTheString(params.query, null, 'query'),
+            query: toTheString(params.query, true),
             fields: new SightFieldsManager(toTheString(params.fields, true)),
             filters,
             cityId: toNumber(params.cityId, 0),
@@ -115,7 +115,7 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
         if (params.tagId) {
             where.push('`sightTag`.`tagId` = ?');
             values.push(params.tagId);
-        } else {
+        } else if (params.query) {
             where.push('(`sight`.`title` like ? or `sight`.`description` like ?)');
             values.push(`%${params.query}%`, `%${params.query}%`);
         }
@@ -136,7 +136,6 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
     }
 
     private async count(companion: ICompanion, params: IParams, [where, values]: FilterTuple): Promise<number> {
-        console.log('count');
         if (params.tagId) {
             return companion.database.count(
                 'select count(*) as `count` from `sight` left join `sightTag` on `sight`.`sightId` = `sightTag`.`sightId` where `sightTag`.`tagId` = ? and ' + where.join(' and '),
