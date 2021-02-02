@@ -84,8 +84,10 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
 
         const filters = this.getFilterStrings(companion, params);
 
-        const count = await this.count(companion, params, filters);
-        const items = await this.items(companion, params, filters);
+        const { joins, columns } = params.fields.build(companion.session);
+
+        const count = await this.count(companion, params, filters, joins);
+        const items = await this.items(companion, params, filters, columns, joins);
 
         return {
             count,
@@ -135,32 +137,28 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
         return [where, values];
     }
 
-    private async count(companion: ICompanion, params: IParams, [where, values]: FilterTuple): Promise<number> {
+    private async count(companion: ICompanion, params: IParams, [where, values]: FilterTuple, joins: string): Promise<number> {
         if (params.tagId) {
             return companion.database.count(
-                'select count(*) as `count` from `sight` left join `sightTag` on `sight`.`sightId` = `sightTag`.`sightId` where `sightTag`.`tagId` = ? and ' + where.join(' and '),
+                'select count(*) as `count` from `sight` left join `sightTag` on `sight`.`sightId` = `sightTag`.`sightId` ' + joins + ' where `sightTag`.`tagId` = ? and ' + where.join(' and '),
                 [params.tagId, ...values],
             );
         } else {
-            return companion.database.count(
-                'select count(*) as `count` from `sight` where (`title` like ? or `description` like ?) and ' + where.join(' and ') + '',
-                [`%${params.query}%`, `%${params.query}%`, ...values],
-            );
+            const sql = 'select count(*) as `count` from `place` `pl` ' + joins + ' where ' + where.join(' and ');
+            return companion.database.count(sql, values);
         }
     }
 
-    private async items(companion: ICompanion, params: IParams, filters: FilterTuple): Promise<ISight[]> {
+    private async items(companion: ICompanion, params: IParams, filters: FilterTuple, columns: string, joins: string): Promise<ISight[]> {
         const [where, values] = filters;
 
         values.push(params.offset, params.count);
 
         const orderBy = this.getSortQueryString(params.sort!, params.fields);
-        const { joins, columns } = params.fields.build(companion.session);
 
         const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where ${where.join(' and ')} group by \`sight\`.\`sightId\` order by ${orderBy} limit ?,?`;
 
         const raw = await companion.database.select<ISight>(sql, values);
-console.log(sql, values);
         return raw.map(params.fields.handleResult);
     }
 
