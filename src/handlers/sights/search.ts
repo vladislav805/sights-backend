@@ -86,13 +86,10 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
 
         const { joins, columns } = params.fields.build(companion.session);
 
-        const count = await this.count(companion, params, filters, joins);
+        const count = await this.count(companion, filters, joins);
         const items = await this.items(companion, params, filters, columns, joins);
 
-        return {
-            count,
-            items,
-        };
+        return { count, items };
     }
 
     private async getTagId(companion: ICompanion, hashtag: string): Promise<number> {
@@ -137,16 +134,10 @@ export default class SightsSearch extends OpenMethodAPI<IParams, IApiList<ISight
         return [where, values];
     }
 
-    private async count(companion: ICompanion, params: IParams, [where, values]: FilterTuple, joins: string): Promise<number> {
-        if (params.tagId) {
-            return companion.database.count(
-                'select count(*) as `count` from `sight` left join `sightTag` on `sight`.`sightId` = `sightTag`.`sightId` ' + joins + ' where `sightTag`.`tagId` = ? and ' + where.join(' and '),
-                [params.tagId, ...values],
-            );
-        } else {
-            const sql = 'select count(*) as `count` from `place` `pl` ' + joins + ' where ' + where.join(' and ');
-            return companion.database.count(sql, values);
-        }
+    private async count(companion: ICompanion, [where, values]: FilterTuple, joins: string): Promise<number> {
+        // noinspection SqlResolve
+        const sql = 'select count(distinct `sight`.`sightId`) as `count` from `place` `pl` ' + joins + ' where ' + where.join(' and ');
+        return companion.database.count(sql, values);
     }
 
     private async items(companion: ICompanion, params: IParams, filters: FilterTuple, columns: string, joins: string): Promise<ISight[]> {
