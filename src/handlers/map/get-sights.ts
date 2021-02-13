@@ -109,7 +109,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
         const { joins, columns } = params.fields.build(session);
 
         // const sql = `select \`pl\`.*, ${columns}, (sqrt(pow(\`pl\`.\`latitude\` - ?, 2) + pow(\`pl\`.\`longitude\` - ?, 2))) as \`_d\` from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` order by \`_d\` asc limit ?`;
-        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit ?`;
+        const sql = `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`sightId\` is not null and (\`pl\`.\`latitude\` between ? and ?) and (\`pl\`.\`longitude\` between ? and ?) ${filterWhere.length ? ' and ' + filterWhere.join(' and ') : ''} group by \`sight\`.\`sightId\` limit ?`;
 
         const raw = await database.select<ISight>(sql, values);
 
