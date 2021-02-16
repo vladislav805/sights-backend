@@ -37,6 +37,7 @@ import PhotosGetById from './photos/get-by-id';
 import PhotosSuggest from './photos/suggest';
 import PhotosApprove from './photos/approve';
 import PhotosDecline from './photos/decline';
+import PhotosGetRandom from './photos/get-random';
 import PhotosGetUnsorted from './photos/get-unsorted';
 import PhotosGetUploadUri from './photos/getUploadUri';
 import AccountEdit from './account/edit';
@@ -160,6 +161,7 @@ export const initMethods = () => {
         'photos.suggest': PhotosSuggest,
         'photos.approve': PhotosApprove,
         'photos.decline': PhotosDecline,
+        'photos.getRandom': PhotosGetRandom,
 
         'comments.get': CommentsGet,
         'comments.add': CommentsAdd,
