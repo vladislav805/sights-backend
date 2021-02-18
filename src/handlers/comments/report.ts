@@ -1,4 +1,4 @@
-import { ICompanionPrivate, OpenMethodAPI } from '../method';
+import { ICompanion, ICompanionPrivate, OpenMethodAPI } from '../method';
 import { IApiParams } from '../../types/api';
 import { toNumber } from '../../utils/to-number';
 import { sendTelegramMessage } from '../../utils/telegram/send-message';
@@ -16,13 +16,17 @@ export default class CommentsReport extends OpenMethodAPI<IParams, boolean> {
         return { commentId };
     }
 
-    protected async perform(params: IParams, { database, session }: ICompanionPrivate): Promise<boolean> {
-        const [comment] = await database.select<IComment & { sightId: number }>(
+    protected async perform(params: IParams, { database, session }: ICompanion): Promise<boolean> {
+        const [comment] = await database.select<IComment>(
             'select * from `comment` where `commentId` = ?',
             [params.commentId],
         );
 
-        sendTelegramMessage(`**Жалоба на комментарий**:\n\n__${comment.text}__\n\nhttps://${config.domain.MAIN}/sight/${comment.sightId}#comment${comment.commentId}`);
+        if (!comment) {
+            return false;
+        }
+
+        sendTelegramMessage(`**Жалоба на комментарий**:\n\n__${comment.text}__\n\nhttps://${config.domain.MAIN}/${comment.sightId ? 'sight' : 'collection'}/${comment.sightId ?? comment.collectionId}#comment${comment.commentId}\n\nЗарепортил ${session ? `[user${session.userId} / ${session.user?.login}](https://${config.domain.MAIN}/user/${session.userId})` : 'неавторизованный'}`);
 
         return true;
     }
