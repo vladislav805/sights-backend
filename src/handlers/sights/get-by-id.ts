@@ -44,7 +44,7 @@ export default class SightsGetById extends OpenMethodAPI<IParams, IResult> {
         const { columns, joins } = params.fields.build(companion.session);
 
         const result = await companion.database.select<ISight>(
-            `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`sightId\` in (?) `,
+            `select \`pl\`.*, ${columns} from \`place\` \`pl\` ${joins} where \`sight\`.\`sightId\` in (?) group by \`sight\`.\`sightId\``,
             [params.sightIds],
         );
 
