@@ -252,6 +252,8 @@ type Response = boolean;
 ```
 
 ## sights.getNearby
+Возвращает только активные (то есть, не архивные) достопримечательности не дальше `distance` метров от заданного координатами `latitude` и `longitude` места.
+
 ### Параметры
 * `double latitude` - широта;
 * `double longitude` - долгота;

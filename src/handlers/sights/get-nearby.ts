@@ -43,7 +43,7 @@ export default class SightsGetNearby extends OpenMethodAPI<IParams, IResponse> {
 
         const delta = .04;
 
-        const sql = `select \`pl\`.*, ${columns}, floor(6371000 * acos(cos(radians(?)) * cos(radians(\`pl\`.\`latitude\`)) * cos(radians(\`pl\`.\`longitude\`) - radians(?)) + sin(radians(?)) * sin(radians(\`pl\`.\`latitude\`)))) as \`distance\` from \`place\` \`pl\` ${joins} where \`pl\`.\`latitude\` between ? and ? and \`pl\`.\`longitude\` between ? and ? group by \`sight\`.\`sightId\` having \`distance\` < ? limit ?`;
+        const sql = `select \`pl\`.*, ${columns}, floor(6371000 * acos(cos(radians(?)) * cos(radians(\`pl\`.\`latitude\`)) * cos(radians(\`pl\`.\`longitude\`) - radians(?)) + sin(radians(?)) * sin(radians(\`pl\`.\`latitude\`)))) as \`distance\` from \`place\` \`pl\` ${joins} where \`pl\`.\`latitude\` between ? and ? and \`pl\`.\`longitude\` between ? and ? and (\`sight\`.\`mask\` & 4) != 4 group by \`sight\`.\`sightId\` having \`distance\` < ? limit ?`;
 
         const items = (await database.select<ISight & Partial<ISightDistance>>(sql, [
             latitude, longitude, latitude, // expr in columns
