@@ -5,6 +5,7 @@ import { ISession } from '../../types/session';
 import { checkTelegramHash } from '../telegram/check-hash';
 import { ApiError, ErrorCode } from '../../error';
 import { checkVkHash } from '../vk/check-hash';
+import { removeUserFromTelegramCache } from '../../session';
 
 export type Disconnect = 0;
 
@@ -30,6 +31,8 @@ async function setSocial(companion: ICompanion<ISession>, social: SocialType, da
     } else {
         socialUserId = null;
     }
+
+    removeUserFromTelegramCache(companion.session.userId);
 
     const result = await companion.database.apply(
         `update \`user\` set \`${social}Id\` = ? where \`userId\` = ? limit 1`,

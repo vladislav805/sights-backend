@@ -1,10 +1,10 @@
 import type { IApiParams } from '../types/api';
 import type { ICompanion, IMethodAPI } from './method';
-import { PrivateMethodAPI } from './method';
+import { PrivateMethodAPI, TrustedMethodAPI } from './method';
 import type { ISession } from '../types/session';
 import { createConnectionFromPool } from '../database';
 import { ApiError, ErrorCode } from '../error';
-import { getSessionByAuthKey } from '../session';
+import { getSessionByAuthKey, getSessionByTelegramId } from '../session';
 import log from '../logger';
 import UsersGet from './users/get';
 import UsersSearch from './users/search';
@@ -86,6 +86,7 @@ import InternalGetPage from './internal/get-page';
 import InternalParseMarkdown from './internal/parse-markdown';
 import UtilsGetTime from './utils/time';
 import UtilsRebuildPoints from './utils/rebuild-points';
+import config from '../config';
 
 export const methods = new Map<string, IMethodAPI>();
 
@@ -208,6 +209,16 @@ export const createCompanion = async(params: IApiParams): Promise<ICompanion> =>
         if (!session) {
             throw new ApiError(ErrorCode.SESSION_INVALID, 'User authorization failed: session is invalid');
         }
+    } else if (typeof params.__telegramId !== 'undefined') {
+        const user = await getSessionByTelegramId(+params.__telegramId, database);
+
+        session = {
+            userId: user?.userId ?? 0,
+            authKey: '',
+            date: 0,
+            authId: 0,
+            user,
+        };
     }
 
     const companion: ICompanion = {
@@ -226,9 +237,13 @@ export const callMethod = async<T = unknown>(method: string, params: IApiParams 
     }
 
     // Экземпляр метода
-    const impl = methods.get(method) as IMethodAPI<unknown, T>;
+    const impl = methods.get(method) as IMethodAPI<IApiParams, T>;
 
-    if (impl instanceof PrivateMethodAPI && !companion.session) { // если метод приватный и нет сессии - ошибка
+    if (impl instanceof TrustedMethodAPI) {
+        if (params.__trustKey !== config.secret.TRUST_KEY) {
+            throw new ApiError(ErrorCode.UNKNOWN_METHOD, 'Unknown method called');
+        }
+    } else if (impl instanceof PrivateMethodAPI && !companion.session) { // если метод приватный и нет сессии - ошибка
         throw new ApiError(ErrorCode.AUTH_KEY_NOT_SPECIFIED, 'User authorization failed: authKey not specified');
     }
 

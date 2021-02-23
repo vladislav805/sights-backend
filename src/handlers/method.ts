@@ -93,3 +93,7 @@ export abstract class OpenMethodAPI<P, R> extends Method<P, R> {
 export abstract class PrivateMethodAPI<P, R> extends Method<P, R> {
     protected abstract perform(params: P, companion: ICompanionPrivate): Promise<R>;
 }
+
+export abstract class TrustedMethodAPI<P, R> extends OpenMethodAPI<P, R> {
+
+}

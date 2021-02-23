@@ -15,6 +15,7 @@ const secret = {
     UPLOAD_REMOVE: getConfigValue('SECRET_REMOVE'),
     EMAIL_LOGIN: getConfigValue('EMAIL_LOGIN'),
     EMAIL_PASSWORD: getConfigValue('EMAIL_PASSWORD'),
+    TRUST_KEY: getConfigValue('SECRET_TRUST_KEY'),
 };
 
 const salt = {
