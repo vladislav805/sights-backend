@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "dev": "npm run build && ENV_DEBUG=1 node dist/index.js",
+        "dev": "ts-node src/index.ts",
         "build": "npm run shit:fixbuild && webpack",
         "test": "jest",
         "shit:fixbuild": "rm -f node_modules/trouter/index.mjs node_modules/regexparam/dist/regexparam.mjs"
@@ -35,6 +35,7 @@
         "@types/node": "14.14.14",
         "@types/node-fetch": "2.5.7",
         "@types/nodemailer": "6.4.0",
+        "@types/osrm": "5.22.0",
         "@types/webpack": "4.41.25",
         "@types/webpack-dev-server": "3.11.1",
         "copy-webpack-plugin": "7.0.0",

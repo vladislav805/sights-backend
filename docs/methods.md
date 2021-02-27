@@ -13,4 +13,5 @@
 * [feed.*](methods-feed.md) - новости;
 * [notifications.*](methods-notifications.md) - уведомления;
 * [collections.*](methods-collections.md) - информация о коллекциях;
-* [rating.*](methods-rating.md) - информация об оценках.
+* [rating.*](methods-rating.md) - информация об оценках;
+* [osm.*](methods-osm.md) - работа с OSM.
