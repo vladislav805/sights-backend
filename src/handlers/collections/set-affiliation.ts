@@ -5,6 +5,7 @@ import { toBoolean } from '../../utils/to-boolean';
 import { ISession } from '../../types/session';
 import { ICollection } from '../../types/collection';
 import { ApiError, ErrorCode } from '../../error';
+import { MysqlError } from 'promise-mysql';
 
 type IParams = {
     collectionId: number;
@@ -47,7 +48,7 @@ export default class CollectionsSetAffiliation extends PrivateMethodAPI<IParams,
                 ? result.insertId > 0
                 : result.affectedRows > 0;
         } catch (e) {
-            if (e.message.includes('Duplicate')) {
+            if ((e as MysqlError).errno === 1062) {
                 return true;
             }
 

@@ -5,6 +5,7 @@ import { toNumber } from '../../utils/to-number';
 import { ApiError, ErrorCode } from '../../error';
 import { IDatabaseBundle } from '../../database';
 import { getAddressByCoordinate } from '../../utils/osm/geocoding';
+import { MysqlError } from 'promise-mysql';
 
 type IParams = {
     latitude: number;
@@ -50,7 +51,7 @@ export default class MapAddPlace extends OpenMethodAPI<IParams, IResult> {
                 address,
             };
         } catch (e) {
-            if (e.message.includes('Duplicate entry')) {
+            if ((e as MysqlError).errno === 1062) {
                 return this.findExists(database, latitude, longitude);
             }
             throw new ApiError(ErrorCode.UNKNOWN, '?');

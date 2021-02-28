@@ -61,10 +61,8 @@ export default class CommentsGet extends OpenMethodAPI<IParams, IApiListExtended
 
         const userIds = items.map(comment => comment.userId);
 
-        return {
-            count,
-            items,
-            users: await getUsers(userIds, params.fields, companion),
-        };
+        const users = await getUsers(userIds, params.fields, companion);
+
+        return { count, items, users };
     }
 }

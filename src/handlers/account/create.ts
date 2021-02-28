@@ -19,6 +19,7 @@ import { isValidLogin } from '../../utils/account/is-valid-login';
 import { IVkAuthResult } from '../../utils/vk/types';
 import { checkVkHash } from '../../utils/vk/check-hash';
 import { toTheString } from '../../utils/to-string';
+import { MysqlError } from 'promise-mysql';
 
 type IParams = {
     isSocial: boolean;
@@ -183,7 +184,7 @@ export default class AccountCreate extends OpenMethodAPI<IParams, IResult> {
         } catch (e) {
             // Если регистрация провалилась из-за дубликата
             console.error(e);
-            if (e.errno === 1062 || e.code === 'ER_DUP_ENTRY') {
+            if ((e as MysqlError).errno === 1062) {
                 // Какой ключ дублируется?
                 const match = e.sqlMessage.match(/for key '([^']+)'/);
                 const key = match[1];
