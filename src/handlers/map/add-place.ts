@@ -4,6 +4,7 @@ import { IPlace } from '../../types/place';
 import { toNumber } from '../../utils/to-number';
 import { ApiError, ErrorCode } from '../../error';
 import { IDatabaseBundle } from '../../database';
+import { getAddressByCoordinate } from '../../utils/osm/geocoding';
 
 type IParams = {
     latitude: number;
@@ -33,15 +34,20 @@ export default class MapAddPlace extends OpenMethodAPI<IParams, IResult> {
 
     private async create(database: IDatabaseBundle, latitude: number, longitude: number): Promise<IPlace> {
         try {
+            const addressInfo = await getAddressByCoordinate([latitude, longitude]);
+
+            const address = addressInfo?.address ?? '';
+
             const result = await database.apply(
-                'insert into `place` (`latitude`, `longitude`) values (?, ?)',
-                [latitude, longitude],
+                'insert into `place` (`latitude`, `longitude`, `address`) values (?, ?, ?)',
+                [latitude, longitude, address],
             );
 
             return {
                 placeId: result.insertId,
                 latitude,
-                longitude
+                longitude,
+                address,
             };
         } catch (e) {
             if (e.message.includes('Duplicate entry')) {
