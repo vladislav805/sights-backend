@@ -28,7 +28,7 @@ service.options('/api/:method', async(req, res) => {
     res.send();
 });
 
-const methodHandler = async(request, response) => {
+const methodHandler = async(request: restana.Request<restana.Protocol.HTTPS>, response) => {
     const { params, query, body } = request;
     const { method } = params;
 
@@ -37,7 +37,7 @@ const methodHandler = async(request, response) => {
         ...(body as IApiParams),
     };
 
-    log(`Request to ${method} with ${apiParams}`);
+    log(`Request to ${method} UA = ${request.rawHeaders}`);
 
     const companion = await createCompanion(apiParams);
     try {
