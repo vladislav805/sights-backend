@@ -1,4 +1,4 @@
-import { ICompanionPrivate, PrivateMethodAPI } from '../method';
+import { ICompanion, TrustedMethodAPI } from '../method';
 import { IUserAchievements } from '../../types/user';
 
 type Params = {
@@ -35,12 +35,8 @@ const COLLECTION_ADD = 10;
  */
 const COMMENT_ADD = 1;
 
-export default class UtilsRebuildPoints extends PrivateMethodAPI<Params, Result> {
-    protected async perform(params: Params, companion: ICompanionPrivate): Promise<Result> {
-        if (companion.session.user?.status !== 'ADMIN') {
-            return null;
-        }
-
+export default class UtilsRebuildPoints extends TrustedMethodAPI<Params, Result> {
+    protected async perform(params: Params, companion: ICompanion): Promise<Result> {
         const allUsers = await companion.database.select<{ userId: number }>('select `userId` from `user`');
 
         for (const { userId } of allUsers) {
