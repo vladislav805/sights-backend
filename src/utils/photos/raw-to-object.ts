@@ -3,7 +3,7 @@ import { joinPhotoPath } from './join-path';
 import config from '../../config';
 
 const raw2object = (raw: IPhotoRaw): IPhoto => {
-    const path = raw.path!;
+    const path = raw.path ?? '';
     delete raw.path;
     return {
         ...raw,
