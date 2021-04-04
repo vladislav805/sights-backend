@@ -141,7 +141,6 @@ type Response = {
         created: number;
         verified: number;
         visited: number;
-        desired: number;
     };
     collections: {
         created: number;

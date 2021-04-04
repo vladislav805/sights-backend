@@ -39,8 +39,7 @@ export const getSightsFilterQueryParts = (companion: ICompanion, filters: number
         fields.is(SIGHTS_GET_FIELD_VISIT_STATE) &&
         (
             isBit(filters, Filter.VISITED) ||
-            isBit(filters, Filter.NOT_VISITED) ||
-            isBit(filters, Filter.DESIRED)
+            isBit(filters, Filter.NOT_VISITED)
         )
     ) {
         fields.add(SIGHTS_GET_FIELD_VISIT_STATE);

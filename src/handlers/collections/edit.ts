@@ -46,7 +46,7 @@ export default class CollectionsEdit extends PrivateMethodAPI<IParams, IResult> 
 
     protected async perform(params: IParams, companion: ICompanionPrivate): Promise<IResult> {
         const result = await companion.database.apply(
-            'update `collection` set `type` = ?, `title` = ?, `content` = ?, `cityId` = ?, `dateUpdated` = unix_timestamp(now()) where `collectionId` = ? and `ownerId` = ?',
+            'update `collection` set `type` = ?, `title` = ?, `content` = ?, `cityId` = ?, `dateUpdated` = unix_timestamp(now()) where `collectionId` = ? and `ownerId` = ? and `type` != ?',
             [
                 params.type,
                 params.title,
@@ -54,6 +54,7 @@ export default class CollectionsEdit extends PrivateMethodAPI<IParams, IResult> 
                 params.cityId,
                 params.collectionId,
                 companion.session.userId,
+                'SYSTEM',
             ],
         );
 

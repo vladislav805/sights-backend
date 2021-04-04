@@ -17,7 +17,7 @@ export default class CollectionsRemove extends PrivateMethodAPI<IParams, IResult
 
     protected async perform(params: IParams, companion: ICompanionPrivate): Promise<IResult> {
         const result = await companion.database.apply(
-            'delete from `collection` where `ownerId` = ? and `collectionId` = ?',
+            'delete from `collection` where `ownerId` = ? and `collectionId` = ? and `type` != \'SYSTEM\'',
             [companion.session.userId, params.collectionId],
         );
 

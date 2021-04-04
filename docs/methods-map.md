@@ -17,8 +17,7 @@
   * `photo` - с фотографиями;
   * `!photo` - без фотографий;
   * `visited` - посещённое (доступно только с `fields=visitState`);
-  * `!visited` - не посещённое (доступно только с `fields=visitState`);
-  * `desired` - желаемое к посещению (доступно только с `fields=visitState`).
+  * `!visited` - не посещённое (доступно только с `fields=visitState`).
 
 ### Формат ответа
 ```ts

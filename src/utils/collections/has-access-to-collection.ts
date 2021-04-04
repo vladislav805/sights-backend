@@ -8,7 +8,8 @@ export const hasAccessToCollection = (collection: ICollection, session: ISession
         }
 
         case 'PRIVATE':
-        case 'NEURAL_RESULT': {
+        case 'NEURAL_RESULT':
+        case 'SYSTEM': {
             return collection.ownerId === session?.userId;
         }
 

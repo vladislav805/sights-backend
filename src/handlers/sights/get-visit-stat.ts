@@ -9,7 +9,6 @@ type IParams = {
 type IResult = {
     // views: number;
     visited: number;
-    desired: number;
 };
 
 export default class SightsGetVisitStat extends OpenMethodAPI<IParams, IResult> {
@@ -26,13 +25,12 @@ export default class SightsGetVisitStat extends OpenMethodAPI<IParams, IResult> 
         );
 
         type IMap = Record<number, number>;
-        const map: IMap = { 1: 0, 2: 0 };
+        const map: IMap = { 1: 0 };
 
         res.forEach(({ state, count }) => map[state] = count);
 
         return {
             visited: map[1],
-            desired: map[2],
         };
     }
 }

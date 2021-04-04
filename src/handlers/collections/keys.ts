@@ -9,6 +9,7 @@ export const COLLECTION_DATE_CREATED = 'dateCreated';
 export const COLLECTION_DATE_UPDATED = 'dateUpdated';
 export const COLLECTION_CITY_ID = 'cityId';
 export const COLLECTION_SIZE = 'size';
+export const COLLECTION_IS_SYSTEM = 'isSystem';
 
 export const COLLECTION_KEYS: (keyof ICollection)[] = [
     COLLECTION_ID,
@@ -20,6 +21,7 @@ export const COLLECTION_KEYS: (keyof ICollection)[] = [
     COLLECTION_DATE_UPDATED,
     COLLECTION_CITY_ID,
     COLLECTION_SIZE,
+    COLLECTION_IS_SYSTEM,
 ];
 
 export const COLLECTION_FIELD_TAGS = 'collection_tags';
