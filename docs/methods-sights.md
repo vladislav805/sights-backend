@@ -191,7 +191,6 @@ type Response = boolean;
 ```ts
 type Response = {
     visited: number;
-    desired: number;
 };
 ```
 
@@ -199,8 +198,7 @@ type Response = {
 ```json5
 {
     "result": {
-        "visited": 1,
-        "desired": 2
+        "visited": 1
     }
 }
 ```
@@ -216,7 +214,6 @@ type Response = {
     state: boolean;
     stat: {
         visited: number;
-        desired: number;
     };
 };
 ```
@@ -227,8 +224,7 @@ type Response = {
     "result": {
         "state": true,
         "stat": {
-            "visited": 4,
-            "desired": 6
+            "visited": 4
         }
     }
 }
@@ -308,8 +304,7 @@ type Response = number;
     * `photo` - с фотографиями;
     * `!photo` - без фотографий;
     * `visited` - посещённое (доступно только с `fields=visitState`);
-    * `!visited` - не посещённое (доступно только с `fields=visitState`);
-    * `desired` - желаемое к посещению (доступно только с `fields=visitState`).
+    * `!visited` - не посещённое (доступно только с `fields=visitState`).
 * `int count = 50` - количество;
 * `int offset = 0` - сдвиг выборки.
 
@@ -417,5 +412,4 @@ type Response = boolean;
 
 ## Sight visit
 * `0` - не посещено;
-* `1` - посещено;
-* `2` - желаемое.
+* `1` - посещено.

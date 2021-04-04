@@ -1,7 +1,7 @@
 import { ISight } from './sight';
 import { ICity } from './city';
 
-export type CollectionType = 'PUBLIC' | 'PRIVATE' | 'DRAFT' | 'NEURAL_RESULT';
+export type CollectionType = 'PUBLIC' | 'PRIVATE' | 'DRAFT' | 'NEURAL_RESULT' | 'SYSTEM';
 
 export interface ICollection {
     collectionId: number;
@@ -14,6 +14,7 @@ export interface ICollection {
     // tags: number[];
     cityId: number;
     size: number;
+    isSystem: boolean;
 
     city?: ICity | null;
     rating?: ICollectionRating;

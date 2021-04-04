@@ -79,7 +79,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
             left join `sight` `sp` on `sp`.`sightId` = `sightPhoto`.`sightId` \
             left join `comment` on `comment`.`commentId` = `feed`.`commentId` \
             left join `sight` `cs` on `cs`.`sightId` = `comment`.`sightId` \
-            left join `collection` `cc` on `cc`.`collectionId` = `comment`.`collectionId` \
+            left join `collection` `cc` on `cc`.`collectionId` = `comment`.`collectionId` and `cc`.`type` = \'PUBLIC\' \
             where `subscribe`.`userId` = ? order by `feed`.`itemId` desc limit ?'
                 .replace('*,', [
                     '`feed`.*',

@@ -14,7 +14,6 @@ type IParams = {
 
 type IResultStat = {
     visited: number;
-    desired: number;
 };
 
 type IResult = {
@@ -27,7 +26,7 @@ export default class SightsSetVisitState extends PrivateMethodAPI<IParams, IResu
         const state = toNumber(params.state, 'state');
 
         if (!isValidVisitState(state)) {
-            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Invalid state value, allowed values: 0, 1, 2');
+            throw new ApiError(ErrorCode.UNSPECIFIED_PARAM, 'Invalid state value, allowed values: 0, 1');
         }
 
         return {

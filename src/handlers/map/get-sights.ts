@@ -93,8 +93,7 @@ export default class MapGetSights extends OpenMethodAPI<IFieldsGetParams, IApiLi
             params.fields.is(SIGHTS_GET_FIELD_VISIT_STATE) &&
             (
                 isBit(params.filters, Filter.VISITED) ||
-                isBit(params.filters, Filter.NOT_VISITED) ||
-                isBit(params.filters, Filter.DESIRED)
+                isBit(params.filters, Filter.NOT_VISITED)
             )
         ) {
             if (isBit(params.filters, Filter.NOT_VISITED)) {
