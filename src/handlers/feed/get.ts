@@ -73,6 +73,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
             from `feed` \
             left join `subscribe` on `subscribe`.`targetId` = `feed`.`actorId` \
             left join `sight` on `sight`.`sightId` = `feed`.`sightId` \
+            left join `place` on `place`.`placeId` = `sight`.`placeId` \
             left join `collection` on `collection`.`collectionId` = `feed`.`collectionId` \
             left join `photo` on `photo`.`photoId` = `feed`.`photoId` \
             left join `sightPhoto` on `sightPhoto`.`photoId` = `photo`.`photoId` \
@@ -84,6 +85,7 @@ export default class FeedGet extends PrivateMethodAPI<IParams, IResult> {
                 .replace('*,', [
                     '`feed`.*',
                     ...packIdentitiesToSql('sight', 's', SIGHT_KEYS),
+                    ...packIdentitiesToSql('place', 's', PLACE_KEYS),
                     ...packIdentitiesToSql('collection', 'c', COLLECTION_KEYS),
                     ...packIdentitiesToSql('photo', 'p', PHOTO_KEYS),
                     ...packIdentitiesToSql('comment', 'cm', COMMENT_KEYS),
