@@ -55,6 +55,10 @@ export const enum ErrorCode {
     EXECUTE_INVALID_CODE = 120,
 
     INTERNAL_PAGE_NOT_FOUND = 130,
+
+    ROUTE_SO_FEW_PLACES = 150,
+    ROUTE_SO_MANY_PLACES = 151,
+    ROUTE_INVALID_PROFILE = 152,
 }
 
 const defaultMessages = {

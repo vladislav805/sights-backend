@@ -86,8 +86,9 @@ import InternalGetPage from './internal/get-page';
 import InternalParseMarkdown from './internal/parse-markdown';
 import UtilsGetTime from './utils/time';
 import UtilsRebuildPoints from './utils/rebuild-points';
-import OsmGetAddress from './osm/get-address';
+import OsmRoute from './osm/route';
 import OsmSearch from './osm/search';
+import OsmGetAddress from './osm/get-address';
 import config from '../config';
 
 export const methods = new Map<string, IMethodAPI>();
@@ -188,6 +189,7 @@ export const initMethods = () => {
 
         'osm.getAddressByCoordinate': OsmGetAddress,
         'osm.search': OsmSearch,
+        'osm.route': OsmRoute,
 
         'execute': Execute,
 

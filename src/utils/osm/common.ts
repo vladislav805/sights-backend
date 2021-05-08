@@ -39,4 +39,4 @@ export const renderAddressFromNominatimObject = (item: INominatimResult) => {
         road,
         house_number,
     ].filter(Boolean).join(', ');
-}
+};

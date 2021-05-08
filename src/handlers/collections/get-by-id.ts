@@ -9,6 +9,7 @@ import CollectionFieldsManager from '../../utils/collections/collection-fields-m
 import SightFieldsManager from '../../utils/sights/sight-fields-manager';
 import { hasAccessToCollection } from '../../utils/collections/has-access-to-collection';
 import { toTheString } from '../../utils/to-string';
+import { getLongestDistanceOfArray } from '../../utils/geo-distance';
 
 type IParams = {
     collectionId: number;
@@ -56,6 +57,8 @@ export default class CollectionsGetById extends OpenMethodAPI<IParams, IResult> 
             );
 
             collection.items = sights.map(params.sightFields.handleResult);
+
+            collection.abilityRoute = getLongestDistanceOfArray(collection.items) < 7000;
         }
 
         return collection;
