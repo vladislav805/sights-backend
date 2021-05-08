@@ -51,7 +51,7 @@ export default class SightsEdit extends PrivateMethodAPI<IParams, IResult> {
     protected async perform(params: IParams, companion: ICompanionPrivate): Promise<IResult> {
         const sight = await getSightById(companion.database, params.sightId);
 
-        if (sight.ownerId !== companion.session.userId) {
+        if (sight.ownerId !== companion.session.userId && companion.session.user?.status !== 'ADMIN') {
             throw new ApiError(ErrorCode.ACCESS_DENIED, 'You cannot edit this sight');
         }
 

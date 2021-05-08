@@ -7,7 +7,7 @@ import { ApiError, ErrorCode } from '../../error';
 export default async function setTags({ database, session }: ICompanionPrivate, sightId: number, newIds: number[]): Promise<boolean> {
     const sight = await getSightById(database, sightId);
 
-    if (sight.ownerId !== session.userId) {
+    if (sight.ownerId !== session.userId && session.user?.status !== 'ADMIN') {
         throw new ApiError(ErrorCode.ACCESS_DENIED, 'Access denied');
     }
 

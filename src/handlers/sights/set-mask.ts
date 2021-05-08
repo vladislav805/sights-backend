@@ -20,7 +20,7 @@ export default class SightsSetMask extends PrivateMethodAPI<IParams, boolean> {
     protected async perform(params: IParams, props: ICompanionPrivate): Promise<boolean> {
         const sight = await getSightById(props.database, params.sightId);
 
-        if (sight.ownerId !== props.session.userId) {
+        if (sight.ownerId !== props.session.userId && props.session.user?.status !== 'ADMIN') {
             throw new ApiError(ErrorCode.ACCESS_DENIED, 'Access denied');
         }
 

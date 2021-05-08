@@ -15,16 +15,16 @@ export default class SightsRemove extends PrivateMethodAPI<IParams, boolean> {
         };
     }
 
-    protected async perform(params: IParams, props: ICompanionPrivate): Promise<boolean> {
-        const sight = await getSightById(props.database, params.sightId);
+    protected async perform(params: IParams, companion: ICompanionPrivate): Promise<boolean> {
+        const sight = await getSightById(companion.database, params.sightId);
 
-        if (sight.ownerId !== props.session.userId) {
+        if (sight.ownerId !== companion.session.userId && companion.session.user?.status !== 'ADMIN') {
             throw new ApiError(ErrorCode.ACCESS_DENIED, 'Access denied');
         }
 
-        const res = await props.database.apply(
+        const res = await companion.database.apply(
             'delete from `sight` where `sightId` = ? and `ownerId` = ?',
-            [params.sightId, props.session.userId],
+            [params.sightId, companion.session.userId],
         );
 
         return res.affectedRows > 0;
